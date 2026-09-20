@@ -49,6 +49,17 @@ function cleanText(value = "") {
   return value.toString().trim().replace(/\s+/g, " ");
 }
 
+function normalizePhone(value = "") {
+  return value
+    .toString()
+    .replace(/\s+/g, "")
+    .replace(/[-().]/g, "");
+}
+
+function normalizeEmail(value = "") {
+  return value.toString().trim().toLowerCase();
+}
+
 function safeStorageGet(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
@@ -127,6 +138,40 @@ const WEEKDAY_DISPLAY = {
   saturday: 6,
 };
 
+function getLocalDateKey(date) {
+  if (!date || Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const year = date.getFullYear();
+  const month = String(
+    date.getMonth() + 1
+  ).padStart(2, "0");
+  const day = String(
+    date.getDate()
+  ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function isValidCalendarDate(
+  year,
+  month,
+  day
+) {
+  const date = new Date(
+    year,
+    month,
+    day
+  );
+
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month &&
+    date.getDate() === day
+  );
+}
+
 function getDateFromText(text = "") {
   const normalized = normalizeText(text);
   const now = new Date();
@@ -182,7 +227,25 @@ function getDateFromText(text = "") {
       year += 2000;
     }
 
-    const date = new Date(year, month, day);
+    if (
+      month < 0 ||
+      month > 11 ||
+      day < 1 ||
+      day > 31 ||
+      !isValidCalendarDate(
+        year,
+        month,
+        day
+      )
+    ) {
+      return null;
+    }
+
+    const date = new Date(
+      year,
+      month,
+      day
+    );
 
     if (!Number.isNaN(date.getTime())) {
       return date;
@@ -200,7 +263,7 @@ function extractTime(text = "") {
   const normalized = normalizeText(text);
 
   const match = normalized.match(
-    /(?:^|\s)(\d{1,2})(?::(\d{2}))?\s*(?:am|pm|πμ|μμ)?(?:\s|$)/
+    /(?:^|\s)(\d{1,2})(?::(\d{2}))?\s*(am|pm|πμ|μμ)?(?:\s|$)/
   );
 
   if (!match) {
@@ -210,9 +273,11 @@ function extractTime(text = "") {
   let hour = Number(match[1]);
   const minute = Number(match[2] || 0);
 
+  const period = match[3] || "";
+
   if (
-    normalized.includes("pm") ||
-    normalized.includes("μμ")
+    period === "pm" ||
+    period === "μμ"
   ) {
     if (hour < 12) {
       hour += 12;
@@ -220,8 +285,8 @@ function extractTime(text = "") {
   }
 
   if (
-    normalized.includes("am") ||
-    normalized.includes("πμ")
+    period === "am" ||
+    period === "πμ"
   ) {
     if (hour === 12) {
       hour = 0;
@@ -237,9 +302,13 @@ function extractTime(text = "") {
     return null;
   }
 
-  return `${String(hour).padStart(2, "0")}:${String(
-    minute
-  ).padStart(2, "0")}`;
+  return `${String(hour).padStart(
+    2,
+    "0"
+  )}:${String(minute).padStart(
+    2,
+    "0"
+  )}`;
 }
 
 /* =======================================================
@@ -252,8 +321,17 @@ function extractPhone(text = "") {
   );
 
   return match
-    ? match[0].replace(/\s+/g, "")
+    ? normalizePhone(match[0])
     : null;
+}
+
+function isValidPhone(phone = "") {
+  const normalized = normalizePhone(phone);
+
+  return (
+    /^69\d{8}$/.test(normalized) ||
+    /^\d{10}$/.test(normalized)
+  );
 }
 
 /* =======================================================
@@ -281,7 +359,9 @@ function isValidEmail(email = "") {
    ======================================================= */
 
 function getServices() {
-  return Array.isArray(businessData?.services)
+  return Array.isArray(
+    businessData?.services
+  )
     ? businessData.services
     : [];
 }
@@ -289,16 +369,32 @@ function getServices() {
 function findService(text = "") {
   const normalized = normalizeText(text);
 
+  if (!normalized) {
+    return null;
+  }
+
   return getServices().find((service) => {
     const serviceName = normalizeText(
       service.name
     );
 
+    if (!serviceName) {
+      return false;
+    }
+
     return (
-      normalized.includes(serviceName) ||
-      serviceName.includes(normalized)
+      normalized === serviceName ||
+      normalized.includes(
+        serviceName
+      ) ||
+      (
+        serviceName.length > 2 &&
+        serviceName.includes(
+          normalized
+        )
+      )
     );
-  });
+  }) || null;
 }
 
 /* =======================================================
@@ -318,7 +414,8 @@ const NAME_PREFIXES = [
 ];
 
 function containsBookingNoise(text = "") {
-  const normalized = normalizeText(text);
+  const normalized =
+    normalizeText(text);
 
   return (
     normalized.includes("ραντεβου") ||
@@ -341,7 +438,10 @@ function isValidName(value = "") {
     return false;
   }
 
-  if (cleaned.length < 2 || cleaned.length > 40) {
+  if (
+    cleaned.length < 2 ||
+    cleaned.length > 40
+  ) {
     return false;
   }
 
@@ -362,10 +462,17 @@ function extractName(text = "") {
   const cleaned = cleanText(text);
 
   for (const prefix of NAME_PREFIXES) {
-    const normalizedPrefix = normalizeText(prefix);
-    const normalizedText = normalizeText(cleaned);
+    const normalizedPrefix =
+      normalizeText(prefix);
 
-    if (normalizedText.startsWith(normalizedPrefix)) {
+    const normalizedText =
+      normalizeText(cleaned);
+
+    if (
+      normalizedText.startsWith(
+        normalizedPrefix
+      )
+    ) {
       const result = cleanText(
         cleaned.slice(prefix.length)
       );
@@ -396,6 +503,9 @@ function normalizeClient(client = {}) {
     client.lastName ||
     "";
 
+  const normalizedSurname =
+    cleanText(surname);
+
   return {
     id:
       client.id ||
@@ -405,28 +515,40 @@ function normalizeClient(client = {}) {
       cleanText(firstName),
 
     surname:
-      cleanText(surname),
+      normalizedSurname,
+
+    /* compatibility with LandingPage */
+    lastName:
+      normalizedSurname,
 
     phone:
-      cleanText(client.phone || ""),
+      normalizePhone(
+        client.phone || ""
+      ),
 
     email:
-      cleanText(
+      normalizeEmail(
         client.email || ""
-      ).toLowerCase(),
+      ),
 
     password:
       client.password || "",
 
     memoryNotes:
-      Array.isArray(client.memoryNotes)
+      Array.isArray(
+        client.memoryNotes
+      )
         ? client.memoryNotes
-        : Array.isArray(client.memory)
+        : Array.isArray(
+            client.memory
+          )
         ? client.memory
         : [],
 
     appointments:
-      Array.isArray(client.appointments)
+      Array.isArray(
+        client.appointments
+      )
         ? client.appointments
         : [],
 
@@ -441,16 +563,19 @@ function normalizeClient(client = {}) {
 }
 
 function loadClients() {
-  const clients = safeStorageGet(
-    CLIENTS_KEY,
-    []
-  );
+  const clients =
+    safeStorageGet(
+      CLIENTS_KEY,
+      []
+    );
 
   if (!Array.isArray(clients)) {
     return [];
   }
 
-  return clients.map(normalizeClient);
+  return clients.map(
+    normalizeClient
+  );
 }
 
 function loadActiveClientId() {
@@ -489,17 +614,19 @@ function findClient(
   }
 
   const normalizedPhone =
-    cleanText(phone);
+    normalizePhone(phone);
 
   const normalizedEmail =
-    cleanText(email).toLowerCase();
+    normalizeEmail(email);
 
   if (normalizedPhone) {
-    const byPhone = clients.find(
-      (client) =>
-        cleanText(client.phone) ===
-        normalizedPhone
-    );
+    const byPhone =
+      clients.find(
+        (client) =>
+          normalizePhone(
+            client.phone
+          ) === normalizedPhone
+      );
 
     if (byPhone) {
       return byPhone;
@@ -507,13 +634,13 @@ function findClient(
   }
 
   if (normalizedEmail) {
-    const byEmail = clients.find(
-      (client) =>
-        cleanText(
-          client.email
-        ).toLowerCase() ===
-        normalizedEmail
-    );
+    const byEmail =
+      clients.find(
+        (client) =>
+          normalizeEmail(
+            client.email
+          ) === normalizedEmail
+      );
 
     if (byEmail) {
       return byEmail;
@@ -546,6 +673,12 @@ function findClient(
   return null;
 }
 
+/*
+  IMPORTANT:
+  Do NOT overwrite an existing password with
+  an empty password during booking/profile updates.
+*/
+
 function rememberClient(
   clients,
   incomingClient
@@ -557,13 +690,18 @@ function rememberClient(
 
   const existing =
     findClient(clients, {
-      id: normalizedIncoming.id,
+      id:
+        normalizedIncoming.id,
+
       phone:
         normalizedIncoming.phone,
+
       email:
         normalizedIncoming.email,
+
       firstName:
         normalizedIncoming.firstName,
+
       surname:
         normalizedIncoming.surname,
     });
@@ -575,11 +713,64 @@ function rememberClient(
     ];
   }
 
+  const mergedMemory =
+    normalizedIncoming.memoryNotes
+      ?.length
+      ? normalizedIncoming.memoryNotes
+      : existing.memoryNotes || [];
+
+  const mergedAppointments =
+    normalizedIncoming.appointments
+      ?.length
+      ? normalizedIncoming.appointments
+      : existing.appointments || [];
+
   const merged = {
     ...existing,
     ...normalizedIncoming,
 
     id: existing.id,
+
+    firstName:
+      normalizedIncoming.firstName ||
+      existing.firstName ||
+      "",
+
+    surname:
+      normalizedIncoming.surname ||
+      existing.surname ||
+      "",
+
+    lastName:
+      normalizedIncoming.surname ||
+      existing.surname ||
+      "",
+
+    phone:
+      normalizedIncoming.phone ||
+      existing.phone ||
+      "",
+
+    email:
+      normalizedIncoming.email ||
+      existing.email ||
+      "",
+
+    /*
+      CRITICAL FIX:
+      Empty incoming password must never erase
+      the password already stored on the account.
+    */
+    password:
+      normalizedIncoming.password ||
+      existing.password ||
+      "",
+
+    memoryNotes:
+      mergedMemory,
+
+    appointments:
+      mergedAppointments,
 
     createdAt:
       existing.createdAt,
@@ -621,7 +812,9 @@ function createEmptyBooking() {
   };
 }
 
-function bookingProgress(booking) {
+function bookingProgress(
+  booking
+) {
   if (!booking?.active) {
     return 0;
   }
@@ -656,7 +849,9 @@ function bookingProgress(booking) {
    INTENT
    ======================================================= */
 
-function wantsBooking(text = "") {
+function wantsBooking(
+  text = ""
+) {
   const normalized =
     normalizeText(text);
 
@@ -673,13 +868,16 @@ function wantsBooking(text = "") {
     normalized.includes(
       "appointment"
     ) ||
+    normalized === "book" ||
     normalized.includes(
-      "book"
+      "book appointment"
     )
   );
 }
 
-function wantsCancel(text = "") {
+function wantsCancel(
+  text = ""
+) {
   const normalized =
     normalizeText(text);
 
@@ -696,7 +894,9 @@ function wantsCancel(text = "") {
   );
 }
 
-function wantsChange(text = "") {
+function wantsChange(
+  text = ""
+) {
   const normalized =
     normalizeText(text);
 
@@ -716,7 +916,9 @@ function wantsChange(text = "") {
   );
 }
 
-function isYes(text = "") {
+function isYes(
+  text = ""
+) {
   const normalized =
     normalizeText(text);
 
@@ -732,14 +934,15 @@ function isYes(text = "") {
   ].includes(normalized);
 }
 
-function isNo(text = "") {
+function isNo(
+  text = ""
+) {
   const normalized =
     normalizeText(text);
 
   return [
     "οχι",
     "no",
-    "cancel",
     "ακυρωση",
   ].includes(normalized);
 }
@@ -748,7 +951,9 @@ function isNo(text = "") {
    MEMORY
    ======================================================= */
 
-function wantsMemoryNote(text = "") {
+function wantsMemoryNote(
+  text = ""
+) {
   const normalized =
     normalizeText(text);
 
@@ -765,7 +970,9 @@ function wantsMemoryNote(text = "") {
   );
 }
 
-function extractMemoryNote(text = "") {
+function extractMemoryNote(
+  text = ""
+) {
   const normalized =
     normalizeText(text);
 
@@ -783,9 +990,9 @@ function extractMemoryNote(text = "") {
 
     if (index !== -1) {
       const originalIndex =
-        text
-          .toLowerCase()
-          .indexOf(prefix);
+        normalizeText(text).indexOf(
+          prefix
+        );
 
       const note = cleanText(
         text.slice(
@@ -825,7 +1032,9 @@ function getTodayName(
   ];
 }
 
-function getAvailableTimes(date) {
+function getAvailableTimes(
+  date
+) {
   if (!date) {
     return [];
   }
@@ -866,6 +1075,15 @@ function getAvailableTimes(date) {
   ] = end
     .split(":")
     .map(Number);
+
+  if (
+    Number.isNaN(startHour) ||
+    Number.isNaN(startMinute) ||
+    Number.isNaN(endHour) ||
+    Number.isNaN(endMinute)
+  ) {
+    return [];
+  }
 
   const result = [];
 
@@ -909,7 +1127,9 @@ function getAvailableTimes(date) {
    AI
    ======================================================= */
 
-async function askNelaAI(message) {
+async function askNelaAI(
+  message
+) {
   try {
     const response =
       await fetch(
@@ -955,32 +1175,37 @@ export default function App() {
   const path =
     window.location.pathname;
 
-  /* ADMIN */
+  /* =====================================================
+     ADMIN
+     ===================================================== */
 
   if (path === "/admin") {
     return <Admin />;
   }
 
-  /* CHAT */
+  /* =====================================================
+     CLIENT AUTH
+     ===================================================== */
 
-  if (path === "/chat") {
-    const user =
-      getLoggedInUser();
+  const user =
+    getLoggedInUser();
 
-    if (!user) {
-      window.location.replace(
-        "/"
-      );
+  /*
+    There is intentionally NO separate /chat route.
 
-      return null;
-    }
+    The homepage decides what to show:
+    - logged out  -> LandingPage
+    - logged in   -> ChatApp
 
-    return <ChatApp />;
+    This prevents the previous:
+    "Not Found" problem caused by /chat.
+  */
+
+  if (!user) {
+    return <LandingPage />;
   }
 
-  /* EVERYTHING ELSE */
-
-  return <LandingPage />;
+  return <ChatApp />;
 }
 
 /* =======================================================
@@ -1016,28 +1241,50 @@ function ChatApp() {
       loadClients()
     );
 
-  const [currentClient, setCurrentClient] =
-    useState(() => {
-      const storedClients =
-        loadClients();
+  const [
+    currentClient,
+    setCurrentClient,
+  ] = useState(() => {
+    const storedClients =
+      loadClients();
 
-      const user =
-        getLoggedInUser();
+    const user =
+      getLoggedInUser();
 
-      const activeId =
-        loadActiveClientId();
+    const activeId =
+      loadActiveClientId();
 
-      return (
-        findClient(
-          storedClients,
-          {
-            id:
-              user?.id ||
-              activeId,
-          }
-        ) || null
-      );
-    });
+    /*
+      First try account ID.
+      If that fails, use active client ID.
+      If that also fails, use email.
+
+      This fixes cases where the account exists
+      but the stored active ID is stale.
+    */
+    return (
+      findClient(
+        storedClients,
+        {
+          id: user?.id,
+        }
+      ) ||
+      findClient(
+        storedClients,
+        {
+          id: activeId,
+        }
+      ) ||
+      findClient(
+        storedClients,
+        {
+          email:
+            user?.email,
+        }
+      ) ||
+      null
+    );
+  });
 
   const [menuOpen, setMenuOpen] =
     useState(false);
@@ -1243,6 +1490,13 @@ function ChatApp() {
         phone,
         email,
 
+        /*
+          Empty password here is safe because
+          rememberClient never overwrites an
+          existing password with an empty value.
+        */
+        password: "",
+
         memoryNotes: [],
       });
 
@@ -1265,7 +1519,9 @@ function ChatApp() {
      SAVE MEMORY
      ======================================================= */
 
-  function saveMemoryNote(note) {
+  function saveMemoryNote(
+    note
+  ) {
     if (
       !currentClient ||
       !note
@@ -1327,9 +1583,7 @@ function ChatApp() {
     }
 
     const dateKey =
-      date
-        .toISOString()
-        .slice(0, 10);
+      getLocalDateKey(date);
 
     return bookings.some(
       (bookingItem) =>
@@ -1351,11 +1605,9 @@ function ChatApp() {
   ) {
     const dateKey =
       finalBooking.date
-        ? new Date(
+        ? getLocalDateKey(
             finalBooking.date
           )
-            .toISOString()
-            .slice(0, 10)
         : "";
 
     const newBooking = {
@@ -1435,10 +1687,23 @@ function ChatApp() {
           finalBooking.email,
       });
 
-    const updatedClient =
-      {
-        ...client,
-      };
+    /*
+      Keep the client's existing password.
+      rememberClient handles this safely.
+    */
+
+    const updatedClient = {
+      ...client,
+
+      appointments: [
+        ...(client.appointments ||
+          []),
+        newBooking,
+      ],
+
+      updatedAt:
+        new Date().toISOString(),
+    };
 
     setClients(
       (previous) =>
@@ -1748,6 +2013,32 @@ function ChatApp() {
         return true;
       }
 
+      /*
+        IMPORTANT:
+        The time must actually be part of
+        the business opening hours.
+      */
+
+      const availableTimes =
+        booking.date
+          ? getAvailableTimes(
+              booking.date
+            )
+          : [];
+
+      if (
+        !availableTimes.includes(
+          time
+        )
+      ) {
+        addMessage(
+          "assistant",
+          `Η ώρα ${time} δεν είναι διαθέσιμη μέσα στο ωράριο της επιχείρησης. Διάλεξε μία από τις διαθέσιμες ώρες.`
+        );
+
+        return true;
+      }
+
       if (
         booking.date &&
         isTimeBooked(
@@ -1921,7 +2212,12 @@ function ChatApp() {
           cleaned
         );
 
-      if (!phone) {
+      if (
+        !phone ||
+        !isValidPhone(
+          phone
+        )
+      ) {
         addMessage(
           "assistant",
           "Γράψε μου ένα έγκυρο τηλέφωνο."
@@ -2238,14 +2534,14 @@ function ChatApp() {
       );
 
     const phone =
-      cleanText(
+      normalizePhone(
         accountForm.phone
       );
 
     const email =
-      cleanText(
+      normalizeEmail(
         accountForm.email
-      ).toLowerCase();
+      );
 
     if (
       !isValidName(
@@ -2259,10 +2555,64 @@ function ChatApp() {
     }
 
     if (
+      !isValidPhone(
+        phone
+      )
+    ) {
+      return;
+    }
+
+    if (
       !isValidEmail(
         email
       )
     ) {
+      return;
+    }
+
+    /*
+      Prevent changing the account into
+      an email already owned by another client.
+    */
+
+    const emailConflict =
+      clients.some(
+        (client) =>
+          client.id !==
+            currentClient.id &&
+          normalizeEmail(
+            client.email
+          ) === email
+      );
+
+    if (emailConflict) {
+      alert(
+        "Αυτό το email χρησιμοποιείται ήδη από άλλον λογαριασμό."
+      );
+
+      return;
+    }
+
+    /*
+      Prevent changing the account into
+      a phone number already owned by another client.
+    */
+
+    const phoneConflict =
+      clients.some(
+        (client) =>
+          client.id !==
+            currentClient.id &&
+          normalizePhone(
+            client.phone
+          ) === phone
+      );
+
+    if (phoneConflict) {
+      alert(
+        "Αυτό το τηλέφωνο χρησιμοποιείται ήδη από άλλον λογαριασμό."
+      );
+
       return;
     }
 
@@ -2271,6 +2621,7 @@ function ChatApp() {
 
       firstName,
       surname,
+      lastName: surname,
       phone,
       email,
 
@@ -2290,7 +2641,9 @@ function ChatApp() {
         )
     );
 
-    /* keep login user synchronized */
+    /*
+      Keep login user synchronized.
+    */
 
     const currentUser =
       getLoggedInUser();
@@ -2339,8 +2692,6 @@ function ChatApp() {
      ======================================================= */
 
   function logout() {
-    /* remove authenticated session */
-
     safeStorageRemove(
       USER_KEY
     );
@@ -2366,9 +2717,9 @@ function ChatApp() {
     setView("chat");
 
     /*
-      Full page navigation is intentional here.
-      It guarantees App remounts and LandingPage
-      becomes the login/home screen.
+      Full page navigation to the root.
+      App will then see that there is no
+      nelaUser and show LandingPage.
     */
 
     window.location.replace(
