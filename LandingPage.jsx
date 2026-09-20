@@ -8,15 +8,24 @@ const CONVERSATION_KEY = "nelaConversationHistory";
 const BUSINESS_EMAIL = "nelabusiness@outlook.com";
 const BUSINESS_PASSWORD = "Nela2022$";
 
-const normalizeEmail = (value = "") => value.trim().toLowerCase();
+const normalizeEmail = (value = "") =>
+  String(value).trim().toLowerCase();
 
 const normalizePhone = (value = "") =>
-  value.replace(/\s+/g, "").replace(/[-().]/g, "");
+  String(value)
+    .replace(/\s+/g, "")
+    .replace(/[-().]/g, "");
 
 const getClients = () => {
   try {
     const stored = localStorage.getItem(CLIENTS_KEY);
-    const parsed = stored ? JSON.parse(stored) : [];
+
+    if (!stored) {
+      return [];
+    }
+
+    const parsed = JSON.parse(stored);
+
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
@@ -28,11 +37,14 @@ const saveClients = (clients) => {
 };
 
 const makeClientId = () =>
-  `client_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+  `client_${Date.now()}_${Math.random()
+    .toString(36)
+    .slice(2, 10)}`;
 
 export default function LandingPage() {
   const [mode, setMode] = useState("home");
 
+  // REGISTER
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -41,9 +53,11 @@ export default function LandingPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // LOGIN
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
+  // BUSINESS
   const [businessEmail, setBusinessEmail] = useState("");
   const [businessPassword, setBusinessPassword] = useState("");
 
@@ -74,6 +88,10 @@ export default function LandingPage() {
     resetMessages();
     setMode("business");
   };
+
+  // =========================================================
+  // CREATE ACCOUNT
+  // =========================================================
 
   const handleRegister = (e) => {
     e.preventDefault();
@@ -116,27 +134,48 @@ export default function LandingPage() {
 
     const clients = getClients();
 
-    const emailExists = clients.some(
-      (client) => normalizeEmail(client.email) === cleanEmail
-    );
+    // -------------------------------------------------------
+    // CHECK EXISTING EMAIL
+    // -------------------------------------------------------
+
+    const emailExists = clients.some((client) => {
+      return normalizeEmail(client?.email || "") === cleanEmail;
+    });
 
     if (emailExists) {
       setError(
         "An account with this email already exists. Please sign in instead."
       );
+
+      // IMPORTANT:
+      // Do NOT create another account.
+      // Do NOT redirect.
       return;
     }
 
-    const phoneExists = clients.some(
-      (client) => normalizePhone(client.phone) === cleanPhone
-    );
+    // -------------------------------------------------------
+    // CHECK EXISTING PHONE
+    // -------------------------------------------------------
+
+    const phoneExists = clients.some((client) => {
+      return normalizePhone(client?.phone || "") === cleanPhone;
+    });
 
     if (phoneExists) {
       setError(
         "An account with this phone number already exists. Please sign in instead."
       );
+
+      // Do NOT create another account.
+      // Do NOT redirect.
       return;
     }
+
+    // -------------------------------------------------------
+    // CREATE CLIENT
+    // -------------------------------------------------------
+
+    const now = new Date().toISOString();
 
     const newClient = {
       id: makeClientId(),
@@ -152,31 +191,48 @@ export default function LandingPage() {
       appointments: [],
       memory: [],
 
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: now,
+      updatedAt: now,
     };
 
     const updatedClients = [...clients, newClient];
 
     saveClients(updatedClients);
 
+    // -------------------------------------------------------
+    // LOGIN NEW CLIENT
+    // -------------------------------------------------------
+
+    const loggedUser = {
+      id: newClient.id,
+      firstName: newClient.firstName,
+      lastName: newClient.lastName,
+      phone: newClient.phone,
+      email: newClient.email,
+    };
+
     localStorage.setItem(
       USER_KEY,
-      JSON.stringify({
-        id: newClient.id,
-        firstName: newClient.firstName,
-        lastName: newClient.lastName,
-        phone: newClient.phone,
-        email: newClient.email,
-      })
+      JSON.stringify(loggedUser)
     );
 
-    localStorage.setItem(ACTIVE_CLIENT_KEY, newClient.id);
+    localStorage.setItem(
+      ACTIVE_CLIENT_KEY,
+      newClient.id
+    );
 
+    // Start a clean conversation for the new account.
     localStorage.removeItem(CONVERSATION_KEY);
 
-    window.location.href = "/chat";
+    // IMPORTANT:
+    // There is NO /chat route anymore.
+    // App.jsx should detect nelaUser and render Chat.
+    window.location.replace("/");
   };
+
+  // =========================================================
+  // SIGN IN
+  // =========================================================
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -192,9 +248,10 @@ export default function LandingPage() {
 
     const clients = getClients();
 
-    const client = clients.find(
-      (item) => normalizeEmail(item.email) === cleanEmail
-    );
+    // Find account by normalized email.
+    const client = clients.find((item) => {
+      return normalizeEmail(item?.email || "") === cleanEmail;
+    });
 
     if (!client) {
       setError("No account was found with this email.");
@@ -206,23 +263,40 @@ export default function LandingPage() {
       return;
     }
 
+    // -------------------------------------------------------
+    // EXISTING CLIENT LOGIN
+    // -------------------------------------------------------
+
+    const loggedUser = {
+      id: client.id,
+      firstName: client.firstName || "",
+      lastName: client.lastName || "",
+      phone: client.phone || "",
+      email: normalizeEmail(client.email || ""),
+    };
+
     localStorage.setItem(
       USER_KEY,
-      JSON.stringify({
-        id: client.id,
-        firstName: client.firstName,
-        lastName: client.lastName,
-        phone: client.phone,
-        email: client.email,
-      })
+      JSON.stringify(loggedUser)
     );
 
-    localStorage.setItem(ACTIVE_CLIENT_KEY, client.id);
+    localStorage.setItem(
+      ACTIVE_CLIENT_KEY,
+      client.id
+    );
 
+    // New login starts with a clean chat session.
     localStorage.removeItem(CONVERSATION_KEY);
 
-    window.location.href = "/chat";
+    // IMPORTANT:
+    // No /chat.
+    // Return to root and App.jsx opens Chat because nelaUser exists.
+    window.location.replace("/");
   };
+
+  // =========================================================
+  // BUSINESS LOGIN
+  // =========================================================
 
   const handleBusinessLogin = (e) => {
     e.preventDefault();
@@ -232,7 +306,9 @@ export default function LandingPage() {
     const cleanEmail = normalizeEmail(businessEmail);
 
     if (!cleanEmail || !businessPassword) {
-      setError("Please enter your business email and password.");
+      setError(
+        "Please enter your business email and password."
+      );
       return;
     }
 
@@ -253,8 +329,13 @@ export default function LandingPage() {
       })
     );
 
-    window.location.href = "/admin";
+    // Business dashboard remains /admin.
+    window.location.replace("/admin");
   };
+
+  // =========================================================
+  // STYLES
+  // =========================================================
 
   const inputStyle = {
     width: "100%",
@@ -283,7 +364,8 @@ export default function LandingPage() {
     padding: "15px",
     border: "none",
     borderRadius: "10px",
-    background: "linear-gradient(135deg, #c9a85c, #a8863f)",
+    background:
+      "linear-gradient(135deg, #c9a85c, #a8863f)",
     color: "#11100d",
     fontSize: "12px",
     fontWeight: 700,
@@ -319,10 +401,18 @@ export default function LandingPage() {
         onChange={(e) => setter(e.target.value)}
         placeholder={placeholder}
         style={inputStyle}
-        autoComplete={type === "password" ? "new-password" : "off"}
+        autoComplete={
+          type === "password"
+            ? "new-password"
+            : "off"
+        }
       />
     </div>
   );
+
+  // =========================================================
+  // UI
+  // =========================================================
 
   return (
     <div
@@ -332,7 +422,8 @@ export default function LandingPage() {
         background:
           "radial-gradient(circle at 50% 35%, rgba(183,146,68,0.10), transparent 32%), #080807",
         color: "#f4efe4",
-        fontFamily: "Inter, Arial, Helvetica, sans-serif",
+        fontFamily:
+          "Inter, Arial, Helvetica, sans-serif",
         display: "flex",
         flexDirection: "column",
         position: "relative",
@@ -340,6 +431,7 @@ export default function LandingPage() {
       }}
     >
       {/* BACKGROUND */}
+
       <div
         style={{
           position: "absolute",
@@ -351,6 +443,7 @@ export default function LandingPage() {
       />
 
       {/* TOP BAR */}
+
       <header
         style={{
           position: "relative",
@@ -360,10 +453,12 @@ export default function LandingPage() {
           alignItems: "center",
           justifyContent: "space-between",
           padding: "0 5vw",
-          borderBottom: "1px solid rgba(255,255,255,0.055)",
+          borderBottom:
+            "1px solid rgba(255,255,255,0.055)",
         }}
       >
         <button
+          type="button"
           onClick={goHome}
           style={{
             background: "none",
@@ -380,6 +475,7 @@ export default function LandingPage() {
         </button>
 
         <button
+          type="button"
           onClick={goBusinessLogin}
           style={{
             background: "none",
@@ -396,6 +492,7 @@ export default function LandingPage() {
       </header>
 
       {/* CONTENT */}
+
       <main
         style={{
           position: "relative",
@@ -403,12 +500,20 @@ export default function LandingPage() {
           flex: 1,
           display: "flex",
           justifyContent: "center",
-          alignItems: mode === "home" ? "center" : "flex-start",
+          alignItems:
+            mode === "home"
+              ? "center"
+              : "flex-start",
           padding:
-            mode === "home" ? "40px 20px" : "55px 20px 80px",
+            mode === "home"
+              ? "40px 20px"
+              : "55px 20px 80px",
         }}
       >
-        {/* HOME */}
+        {/* =====================================================
+            HOME
+        ====================================================== */}
+
         {mode === "home" && (
           <div
             style={{
@@ -436,13 +541,13 @@ export default function LandingPage() {
                 fontWeight: 400,
                 letterSpacing: "12px",
                 color: "#f2eadb",
-                fontFamily: "Cinzel, Georgia, serif",
+                fontFamily:
+                  "Cinzel, Georgia, serif",
               }}
             >
               NELA
             </h1>
 
-            {/* NEW SLOGAN */}
             <div
               style={{
                 marginTop: "14px",
@@ -467,13 +572,15 @@ export default function LandingPage() {
               style={{
                 margin: "25px auto 42px",
                 maxWidth: "470px",
-                color: "rgba(244,239,228,0.55)",
+                color:
+                  "rgba(244,239,228,0.55)",
                 fontSize: "14px",
                 lineHeight: 1.8,
                 fontWeight: 300,
               }}
             >
-              Your appointment, your experience with us.
+              Your appointment, your experience
+              with us.
             </p>
 
             <div
@@ -485,6 +592,7 @@ export default function LandingPage() {
               }}
             >
               <button
+                type="button"
                 onClick={goRegister}
                 style={{
                   ...buttonStyle,
@@ -498,14 +606,17 @@ export default function LandingPage() {
               </button>
 
               <button
+                type="button"
                 onClick={goLogin}
                 style={{
                   width: "auto",
                   minWidth: "190px",
                   padding: "14px 28px",
                   borderRadius: "10px",
-                  background: "rgba(255,255,255,0.025)",
-                  border: "1px solid rgba(210,180,105,0.28)",
+                  background:
+                    "rgba(255,255,255,0.025)",
+                  border:
+                    "1px solid rgba(210,180,105,0.28)",
                   color: "#d9c58d",
                   fontSize: "12px",
                   letterSpacing: "2px",
@@ -519,7 +630,10 @@ export default function LandingPage() {
           </div>
         )}
 
-        {/* REGISTER */}
+        {/* =====================================================
+            REGISTER
+        ====================================================== */}
+
         {mode === "register" && (
           <div
             style={{
@@ -527,7 +641,12 @@ export default function LandingPage() {
               maxWidth: "500px",
             }}
           >
-            <div style={{ textAlign: "center", marginBottom: "35px" }}>
+            <div
+              style={{
+                textAlign: "center",
+                marginBottom: "35px",
+              }}
+            >
               <div
                 style={{
                   color: "#c9a85c",
@@ -558,8 +677,10 @@ export default function LandingPage() {
                   marginBottom: "20px",
                   padding: "13px 15px",
                   borderRadius: "9px",
-                  background: "rgba(180,60,60,0.10)",
-                  border: "1px solid rgba(220,100,100,0.25)",
+                  background:
+                    "rgba(180,60,60,0.10)",
+                  border:
+                    "1px solid rgba(220,100,100,0.25)",
                   color: "#e5a4a4",
                   fontSize: "13px",
                   lineHeight: 1.5,
@@ -570,13 +691,37 @@ export default function LandingPage() {
             )}
 
             <form onSubmit={handleRegister}>
-              {field("First Name", firstName, setFirstName, "text", "First name")}
+              {field(
+                "First Name",
+                firstName,
+                setFirstName,
+                "text",
+                "First name"
+              )}
 
-              {field("Last Name", lastName, setLastName, "text", "Last name")}
+              {field(
+                "Last Name",
+                lastName,
+                setLastName,
+                "text",
+                "Last name"
+              )}
 
-              {field("Phone", phone, setPhone, "tel", "Phone number")}
+              {field(
+                "Phone",
+                phone,
+                setPhone,
+                "tel",
+                "Phone number"
+              )}
 
-              {field("Email", email, setEmail, "email", "Email address")}
+              {field(
+                "Email",
+                email,
+                setEmail,
+                "email",
+                "Email address"
+              )}
 
               {field(
                 "Confirm Email",
@@ -602,7 +747,10 @@ export default function LandingPage() {
                 "Confirm password"
               )}
 
-              <button type="submit" style={buttonStyle}>
+              <button
+                type="submit"
+                style={buttonStyle}
+              >
                 Create Account
               </button>
             </form>
@@ -611,12 +759,17 @@ export default function LandingPage() {
               style={{
                 textAlign: "center",
                 marginTop: "25px",
-                color: "rgba(244,239,228,0.45)",
+                color:
+                  "rgba(244,239,228,0.45)",
                 fontSize: "12px",
               }}
             >
               Already have an account?{" "}
-              <button onClick={goLogin} style={secondaryButtonStyle}>
+              <button
+                type="button"
+                onClick={goLogin}
+                style={secondaryButtonStyle}
+              >
                 Sign in
               </button>
             </div>
@@ -628,10 +781,12 @@ export default function LandingPage() {
               }}
             >
               <button
+                type="button"
                 onClick={goHome}
                 style={{
                   ...secondaryButtonStyle,
-                  color: "rgba(244,239,228,0.35)",
+                  color:
+                    "rgba(244,239,228,0.35)",
                 }}
               >
                 Back
@@ -640,7 +795,10 @@ export default function LandingPage() {
           </div>
         )}
 
-        {/* LOGIN */}
+        {/* =====================================================
+            LOGIN
+        ====================================================== */}
+
         {mode === "login" && (
           <div
             style={{
@@ -648,7 +806,12 @@ export default function LandingPage() {
               maxWidth: "430px",
             }}
           >
-            <div style={{ textAlign: "center", marginBottom: "35px" }}>
+            <div
+              style={{
+                textAlign: "center",
+                marginBottom: "35px",
+              }}
+            >
               <div
                 style={{
                   color: "#c9a85c",
@@ -679,8 +842,10 @@ export default function LandingPage() {
                   marginBottom: "20px",
                   padding: "13px 15px",
                   borderRadius: "9px",
-                  background: "rgba(180,60,60,0.10)",
-                  border: "1px solid rgba(220,100,100,0.25)",
+                  background:
+                    "rgba(180,60,60,0.10)",
+                  border:
+                    "1px solid rgba(220,100,100,0.25)",
                   color: "#e5a4a4",
                   fontSize: "13px",
                   lineHeight: 1.5,
@@ -696,8 +861,10 @@ export default function LandingPage() {
                   marginBottom: "20px",
                   padding: "13px 15px",
                   borderRadius: "9px",
-                  background: "rgba(100,160,100,0.10)",
-                  border: "1px solid rgba(120,190,120,0.22)",
+                  background:
+                    "rgba(100,160,100,0.10)",
+                  border:
+                    "1px solid rgba(120,190,120,0.22)",
                   color: "#a8d4a8",
                   fontSize: "13px",
                 }}
@@ -723,7 +890,10 @@ export default function LandingPage() {
                 "Password"
               )}
 
-              <button type="submit" style={buttonStyle}>
+              <button
+                type="submit"
+                style={buttonStyle}
+              >
                 Sign In
               </button>
             </form>
@@ -732,12 +902,17 @@ export default function LandingPage() {
               style={{
                 textAlign: "center",
                 marginTop: "25px",
-                color: "rgba(244,239,228,0.45)",
+                color:
+                  "rgba(244,239,228,0.45)",
                 fontSize: "12px",
               }}
             >
               Don't have an account?{" "}
-              <button onClick={goRegister} style={secondaryButtonStyle}>
+              <button
+                type="button"
+                onClick={goRegister}
+                style={secondaryButtonStyle}
+              >
                 Create one
               </button>
             </div>
@@ -749,10 +924,12 @@ export default function LandingPage() {
               }}
             >
               <button
+                type="button"
                 onClick={goHome}
                 style={{
                   ...secondaryButtonStyle,
-                  color: "rgba(244,239,228,0.35)",
+                  color:
+                    "rgba(244,239,228,0.35)",
                 }}
               >
                 Back
@@ -761,7 +938,10 @@ export default function LandingPage() {
           </div>
         )}
 
-        {/* BUSINESS LOGIN */}
+        {/* =====================================================
+            BUSINESS LOGIN
+        ====================================================== */}
+
         {mode === "business" && (
           <div
             style={{
@@ -805,8 +985,10 @@ export default function LandingPage() {
                   marginBottom: "20px",
                   padding: "13px 15px",
                   borderRadius: "9px",
-                  background: "rgba(180,60,60,0.10)",
-                  border: "1px solid rgba(220,100,100,0.25)",
+                  background:
+                    "rgba(180,60,60,0.10)",
+                  border:
+                    "1px solid rgba(220,100,100,0.25)",
                   color: "#e5a4a4",
                   fontSize: "13px",
                   lineHeight: 1.5,
@@ -833,7 +1015,10 @@ export default function LandingPage() {
                 "Password"
               )}
 
-              <button type="submit" style={buttonStyle}>
+              <button
+                type="submit"
+                style={buttonStyle}
+              >
                 Sign In
               </button>
             </form>
@@ -842,7 +1027,8 @@ export default function LandingPage() {
               style={{
                 textAlign: "center",
                 marginTop: "28px",
-                color: "rgba(244,239,228,0.38)",
+                color:
+                  "rgba(244,239,228,0.38)",
                 fontSize: "11px",
                 lineHeight: 1.7,
               }}
@@ -857,10 +1043,12 @@ export default function LandingPage() {
               }}
             >
               <button
+                type="button"
                 onClick={goHome}
                 style={{
                   ...secondaryButtonStyle,
-                  color: "rgba(244,239,228,0.35)",
+                  color:
+                    "rgba(244,239,228,0.35)",
                 }}
               >
                 Back
@@ -871,13 +1059,15 @@ export default function LandingPage() {
       </main>
 
       {/* FOOTER */}
+
       <footer
         style={{
           position: "relative",
           zIndex: 2,
           textAlign: "center",
           padding: "20px",
-          color: "rgba(244,239,228,0.22)",
+          color:
+            "rgba(244,239,228,0.22)",
           fontSize: "9px",
           letterSpacing: "2px",
           textTransform: "uppercase",
