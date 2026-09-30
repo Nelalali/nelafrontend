@@ -1514,4 +1514,610 @@ export default function Admin() {
 
           <div style={styles.stat}>
             <div style={styles.statIcon}>📊</div>
-            <div style={styles.statLabel}>ΕΝΕ
+            <div style={styles.statLabel}>ΕΝΕΡΓΑ ΡΑΝΤΕΒΟΥ</div>
+            <div style={styles.statValue}>
+              {statistics.confirmed + statistics.completed}
+            </div>
+          </div>
+        </div>
+
+        <div style={styles.panel}>
+          <div style={styles.panelHeader}>
+            <div>
+              <div style={styles.panelTitle}>Ιστορικό ακυρώσεων</div>
+              <div style={styles.panelSub}>Όλα τα ακυρωμένα ραντεβού</div>
+            </div>
+          </div>
+
+          {cancellations.length === 0 ? (
+            <div style={styles.empty}>Δεν υπάρχουν ακυρωμένα ραντεβού.</div>
+          ) : (
+            <div style={styles.bookingList}>
+              {cancellations.slice().reverse().map(renderBooking)}
+            </div>
+          )}
+        </div>
+      </>
+    );
+  }
+
+  function Clients() {
+    const filteredClients = clients.filter(
+      (client) =>
+        normalize(client.name).includes(normalize(search)) ||
+        normalize(client.phone).includes(normalize(search)) ||
+        normalize(client.email).includes(normalize(search))
+    );
+
+    return (
+      <>
+        <div style={styles.topbar}>
+          <div>
+            <h1 style={styles.heading}>Πελατολόγιο</h1>
+            <div style={styles.headingSub}>
+              Όλοι οι πελάτες που έχουν αλληλεπιδράσει με τη NELA
+            </div>
+          </div>
+        </div>
+
+        <div style={{ ...styles.panel, marginBottom: "18px", padding: "15px" }}>
+          <input
+            style={styles.search}
+            placeholder="🔎 Αναζήτηση ονόματος, τηλεφώνου ή email..."
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
+        </div>
+
+        <div style={styles.panel}>
+          {filteredClients.length === 0 ? (
+            <div style={styles.empty}>Δεν βρέθηκαν πελάτες.</div>
+          ) : (
+            <div style={styles.clientGrid}>
+              {filteredClients.map((client) => (
+                <div
+                  key={client.id}
+                  style={styles.clientCard}
+                  onClick={() => setSelectedClient(client)}
+                >
+                  <div style={styles.clientAvatar}>
+                    {getInitials(client.name)}
+                  </div>
+                  <div style={styles.clientName}>{client.name}</div>
+                  <div style={styles.clientPhone}>{client.phone}</div>
+                  <div style={{ ...styles.clientPhone, marginTop: "3px" }}>
+                    {client.email}
+                  </div>
+                  <div style={styles.clientStats}>
+                    <span>{client.bookings.length} ραντεβού</span>
+                    <span>€{client.totalSpent}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </>
+    );
+  }
+
+  function Analytics() {
+    const maxDay = Math.max(...Object.values(analytics.dayCounts), 1);
+    const maxHour = Math.max(...Object.values(analytics.hourCounts), 1);
+
+    return (
+      <>
+        <div style={styles.topbar}>
+          <div>
+            <h1 style={styles.heading}>Analytics</h1>
+            <div style={styles.headingSub}>
+              Αναλυτικά στοιχεία λειτουργίας της επιχείρησης
+            </div>
+          </div>
+        </div>
+
+        <div style={styles.stats}>
+          <div style={styles.stat}>
+            <div style={styles.statLabel}>ΣΥΝΟΛΙΚΑ ΡΑΝΤΕΒΟΥ</div>
+            <div style={styles.statValue}>{statistics.total}</div>
+          </div>
+          <div style={styles.stat}>
+            <div style={styles.statLabel}>ΝΕΟΙ ΠΕΛΑΤΕΣ</div>
+            <div style={styles.statValue}>{analytics.newClients}</div>
+          </div>
+          <div style={styles.stat}>
+            <div style={styles.statLabel}>ΕΠΑΝΑΛΑΜΒΑΝΟΜΕΝΟΙ</div>
+            <div style={styles.statValue}>{analytics.returningClients}</div>
+          </div>
+          <div style={styles.stat}>
+            <div style={styles.statLabel}>ΜΕΣΟ TICKET</div>
+            <div style={styles.statValue}>€{analytics.averageTicket}</div>
+          </div>
+        </div>
+
+        <div style={styles.grid2}>
+          <div style={styles.miniPanel}>
+            <div style={styles.miniTitle}>Ραντεβού ανά ημέρα</div>
+            <div style={styles.miniSub}>Ποια ημέρα εμφανίζει μεγαλύτερη κίνηση</div>
+
+            {Object.entries(analytics.dayCounts).map(([day, count]) => (
+              <div key={day} style={styles.barRow}>
+                <div style={styles.barTop}>
+                  <span>{day}</span>
+                  <span>{count}</span>
+                </div>
+                <div style={styles.barTrack}>
+                  <div
+                    style={{
+                      ...styles.barFill,
+                      width: `${Math.max(5, (count / maxDay) * 100)}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={styles.miniPanel}>
+            <div style={styles.miniTitle}>Δημοφιλέστερες ώρες</div>
+            <div style={styles.miniSub}>Ώρες με τις περισσότερες κρατήσεις</div>
+
+            {Object.entries(analytics.hourCounts)
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 8)
+              .map(([hour, count]) => (
+                <div key={hour} style={styles.barRow}>
+                  <div style={styles.barTop}>
+                    <span>{hour}</span>
+                    <span>{count}</span>
+                  </div>
+                  <div style={styles.barTrack}>
+                    <div
+                      style={{
+                        ...styles.barFill,
+                        width: `${Math.max(5, (count / maxHour) * 100)}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  function Services() {
+    const services = {};
+
+    bookings.forEach((booking) => {
+      const name = booking.serviceName || booking.service || "Άγνωστη υπηρεσία";
+      if (!services[name]) {
+        services[name] = { name, count: 0, revenue: 0 };
+      }
+      services[name].count += 1;
+      if (getBookingStatus(booking) !== "cancelled") {
+        services[name].revenue += getPrice(booking);
+      }
+    });
+
+    const serviceList = Object.values(services);
+
+    return (
+      <>
+        <div style={styles.topbar}>
+          <div>
+            <h1 style={styles.heading}>Υπηρεσίες</h1>
+            <div style={styles.headingSub}>Η απόδοση των υπηρεσιών σας</div>
+          </div>
+        </div>
+
+        <div style={styles.panel}>
+          <div style={styles.panelHeader}>
+            <div>
+              <div style={styles.panelTitle}>Υπηρεσίες της NELA</div>
+              <div style={styles.panelSub}>
+                Υπηρεσίες που εμφανίζονται στα ραντεβού
+              </div>
+            </div>
+          </div>
+
+          {serviceList.length === 0 ? (
+            <div style={styles.empty}>Δεν υπάρχουν ακόμα δεδομένα υπηρεσιών.</div>
+          ) : (
+            serviceList
+              .sort((a, b) => b.count - a.count)
+              .map((service) => (
+                <div key={service.name} style={styles.serviceCard}>
+                  <div>
+                    <div style={styles.serviceName}>{service.name}</div>
+                    <div style={styles.serviceMeta}>
+                      {service.count} κρατήσεις • € {service.revenue.toFixed(2)} έσοδα
+                    </div>
+                  </div>
+                  <div style={styles.servicePrice}>{service.count}</div>
+                </div>
+              ))
+          )}
+        </div>
+      </>
+    );
+  }
+
+  function Settings() {
+    return (
+      <>
+        <div style={styles.topbar}>
+          <div>
+            <h1 style={styles.heading}>Ρυθμίσεις</h1>
+            <div style={styles.headingSub}>Στοιχεία και ρυθμίσεις επιχείρησης</div>
+          </div>
+        </div>
+
+        <div style={styles.panel}>
+          <div style={styles.panelHeader}>
+            <div>
+              <div style={styles.panelTitle}>Business profile</div>
+              <div style={styles.panelSub}>
+                Οι βασικές πληροφορίες της επιχείρησης
+              </div>
+            </div>
+          </div>
+
+          <div style={styles.settingsGrid}>
+            <div style={styles.field}>
+              <label style={styles.fieldLabel}>ΟΝΟΜΑ ΕΠΙΧΕΙΡΗΣΗΣ</label>
+              <input
+                style={styles.input}
+                value={settings.businessName}
+                onChange={(e) =>
+                  setSettings((c) => ({ ...c, businessName: e.target.value }))
+                }
+              />
+            </div>
+
+            <div style={styles.field}>
+              <label style={styles.fieldLabel}>ΤΗΛΕΦΩΝΟ</label>
+              <input
+                style={styles.input}
+                value={settings.phone}
+                onChange={(e) =>
+                  setSettings((c) => ({ ...c, phone: e.target.value }))
+                }
+              />
+            </div>
+
+            <div style={styles.field}>
+              <label style={styles.fieldLabel}>EMAIL</label>
+              <input
+                style={styles.input}
+                value={settings.email}
+                onChange={(e) =>
+                  setSettings((c) => ({ ...c, email: e.target.value }))
+                }
+              />
+            </div>
+
+            <div style={styles.field}>
+              <label style={styles.fieldLabel}>ΔΙΕΥΘΥΝΣΗ</label>
+              <input
+                style={styles.input}
+                value={settings.address}
+                onChange={(e) =>
+                  setSettings((c) => ({ ...c, address: e.target.value }))
+                }
+              />
+            </div>
+
+            <div style={{ ...styles.field, ...styles.fieldFull }}>
+              <label style={styles.fieldLabel}>ΠΟΛΙΤΙΚΗ ΑΚΥΡΩΣΕΩΝ</label>
+              <textarea
+                style={{ ...styles.input, ...styles.textarea }}
+                value={settings.cancellationPolicy}
+                onChange={(e) =>
+                  setSettings((c) => ({
+                    ...c,
+                    cancellationPolicy: e.target.value,
+                  }))
+                }
+              />
+            </div>
+
+            <div style={{ ...styles.field, ...styles.fieldFull }}>
+              <button style={styles.close} onClick={saveSettings}>
+                ΑΠΟΘΗΚΕΥΣΗ ΡΥΘΜΙΣΕΩΝ
+              </button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  function renderPage() {
+    if (activePage === "calendar") return Calendar();
+    if (activePage === "appointments") return Appointments();
+    if (activePage === "cancellations") return Cancellations();
+    if (activePage === "clients") return Clients();
+    if (activePage === "analytics") return Analytics();
+    if (activePage === "services") return Services();
+    if (activePage === "settings") return Settings();
+    return Dashboard();
+  }
+
+  /* =====================================================
+     MAIN LAYOUT
+  ===================================================== */
+  return (
+    <div style={styles.page}>
+      <aside style={styles.sidebar}>
+        <div style={styles.brand}>
+          <div style={styles.logo}>N</div>
+          <div>
+            <div style={styles.brandName}>NELA</div>
+            <div style={styles.brandSub}>BUSINESS CENTER</div>
+          </div>
+        </div>
+
+        <nav style={styles.nav}>
+          <div style={styles.navSection}>OVERVIEW</div>
+
+          <button
+            style={{
+              ...styles.navButton,
+              ...(activePage === "dashboard" ? styles.navActive : {}),
+            }}
+            onClick={() => goTo("dashboard")}
+          >
+            ◈ &nbsp; Dashboard
+          </button>
+
+          <button
+            style={{
+              ...styles.navButton,
+              ...(activePage === "calendar" ? styles.navActive : {}),
+            }}
+            onClick={() => goTo("calendar")}
+          >
+            ◷ &nbsp; Calendar
+          </button>
+
+          <div style={styles.navSection}>MANAGEMENT</div>
+
+          <button
+            style={{
+              ...styles.navButton,
+              ...(activePage === "appointments" ? styles.navActive : {}),
+            }}
+            onClick={() => goTo("appointments")}
+          >
+            ◉ &nbsp; Ραντεβού
+          </button>
+
+          <button
+            style={{
+              ...styles.navButton,
+              ...(activePage === "cancellations" ? styles.navActive : {}),
+            }}
+            onClick={() => goTo("cancellations")}
+          >
+            × &nbsp; Ακυρώσεις
+          </button>
+
+          <button
+            style={{
+              ...styles.navButton,
+              ...(activePage === "clients" ? styles.navActive : {}),
+            }}
+            onClick={() => goTo("clients")}
+          >
+            ◉ &nbsp; Πελατολόγιο
+          </button>
+
+          <div style={styles.navSection}>BUSINESS</div>
+
+          <button
+            style={{
+              ...styles.navButton,
+              ...(activePage === "analytics" ? styles.navActive : {}),
+            }}
+            onClick={() => goTo("analytics")}
+          >
+            ◌ &nbsp; Analytics
+          </button>
+
+          <button
+            style={{
+              ...styles.navButton,
+              ...(activePage === "services" ? styles.navActive : {}),
+            }}
+            onClick={() => goTo("services")}
+          >
+            ✦ &nbsp; Υπηρεσίες
+          </button>
+
+          <button
+            style={{
+              ...styles.navButton,
+              ...(activePage === "settings" ? styles.navActive : {}),
+            }}
+            onClick={() => goTo("settings")}
+          >
+            ⚙ &nbsp; Ρυθμίσεις
+          </button>
+        </nav>
+
+        <div style={styles.sidebarBottom}>
+          <button style={styles.sidebarBtn} onClick={goToSite}>
+            🌐 Προβολή Chat / Site
+          </button>
+          <button
+            style={{ ...styles.sidebarBtn, ...styles.logoutBtn }}
+            onClick={logoutAdmin}
+          >
+            🚪 Αποσύνδεση (Logout)
+          </button>
+        </div>
+      </aside>
+
+      <main style={styles.main}>{renderPage()}</main>
+
+      {/* BOOKING MODAL */}
+      {selectedBooking && (
+        <div style={styles.modalOverlay} onClick={() => setSelectedBooking(null)}>
+          <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div style={styles.modalTitle}>Στοιχεία ραντεβού</div>
+
+            <div style={styles.modalRow}>
+              <span style={styles.modalLabel}>Όνομα</span>
+              <span style={styles.modalValue}>
+                {getCustomerName(selectedBooking)}
+              </span>
+            </div>
+
+            <div style={styles.modalRow}>
+              <span style={styles.modalLabel}>Τηλέφωνο</span>
+              <span style={styles.modalValue}>
+                {selectedBooking.phone || "—"}
+              </span>
+            </div>
+
+            <div style={styles.modalRow}>
+              <span style={styles.modalLabel}>Email</span>
+              <span style={styles.modalValue}>
+                {selectedBooking.email || "—"}
+              </span>
+            </div>
+
+            <div style={styles.modalRow}>
+              <span style={styles.modalLabel}>Υπηρεσία</span>
+              <span style={styles.modalValue}>
+                {selectedBooking.serviceName || selectedBooking.service || "—"}
+              </span>
+            </div>
+
+            <div style={styles.modalRow}>
+              <span style={styles.modalLabel}>Ημέρα</span>
+              <span style={styles.modalValue}>
+                {selectedBooking.date || "—"}
+              </span>
+            </div>
+
+            <div style={styles.modalRow}>
+              <span style={styles.modalLabel}>Ώρα</span>
+              <span style={styles.modalValue}>
+                {selectedBooking.time || "—"}
+              </span>
+            </div>
+
+            <div style={styles.modalRow}>
+              <span style={styles.modalLabel}>Τιμή</span>
+              <span style={styles.modalValue}>
+                €{getPrice(selectedBooking).toFixed(2)}
+              </span>
+            </div>
+
+            <div style={styles.modalRow}>
+              <span style={styles.modalLabel}>Κατάσταση</span>
+              <span style={styles.modalValue}>
+                {getStatusLabel(getBookingStatus(selectedBooking))}
+              </span>
+            </div>
+
+            <div
+              style={{
+                marginTop: "20px",
+                color: COLORS.goldLight,
+                fontFamily: "Georgia, serif",
+                fontSize: "14px",
+              }}
+            >
+              Αλλαγή κατάστασης
+            </div>
+
+            <div style={{ ...styles.filterRow, marginTop: "10px" }}>
+              <button
+                style={styles.filterButton}
+                onClick={() => updateBookingStatus(selectedBooking, "confirmed")}
+              >
+                Επιβεβαιωμένο
+              </button>
+              <button
+                style={styles.filterButton}
+                onClick={() => updateBookingStatus(selectedBooking, "completed")}
+              >
+                Ολοκληρωμένο
+              </button>
+              <button
+                style={{ ...styles.filterButton, color: COLORS.red }}
+                onClick={() => updateBookingStatus(selectedBooking, "cancelled")}
+              >
+                Ακυρωμένο
+              </button>
+            </div>
+
+            <div style={styles.modalActions}>
+              <button
+                style={styles.secondaryButton}
+                onClick={() => editBooking(selectedBooking)}
+              >
+                Αλλαγή
+              </button>
+              <button
+                style={styles.close}
+                onClick={() => setSelectedBooking(null)}
+              >
+                Κλείσιμο
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CLIENT MODAL */}
+      {selectedClient && (
+        <div style={styles.modalOverlay} onClick={() => setSelectedClient(null)}>
+          <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div style={styles.modalTitle}>{selectedClient.name}</div>
+
+            <div style={styles.modalRow}>
+              <span style={styles.modalLabel}>Τηλέφωνο</span>
+              <span style={styles.modalValue}>{selectedClient.phone}</span>
+            </div>
+
+            <div style={styles.modalRow}>
+              <span style={styles.modalLabel}>Email</span>
+              <span style={styles.modalValue}>{selectedClient.email}</span>
+            </div>
+
+            <div style={styles.modalRow}>
+              <span style={styles.modalLabel}>Ραντεβού</span>
+              <span style={styles.modalValue}>
+                {selectedClient.bookings.length}
+              </span>
+            </div>
+
+            <div style={styles.modalRow}>
+              <span style={styles.modalLabel}>Συνολικές αγορές</span>
+              <span style={styles.modalValue}>
+                €{selectedClient.totalSpent.toFixed(2)}
+              </span>
+            </div>
+
+            <div style={styles.modalRow}>
+              <span style={styles.modalLabel}>Τελευταία επίσκεψη</span>
+              <span style={styles.modalValue}>{selectedClient.lastVisit}</span>
+            </div>
+
+            <button
+              style={{ ...styles.close, marginTop: "20px" }}
+              onClick={() => setSelectedClient(null)}
+            >
+              Κλείσιμο
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
