@@ -19,13 +19,8 @@ const normalizePhone = (value = "") =>
 const getClients = () => {
   try {
     const stored = localStorage.getItem(CLIENTS_KEY);
-
-    if (!stored) {
-      return [];
-    }
-
+    if (!stored) return [];
     const parsed = JSON.parse(stored);
-
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
@@ -95,7 +90,6 @@ export default function LandingPage({ defaultMode = "home" }) {
 
   const handleRegister = (e) => {
     e.preventDefault();
-
     resetMessages();
 
     const cleanFirstName = firstName.trim();
@@ -197,7 +191,6 @@ export default function LandingPage({ defaultMode = "home" }) {
 
   const handleLogin = (e) => {
     e.preventDefault();
-
     resetMessages();
 
     const cleanEmail = normalizeEmail(loginEmail);
@@ -240,12 +233,11 @@ export default function LandingPage({ defaultMode = "home" }) {
   };
 
   // =========================================================
-  // BUSINESS LOGIN
+  // BUSINESS LOGIN (Ασφαλής ανακατεύθυνση χωρίς 404)
   // =========================================================
 
   const handleBusinessLogin = (e) => {
     e.preventDefault();
-
     resetMessages();
 
     const cleanEmail = normalizeEmail(businessEmail);
@@ -273,8 +265,8 @@ export default function LandingPage({ defaultMode = "home" }) {
       })
     );
 
-    // Redirect καθαρά στο /admin
-    window.location.replace("/admin");
+    // Ασφαλές SPA redirect: Αποτρέπει το server 404 "Not Found"
+    window.location.replace("/?admin=true");
   };
 
   // =========================================================
@@ -344,9 +336,7 @@ export default function LandingPage({ defaultMode = "home" }) {
         onChange={(e) => setter(e.target.value)}
         placeholder={placeholder}
         style={inputStyle}
-        autoComplete={
-          type === "password" ? "new-password" : "off"
-        }
+        autoComplete={type === "password" ? "new-password" : "off"}
       />
     </div>
   );
