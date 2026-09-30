@@ -64,11 +64,7 @@ function normalizeEmail(value = "") {
 function safeStorageGet(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
-
-    if (!raw) {
-      return fallback;
-    }
-
+    if (!raw) return fallback;
     return JSON.parse(raw);
   } catch {
     return fallback;
@@ -78,33 +74,21 @@ function safeStorageGet(key, fallback) {
 function safeStorageSet(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    // ignore
-  }
+  } catch {}
 }
 
 function safeStorageRemove(key) {
   try {
     localStorage.removeItem(key);
-  } catch {
-    // ignore
-  }
+  } catch {}
 }
 
 function getLoggedInUser() {
   try {
     const raw = localStorage.getItem(USER_KEY);
-
-    if (!raw) {
-      return null;
-    }
-
+    if (!raw) return null;
     const user = JSON.parse(raw);
-
-    if (!user || !user.id) {
-      return null;
-    }
-
+    if (!user || !user.id) return null;
     return user;
   } catch {
     return null;
@@ -151,20 +135,15 @@ const WEEKDAY_DISPLAY = {
 };
 
 function getLocalDateKey(date) {
-  if (!date || Number.isNaN(date.getTime())) {
-    return "";
-  }
-
+  if (!date || Number.isNaN(date.getTime())) return "";
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
-
   return `${year}-${month}-${day}`;
 }
 
 function isValidCalendarDate(year, month, day) {
   const date = new Date(year, month, day);
-
   return (
     date.getFullYear() === year &&
     date.getMonth() === month &&
@@ -190,15 +169,9 @@ function getDateFromText(text = "") {
     if (normalized.includes(dayName)) {
       const date = new Date(now);
       const currentDay = date.getDay();
-
       let diff = dayNumber - currentDay;
-
-      if (diff <= 0) {
-        diff += 7;
-      }
-
+      if (diff <= 0) diff += 7;
       date.setDate(date.getDate() + diff);
-
       return date;
     }
   }
@@ -210,12 +183,9 @@ function getDateFromText(text = "") {
   if (match) {
     const day = Number(match[1]);
     const month = Number(match[2]) - 1;
-
     let year = match[3] ? Number(match[3]) : now.getFullYear();
 
-    if (year < 100) {
-      year += 2000;
-    }
+    if (year < 100) year += 2000;
 
     if (
       month < 0 ||
@@ -228,10 +198,7 @@ function getDateFromText(text = "") {
     }
 
     const date = new Date(year, month, day);
-
-    if (!Number.isNaN(date.getTime())) {
-      return date;
-    }
+    if (!Number.isNaN(date.getTime())) return date;
   }
 
   return null;
@@ -243,62 +210,41 @@ function getDateFromText(text = "") {
 
 function extractTime(text = "") {
   const normalized = normalizeText(text);
-
   const match = normalized.match(
     /(?:^|\s)(\d{1,2})(?::(\d{2}))?\s*(am|pm|πμ|μμ)?(?:\s|$)/
   );
 
-  if (!match) {
-    return null;
-  }
+  if (!match) return null;
 
   let hour = Number(match[1]);
   const minute = Number(match[2] || 0);
-
   const period = match[3] || "";
 
   if (period === "pm" || period === "μμ") {
-    if (hour < 12) {
-      hour += 12;
-    }
+    if (hour < 12) hour += 12;
   }
 
   if (period === "am" || period === "πμ") {
-    if (hour === 12) {
-      hour = 0;
-    }
+    if (hour === 12) hour = 0;
   }
 
-  if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
-    return null;
-  }
+  if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
 
   return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
 }
 
-/* =======================================================
-   PHONE
-   ======================================================= */
-
 function extractPhone(text = "") {
   const match = text.match(/(?:\+30\s?)?(?:69\d{8}|\d{10})/);
-
   return match ? normalizePhone(match[0]) : null;
 }
 
 function isValidPhone(phone = "") {
   const normalized = normalizePhone(phone);
-
   return /^69\d{8}$/.test(normalized) || /^\d{10}$/.test(normalized);
 }
 
-/* =======================================================
-   EMAIL
-   ======================================================= */
-
 function extractEmail(text = "") {
   const match = text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
-
   return match ? match[0].toLowerCase() : null;
 }
 
@@ -306,29 +252,18 @@ function isValidEmail(email = "") {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
 
-/* =======================================================
-   SERVICES
-   ======================================================= */
-
 function getServices() {
   return Array.isArray(businessData?.services) ? businessData.services : [];
 }
 
 function findService(text = "") {
   const normalized = normalizeText(text);
-
-  if (!normalized) {
-    return null;
-  }
+  if (!normalized) return null;
 
   return (
     getServices().find((service) => {
       const serviceName = normalizeText(service.name);
-
-      if (!serviceName) {
-        return false;
-      }
-
+      if (!serviceName) return false;
       return (
         normalized === serviceName ||
         normalized.includes(serviceName) ||
@@ -337,10 +272,6 @@ function findService(text = "") {
     }) || null
   );
 }
-
-/* =======================================================
-   NAME
-   ======================================================= */
 
 const NAME_PREFIXES = [
   "με λενε",
@@ -356,7 +287,6 @@ const NAME_PREFIXES = [
 
 function containsBookingNoise(text = "") {
   const normalized = normalizeText(text);
-
   return (
     normalized.includes("ραντεβου") ||
     normalized.includes("appointment") ||
@@ -373,23 +303,10 @@ function containsBookingNoise(text = "") {
 
 function isValidName(value = "") {
   const cleaned = cleanText(value);
-
-  if (!cleaned) {
-    return false;
-  }
-
-  if (cleaned.length < 2 || cleaned.length > 40) {
-    return false;
-  }
-
-  if (/\d/.test(cleaned)) {
-    return false;
-  }
-
-  if (containsBookingNoise(cleaned)) {
-    return false;
-  }
-
+  if (!cleaned) return false;
+  if (cleaned.length < 2 || cleaned.length > 40) return false;
+  if (/\d/.test(cleaned)) return false;
+  if (containsBookingNoise(cleaned)) return false;
   return /^[A-Za-zΑ-Ωα-ωΆ-Ώά-ώϊΐϋΰ\s'-]+$/.test(cleaned);
 }
 
@@ -402,23 +319,13 @@ function extractName(text = "") {
 
     if (normalizedText.startsWith(normalizedPrefix)) {
       const result = cleanText(cleaned.slice(prefix.length));
-
-      if (isValidName(result)) {
-        return result;
-      }
+      if (isValidName(result)) return result;
     }
   }
 
-  if (isValidName(cleaned)) {
-    return cleaned;
-  }
-
+  if (isValidName(cleaned)) return cleaned;
   return null;
 }
-
-/* =======================================================
-   CLIENT
-   ======================================================= */
 
 function normalizeClient(client = {}) {
   const firstName = client.firstName || "";
@@ -446,11 +353,7 @@ function normalizeClient(client = {}) {
 
 function loadClients() {
   const clients = safeStorageGet(CLIENTS_KEY, []);
-
-  if (!Array.isArray(clients)) {
-    return [];
-  }
-
+  if (!Array.isArray(clients)) return [];
   return clients.map(normalizeClient);
 }
 
@@ -466,9 +369,7 @@ function findClient(
   clients,
   { id, phone, email, firstName, surname } = {}
 ) {
-  if (!Array.isArray(clients)) {
-    return null;
-  }
+  if (!Array.isArray(clients)) return null;
 
   if (id) {
     const byId = clients.find((client) => client.id === id);
@@ -550,10 +451,6 @@ function rememberClient(clients, incomingClient) {
   return clients.map((client) => (client.id === existing.id ? merged : client));
 }
 
-/* =======================================================
-   BOOKING
-   ======================================================= */
-
 function createEmptyBooking() {
   return {
     active: false,
@@ -573,9 +470,7 @@ function createEmptyBooking() {
 }
 
 function bookingProgress(booking) {
-  if (!booking?.active) {
-    return 0;
-  }
+  if (!booking?.active) return 0;
 
   let completed = 0;
   if (booking.serviceId) completed += 1;
@@ -589,13 +484,8 @@ function bookingProgress(booking) {
   return completed;
 }
 
-/* =======================================================
-   INTENT
-   ======================================================= */
-
 function wantsBooking(text = "") {
   const normalized = normalizeText(text);
-
   return (
     normalized.includes("ραντεβου") ||
     normalized.includes("κλεισω") ||
@@ -608,7 +498,6 @@ function wantsBooking(text = "") {
 
 function wantsCancel(text = "") {
   const normalized = normalizeText(text);
-
   return (
     normalized.includes("ακυρωση") ||
     normalized.includes("ακυρωσω") ||
@@ -618,7 +507,6 @@ function wantsCancel(text = "") {
 
 function wantsChange(text = "") {
   const normalized = normalizeText(text);
-
   return (
     normalized.includes("αλλαξ") ||
     normalized.includes("μετακινη") ||
@@ -629,7 +517,6 @@ function wantsChange(text = "") {
 
 function isYes(text = "") {
   const normalized = normalizeText(text);
-
   return [
     "ναι",
     "yes",
@@ -644,17 +531,11 @@ function isYes(text = "") {
 
 function isNo(text = "") {
   const normalized = normalizeText(text);
-
   return ["οχι", "no", "ακυρωση"].includes(normalized);
 }
 
-/* =======================================================
-   MEMORY
-   ======================================================= */
-
 function wantsMemoryNote(text = "") {
   const normalized = normalizeText(text);
-
   return (
     normalized.includes("θυμησου") ||
     normalized.includes("να θυμασαι") ||
@@ -664,29 +545,18 @@ function wantsMemoryNote(text = "") {
 
 function extractMemoryNote(text = "") {
   const normalized = normalizeText(text);
-
   const prefixes = ["θυμησου", "να θυμασαι", "remember"];
 
   for (const prefix of prefixes) {
     const index = normalized.indexOf(prefix);
-
     if (index !== -1) {
       const originalIndex = normalizeText(text).indexOf(prefix);
-
       const note = cleanText(text.slice(originalIndex + prefix.length));
-
-      if (note) {
-        return note;
-      }
+      if (note) return note;
     }
   }
-
   return null;
 }
-
-/* =======================================================
-   BUSINESS HOURS
-   ======================================================= */
 
 function getTodayName(date = new Date()) {
   const names = [
@@ -698,27 +568,19 @@ function getTodayName(date = new Date()) {
     "friday",
     "saturday",
   ];
-
   return names[date.getDay()];
 }
 
 function getAvailableTimes(date) {
-  if (!date) {
-    return [];
-  }
+  if (!date) return [];
 
   const dayName = getTodayName(date);
   const range = businessData?.openingHours?.[dayName];
 
-  if (!range || range === "Κλειστά") {
-    return [];
-  }
+  if (!range || range === "Κλειστά") return [];
 
   const [start, end] = range.split("-");
-
-  if (!start || !end) {
-    return [];
-  }
+  if (!start || !end) return [];
 
   const [startHour, startMinute] = start.split(":").map(Number);
   const [endHour, endMinute] = end.split(":").map(Number);
@@ -739,20 +601,14 @@ function getAvailableTimes(date) {
   while (currentMinutes < endMinutes) {
     const hour = Math.floor(currentMinutes / 60);
     const minute = currentMinutes % 60;
-
     result.push(
       `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
     );
-
     currentMinutes += 30;
   }
 
   return result;
 }
-
-/* =======================================================
-   AI
-   ======================================================= */
 
 async function askNelaAI(message) {
   try {
@@ -761,9 +617,7 @@ async function askNelaAI(message) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        message,
-      }),
+      body: JSON.stringify({ message }),
     });
 
     if (!response.ok) {
@@ -771,8 +625,6 @@ async function askNelaAI(message) {
     }
 
     const data = await response.json();
-
-    // Υποστήριξη είτε το backend επιστρέψει reply, answer, ή message
     return data?.reply || data?.answer || data?.message || null;
   } catch {
     return null;
@@ -780,24 +632,29 @@ async function askNelaAI(message) {
 }
 
 /* =======================================================
-   APP ROUTER
+   APP ROUTER (Απόλυτα ασφαλές χωρίς 404 Not Found)
    ======================================================= */
 
 export default function App() {
-  // Καθαρισμός του path (αφαιρεί trailing slashes)
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
+  const searchParams = new URLSearchParams(window.location.search);
+
+  // Εντοπισμός Admin είτε από URL path, είτε από Query parameter, είτε από Hash
+  const isAdmin =
+    path === "/admin" ||
+    path.startsWith("/admin") ||
+    searchParams.get("view") === "admin" ||
+    searchParams.get("admin") === "true" ||
+    window.location.hash === "#admin";
 
   /* =====================================================
      ADMIN ROUTE & GUARD
      ===================================================== */
 
-  if (path === "/admin") {
-    // Αν ο διαχειριστής είναι συνδεδεμένος, δείχνει το Admin Dashboard
+  if (isAdmin) {
     if (isBusinessLoggedIn()) {
       return <Admin />;
     }
-
-    // Αν δεν είναι συνδεδεμένος, ανοίγει απευθείας τη φόρμα Business Login
     return <LandingPage defaultMode="business" />;
   }
 
@@ -976,10 +833,6 @@ function ChatApp() {
     );
   }
 
-  /* =======================================================
-     SAVE BOOKING (With Name unification for Admin)
-     ======================================================= */
-
   function saveBooking(finalBooking) {
     const dateKey = finalBooking.date
       ? getLocalDateKey(finalBooking.date)
@@ -992,10 +845,7 @@ function ChatApp() {
       clientId: currentClient?.id || null,
       serviceId: finalBooking.serviceId,
       serviceName: finalBooking.serviceName,
-
-      // Σημαντική προσθήκη: name για πλήρη συμβατότητα με το Admin
       name: customerFullName,
-
       price: finalBooking.price,
       duration: finalBooking.duration,
       date: dateKey,
@@ -1949,7 +1799,7 @@ function ChatApp() {
       width: "100%",
       height: "44px",
       borderRadius: "11px",
-      border: "1px solid rgba(255,255,255,0.09)",
+      border: "1px solid rgba(255,255,205,0.09)",
       background: "rgba(0,0,0,0.22)",
       color: COLORS.text,
       outline: "none",
