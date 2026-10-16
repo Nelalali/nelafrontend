@@ -1,827 +1,127 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import "./LandingPage.css";
 
 const CLIENTS_KEY = "nelaClients";
 const USER_KEY = "nelaUser";
 const ACTIVE_CLIENT_KEY = "nelaActiveClient";
-const CONVERSATION_KEY = "nelaConversationHistory";
+const HISTORY_KEY = "nelaConversationHistory";
 
+// Temporary local-demo credentials from the existing project.
+// For a public launch, replace this with backend authentication; browser-side
+// credentials are visible to users and are not a security boundary.
 const BUSINESS_EMAIL = "nelabusiness@outlook.com";
 const BUSINESS_PASSWORD = "Nela2022$";
 
-const normalizeEmail = (value = "") =>
-  String(value).trim().toLowerCase();
-
-const normalizePhone = (value = "") =>
-  String(value)
-    .replace(/\s+/g, "")
-    .replace(/[-().]/g, "");
-
-const getClients = () => {
+const readArray = (key) => {
   try {
-    const stored = localStorage.getItem(CLIENTS_KEY);
-    if (!stored) return [];
-    const parsed = JSON.parse(stored);
-    return Array.isArray(parsed) ? parsed : [];
+    const value = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(value) ? value : [];
   } catch {
     return [];
   }
 };
-
-const saveClients = (clients) => {
-  localStorage.setItem(CLIENTS_KEY, JSON.stringify(clients));
-};
-
-const makeClientId = () =>
-  `client_${Date.now()}_${Math.random()
-    .toString(36)
-    .slice(2, 10)}`;
+const normalizeEmail = (value = "") => String(value).trim().toLowerCase();
+const normalizePhone = (value = "") => String(value).replace(/[^\d+]/g, "");
+const makeId = () => `client_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
 export default function LandingPage({ defaultMode = "home" }) {
   const [mode, setMode] = useState(defaultMode);
-
-  // REGISTER
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [confirmEmail, setConfirmEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  // LOGIN
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-
-  // BUSINESS
-  const [businessEmail, setBusinessEmail] = useState("");
-  const [businessPassword, setBusinessPassword] = useState("");
-
+  const [form, setForm] = useState({ firstName: "", lastName: "", phone: "", email: "", confirmEmail: "", password: "", confirmPassword: "" });
+  const [login, setLogin] = useState({ email: "", password: "" });
+  const [business, setBusiness] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  const resetMessages = () => {
-    setError("");
-    setSuccess("");
-  };
+  const go = (next) => { setError(""); setMode(next); };
+  const updateForm = (e) => setForm((old) => ({ ...old, [e.target.name]: e.target.value }));
+  const updateLogin = (e) => setLogin((old) => ({ ...old, [e.target.name]: e.target.value }));
+  const updateBusiness = (e) => setBusiness((old) => ({ ...old, [e.target.name]: e.target.value }));
 
-  const goHome = () => {
-    resetMessages();
-    setMode("home");
-  };
-
-  const goRegister = () => {
-    resetMessages();
-    setMode("register");
-  };
-
-  const goLogin = () => {
-    resetMessages();
-    setMode("login");
-  };
-
-  const goBusinessLogin = () => {
-    resetMessages();
-    setMode("business");
-  };
-
-  // =========================================================
-  // CREATE ACCOUNT
-  // =========================================================
-
-  const handleRegister = (e) => {
-    e.preventDefault();
-    resetMessages();
-
-    const cleanFirstName = firstName.trim();
-    const cleanLastName = lastName.trim();
-    const cleanEmail = normalizeEmail(email);
-    const cleanConfirmEmail = normalizeEmail(confirmEmail);
-    const cleanPhone = normalizePhone(phone);
-    const cleanPassword = String(password).trim();
-    const cleanConfirmPassword = String(confirmPassword).trim();
-
-    if (
-      !cleanFirstName ||
-      !cleanLastName ||
-      !cleanPhone ||
-      !cleanEmail ||
-      !cleanConfirmEmail ||
-      !cleanPassword ||
-      !cleanConfirmPassword
-    ) {
-      setError("Please complete all fields.");
-      return;
-    }
-
-    if (cleanEmail !== cleanConfirmEmail) {
-      setError("Email addresses do not match.");
-      return;
-    }
-
-    if (cleanPassword !== cleanConfirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
-    if (cleanPassword.length < 6) {
-      setError("Password must contain at least 6 characters.");
-      return;
-    }
-
-    const clients = getClients();
-
-    const emailExists = clients.some((client) => {
-      return normalizeEmail(client?.email || "") === cleanEmail;
-    });
-
-    if (emailExists) {
-      setError(
-        "An account with this email already exists. Please sign in instead."
-      );
-      return;
-    }
-
-    const phoneExists = clients.some((client) => {
-      return normalizePhone(client?.phone || "") === cleanPhone;
-    });
-
-    if (phoneExists) {
-      setError(
-        "An account with this phone number already exists. Please sign in instead."
-      );
-      return;
-    }
-
+  function handleRegister(e) {
+    e.preventDefault(); setError("");
+    const clean = { ...form, firstName: form.firstName.trim(), lastName: form.lastName.trim(), phone: normalizePhone(form.phone), email: normalizeEmail(form.email), confirmEmail: normalizeEmail(form.confirmEmail) };
+    if (Object.values(clean).some((v) => !String(v).trim())) return setError("Συμπλήρωσε όλα τα πεδία.");
+    if (clean.email !== clean.confirmEmail) return setError("Τα email δεν ταιριάζουν.");
+    if (clean.password !== clean.confirmPassword) return setError("Οι κωδικοί δεν ταιριάζουν.");
+    if (clean.password.length < 8) return setError("Ο κωδικός πρέπει να έχει τουλάχιστον 8 χαρακτήρες.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean.email)) return setError("Βάλε έγκυρη διεύθυνση email.");
+    if (clean.phone.replace(/\D/g, "").length < 8) return setError("Έλεγξε τον αριθμό τηλεφώνου.");
+    const clients = readArray(CLIENTS_KEY);
+    if (clients.some((c) => normalizeEmail(c?.email) === clean.email)) return setError("Υπάρχει ήδη λογαριασμός με αυτό το email. Κάνε σύνδεση.");
+    if (clients.some((c) => normalizePhone(c?.phone) === clean.phone)) return setError("Υπάρχει ήδη λογαριασμός με αυτό το τηλέφωνο.");
     const now = new Date().toISOString();
+    const client = { id: makeId(), firstName: clean.firstName, lastName: clean.lastName, phone: clean.phone, email: clean.email, password: clean.password, appointments: [], memory: [], createdAt: now, updatedAt: now };
+    try {
+      localStorage.setItem(CLIENTS_KEY, JSON.stringify([...clients, client]));
+      localStorage.setItem(USER_KEY, JSON.stringify({ id: client.id, firstName: client.firstName, lastName: client.lastName, phone: client.phone, email: client.email }));
+      localStorage.setItem(ACTIVE_CLIENT_KEY, client.id);
+      localStorage.setItem("nelaClientMemory", JSON.stringify({ name: `${client.firstName} ${client.lastName}`.trim(), phone: client.phone, visits: 0, lastBooking: null, preferences: [] }));
+      localStorage.removeItem(HISTORY_KEY);
+      window.location.replace("/");
+    } catch { setError("Δεν ήταν δυνατή η αποθήκευση. Έλεγξε τον διαθέσιμο χώρο του browser."); }
+  }
 
-    const newClient = {
-      id: makeClientId(),
-      firstName: cleanFirstName,
-      lastName: cleanLastName,
-      phone: cleanPhone,
-      email: cleanEmail,
-      password: cleanPassword,
-      appointments: [],
-      memory: [],
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    const updatedClients = [...clients, newClient];
-    saveClients(updatedClients);
-
-    const loggedUser = {
-      id: newClient.id,
-      firstName: newClient.firstName,
-      lastName: newClient.lastName,
-      phone: newClient.phone,
-      email: newClient.email,
-    };
-
-    localStorage.setItem(USER_KEY, JSON.stringify(loggedUser));
-    localStorage.setItem(ACTIVE_CLIENT_KEY, newClient.id);
-    localStorage.removeItem(CONVERSATION_KEY);
-
-    window.location.replace("/");
-  };
-
-  // =========================================================
-  // SIGN IN
-  // =========================================================
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    resetMessages();
-
-    const cleanEmail = normalizeEmail(loginEmail);
-    const cleanPassword = String(loginPassword).trim();
-
-    if (!cleanEmail || !cleanPassword) {
-      setError("Please enter your email and password.");
-      return;
-    }
-
-    const clients = getClients();
-
-    const client = clients.find((item) => {
-      return normalizeEmail(item?.email || "") === cleanEmail;
-    });
-
-    if (!client) {
-      setError("No account was found with this email.");
-      return;
-    }
-
-    if (String(client.password).trim() !== cleanPassword) {
-      setError("Incorrect password.");
-      return;
-    }
-
-    const loggedUser = {
-      id: client.id,
-      firstName: client.firstName || "",
-      lastName: client.lastName || "",
-      phone: client.phone || "",
-      email: normalizeEmail(client.email || ""),
-    };
-
-    localStorage.setItem(USER_KEY, JSON.stringify(loggedUser));
+  function handleLogin(e) {
+    e.preventDefault(); setError("");
+    const email = normalizeEmail(login.email);
+    if (!email || !login.password) return setError("Συμπλήρωσε email και κωδικό.");
+    const client = readArray(CLIENTS_KEY).find((c) => normalizeEmail(c?.email) === email);
+    if (!client) return setError("Δεν βρέθηκε λογαριασμός με αυτό το email.");
+    if (String(client.password || "") !== login.password) return setError("Ο κωδικός δεν είναι σωστός.");
+    localStorage.setItem(USER_KEY, JSON.stringify({ id: client.id, firstName: client.firstName || "", lastName: client.lastName || "", phone: client.phone || "", email }));
     localStorage.setItem(ACTIVE_CLIENT_KEY, client.id);
-    localStorage.removeItem(CONVERSATION_KEY);
-
+    localStorage.setItem("nelaClientMemory", JSON.stringify({ name: `${client.firstName || ""} ${client.lastName || ""}`.trim(), phone: client.phone || "", visits: Number(client.visits || 0), lastBooking: client.lastBooking || null, preferences: Array.isArray(client.preferences) ? client.preferences : [] }));
+    localStorage.removeItem(HISTORY_KEY);
     window.location.replace("/");
-  };
+  }
 
-  // =========================================================
-  // BUSINESS LOGIN (Ασφαλής ανακατεύθυνση χωρίς 404)
-  // =========================================================
-
-  const handleBusinessLogin = (e) => {
-    e.preventDefault();
-    resetMessages();
-
-    const cleanEmail = normalizeEmail(businessEmail);
-    const cleanPassword = String(businessPassword).trim();
-
-    if (!cleanEmail || !cleanPassword) {
-      setError("Please enter your business email and password.");
-      return;
-    }
-
-    if (
-      cleanEmail !== normalizeEmail(BUSINESS_EMAIL) ||
-      cleanPassword !== BUSINESS_PASSWORD.trim()
-    ) {
-      setError("Incorrect business email or password.");
-      return;
-    }
-
-    localStorage.setItem(
-      "nelaBusinessUser",
-      JSON.stringify({
-        email: BUSINESS_EMAIL,
-        loggedIn: true,
-        loggedInAt: new Date().toISOString(),
-      })
-    );
-
-    // Ασφαλές SPA redirect: Αποτρέπει το server 404 "Not Found"
+  function handleBusinessLogin(e) {
+    e.preventDefault(); setError(""); setBusy(true);
+    const valid = normalizeEmail(business.email) === BUSINESS_EMAIL && business.password === BUSINESS_PASSWORD;
+    if (!valid) { setBusy(false); return setError("Το email ή ο κωδικός επιχείρησης δεν είναι σωστός."); }
+    localStorage.setItem("nelaBusinessUser", JSON.stringify({ email: BUSINESS_EMAIL, loggedIn: true, loggedInAt: new Date().toISOString() }));
     window.location.replace("/?admin=true");
-  };
+  }
 
-  // =========================================================
-  // STYLES
-  // =========================================================
+  const isForm = mode !== "home";
+  return <div className="landing-shell">
+    <div className="landing-glow landing-glow-a" /><div className="landing-glow landing-glow-b" />
+    <header className="landing-header">
+      <button className="wordmark" onClick={() => go("home")} type="button" aria-label="NELA αρχική">NELA<span>®</span></button>
+      <button className="business-link" type="button" onClick={() => go("business")}>FOR BUSINESS <span>↗</span></button>
+    </header>
+    <main className={`landing-main ${isForm ? "is-form" : ""}`}>
+      {mode === "home" && <section className="landing-hero">
+        <div className="eyebrow"><span className="eyebrow-line" /> YOUR PERSONAL AI RECEPTIONIST <span className="eyebrow-line" /></div>
+        <h1>NELA</h1><div className="hero-subtitle">Booking, beautifully simple.<span> Έτσι απλά.</span></div>
+        <p className="hero-copy">Η εμπειρία του ραντεβού σου, αναβαθμισμένη.<br />Έξυπνη εξυπηρέτηση. Προσωπική εμπειρία. Χωρίς αναμονή.</p>
+        <div className="hero-actions"><button className="btn btn-gold" onClick={() => go("register")}>Δημιουργία λογαριασμού <span>→</span></button><button className="btn btn-outline" onClick={() => go("login")}>Σύνδεση</button></div>
+        <div className="hero-trust"><span>✦</span> Πιο εύκολα ραντεβού. Πιο προσωπική εξυπηρέτηση.</div>
+      </section>}
+      {mode !== "home" && <section className="auth-card">
+        <button className="back-link" type="button" onClick={() => go("home")}>← Αρχική</button>
+        <div className="auth-kicker">{mode === "register" ? "WELCOME TO NELA" : mode === "login" ? "WELCOME BACK" : "NELA BUSINESS"}</div>
+        <h2>{mode === "register" ? "Δημιουργία λογαριασμού" : mode === "login" ? "Καλώς επέστρεψες" : "Business sign in"}</h2>
+        <p className="auth-description">{mode === "business" ? "Ασφαλής πρόσβαση στον χώρο διαχείρισης." : "Η επόμενη κράτηση ξεκινά εδώ."}</p>
+        {error && <div className="form-error" role="alert">{error}</div>}
+        {mode === "register" && <form onSubmit={handleRegister} className="auth-form">
+          <div className="field-grid"><Field label="Όνομα" name="firstName" value={form.firstName} onChange={updateForm} autoComplete="given-name" /><Field label="Επώνυμο" name="lastName" value={form.lastName} onChange={updateForm} autoComplete="family-name" /></div>
+          <Field label="Τηλέφωνο" name="phone" value={form.phone} onChange={updateForm} type="tel" autoComplete="tel" />
+          <Field label="Email" name="email" value={form.email} onChange={updateForm} type="email" autoComplete="email" />
+          <Field label="Επιβεβαίωση email" name="confirmEmail" value={form.confirmEmail} onChange={updateForm} type="email" autoComplete="off" />
+          <div className="field-grid"><Field label="Κωδικός (8+ χαρακτήρες)" name="password" value={form.password} onChange={updateForm} type="password" autoComplete="new-password" /><Field label="Επιβεβαίωση κωδικού" name="confirmPassword" value={form.confirmPassword} onChange={updateForm} type="password" autoComplete="new-password" /></div>
+          <button className="btn btn-gold full-width" type="submit">Δημιουργία λογαριασμού <span>→</span></button>
+        </form>}
+        {mode === "login" && <form onSubmit={handleLogin} className="auth-form"><Field label="Email" name="email" value={login.email} onChange={updateLogin} type="email" autoComplete="email" /><Field label="Κωδικός" name="password" value={login.password} onChange={updateLogin} type="password" autoComplete="current-password" /><button className="btn btn-gold full-width" type="submit">Σύνδεση <span>→</span></button></form>}
+        {mode === "business" && <form onSubmit={handleBusinessLogin} className="auth-form"><Field label="Business email" name="email" value={business.email} onChange={updateBusiness} type="email" autoComplete="username" /><Field label="Κωδικός επιχείρησης" name="password" value={business.password} onChange={updateBusiness} type="password" autoComplete="current-password" /><button className="btn btn-gold full-width" type="submit" disabled={busy}>Είσοδος στο dashboard <span>→</span></button><p className="security-note">Η τρέχουσα σύνδεση είναι για demo. Για δημόσια λειτουργία χρειάζεται επαλήθευση από το backend.</p></form>}
+        {mode === "register" && <p className="auth-switch">Έχεις ήδη λογαριασμό; <button type="button" onClick={() => go("login")}>Σύνδεση</button></p>}
+        {mode === "login" && <p className="auth-switch">Δεν έχεις λογαριασμό; <button type="button" onClick={() => go("register")}>Δημιούργησε έναν</button></p>}
+      </section>}
+    </main>
+    <footer className="landing-footer"><span>NELA</span> · AI RECEPTIONIST <span className="footer-dot">✦</span> MADE FOR BETTER EXPERIENCES</footer>
+  </div>;
+}
 
-  const inputStyle = {
-    width: "100%",
-    boxSizing: "border-box",
-    padding: "15px 16px",
-    background: "rgba(255,255,255,0.035)",
-    border: "1px solid rgba(210,180,105,0.24)",
-    borderRadius: "10px",
-    color: "#f4efe4",
-    outline: "none",
-    fontSize: "14px",
-    letterSpacing: "0.2px",
-  };
-
-  const labelStyle = {
-    display: "block",
-    marginBottom: "7px",
-    fontSize: "10px",
-    letterSpacing: "2px",
-    textTransform: "uppercase",
-    color: "rgba(244,239,228,0.58)",
-  };
-
-  const buttonStyle = {
-    width: "100%",
-    padding: "15px",
-    border: "none",
-    borderRadius: "10px",
-    background: "linear-gradient(135deg, #c9a85c, #a8863f)",
-    color: "#11100d",
-    fontSize: "12px",
-    fontWeight: 700,
-    letterSpacing: "2px",
-    textTransform: "uppercase",
-    cursor: "pointer",
-    marginTop: "8px",
-  };
-
-  const secondaryButtonStyle = {
-    background: "transparent",
-    border: "none",
-    color: "#c9a85c",
-    cursor: "pointer",
-    fontSize: "12px",
-    letterSpacing: "0.5px",
-    padding: "4px",
-  };
-
-  const field = (
-    label,
-    value,
-    setter,
-    type = "text",
-    placeholder = ""
-  ) => (
-    <div style={{ marginBottom: "14px" }}>
-      <label style={labelStyle}>{label}</label>
-
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => setter(e.target.value)}
-        placeholder={placeholder}
-        style={inputStyle}
-        autoComplete={type === "password" ? "new-password" : "off"}
-      />
-    </div>
-  );
-
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        width: "100%",
-        background:
-          "radial-gradient(circle at 50% 35%, rgba(183,146,68,0.10), transparent 32%), #080807",
-        color: "#f4efe4",
-        fontFamily: "Inter, Arial, Helvetica, sans-serif",
-        display: "flex",
-        flexDirection: "column",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.82)), radial-gradient(circle at 50% 0%, rgba(202,169,94,0.08), transparent 42%)",
-          pointerEvents: "none",
-        }}
-      />
-
-      <header
-        style={{
-          position: "relative",
-          zIndex: 2,
-          height: "78px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0 5vw",
-          borderBottom: "1px solid rgba(255,255,255,0.055)",
-        }}
-      >
-        <button
-          type="button"
-          onClick={goHome}
-          style={{
-            background: "none",
-            border: "none",
-            color: "#d2b56b",
-            fontSize: "22px",
-            letterSpacing: "7px",
-            fontWeight: 500,
-            cursor: "pointer",
-            padding: 0,
-          }}
-        >
-          NELA
-        </button>
-
-        <button
-          type="button"
-          onClick={goBusinessLogin}
-          style={{
-            background: "none",
-            border: "none",
-            color: "rgba(244,239,228,0.72)",
-            fontSize: "10px",
-            letterSpacing: "2.5px",
-            textTransform: "uppercase",
-            cursor: "pointer",
-          }}
-        >
-          FOR BUSINESS
-        </button>
-      </header>
-
-      <main
-        style={{
-          position: "relative",
-          zIndex: 1,
-          flex: 1,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: mode === "home" ? "center" : "flex-start",
-          padding: mode === "home" ? "40px 20px" : "55px 20px 80px",
-        }}
-      >
-        {mode === "home" && (
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "620px",
-              textAlign: "center",
-            }}
-          >
-            <div
-              style={{
-                color: "#c9a85c",
-                fontSize: "10px",
-                letterSpacing: "5px",
-                textTransform: "uppercase",
-                marginBottom: "24px",
-              }}
-            >
-              YOUR PERSONAL RECEPTIONIST
-            </div>
-
-            <h1
-              style={{
-                margin: 0,
-                fontSize: "clamp(48px, 8vw, 88px)",
-                fontWeight: 400,
-                letterSpacing: "12px",
-                color: "#f2eadb",
-                fontFamily: "Cinzel, Georgia, serif",
-              }}
-            >
-              NELA
-            </h1>
-
-            <div
-              style={{
-                marginTop: "14px",
-                color: "rgba(201,168,92,0.88)",
-                fontSize: "12px",
-                letterSpacing: "2.8px",
-                fontWeight: 400,
-              }}
-            >
-              Booking. Simple.{" "}
-              <span style={{ fontStyle: "italic", color: "#d8bd79" }}>
-                Έτσι απλά.
-              </span>
-            </div>
-
-            <p
-              style={{
-                margin: "25px auto 42px",
-                maxWidth: "470px",
-                color: "rgba(244,239,228,0.55)",
-                fontSize: "14px",
-                lineHeight: 1.8,
-                fontWeight: 300,
-              }}
-            >
-              Your appointment, your experience with us.
-            </p>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: "12px",
-                flexWrap: "wrap",
-              }}
-            >
-              <button
-                type="button"
-                onClick={goRegister}
-                style={{
-                  ...buttonStyle,
-                  width: "auto",
-                  minWidth: "190px",
-                  marginTop: 0,
-                  padding: "15px 28px",
-                }}
-              >
-                Create Account
-              </button>
-
-              <button
-                type="button"
-                onClick={goLogin}
-                style={{
-                  width: "auto",
-                  minWidth: "190px",
-                  padding: "14px 28px",
-                  borderRadius: "10px",
-                  background: "rgba(255,255,255,0.025)",
-                  border: "1px solid rgba(210,180,105,0.28)",
-                  color: "#d9c58d",
-                  fontSize: "12px",
-                  letterSpacing: "2px",
-                  textTransform: "uppercase",
-                  cursor: "pointer",
-                }}
-              >
-                Sign In
-              </button>
-            </div>
-          </div>
-        )}
-
-        {mode === "register" && (
-          <div style={{ width: "100%", maxWidth: "500px" }}>
-            <div style={{ textAlign: "center", marginBottom: "35px" }}>
-              <div
-                style={{
-                  color: "#c9a85c",
-                  fontSize: "10px",
-                  letterSpacing: "4px",
-                  textTransform: "uppercase",
-                  marginBottom: "12px",
-                }}
-              >
-                WELCOME TO NELA
-              </div>
-
-              <h2
-                style={{
-                  margin: 0,
-                  fontSize: "30px",
-                  fontWeight: 400,
-                  letterSpacing: "3px",
-                }}
-              >
-                Create Account
-              </h2>
-            </div>
-
-            {error && (
-              <div
-                style={{
-                  marginBottom: "20px",
-                  padding: "13px 15px",
-                  borderRadius: "9px",
-                  background: "rgba(180,60,60,0.10)",
-                  border: "1px solid rgba(220,100,100,0.25)",
-                  color: "#e5a4a4",
-                  fontSize: "13px",
-                  lineHeight: 1.5,
-                }}
-              >
-                {error}
-              </div>
-            )}
-
-            <form onSubmit={handleRegister}>
-              {field("First Name", firstName, setFirstName, "text", "First name")}
-              {field("Last Name", lastName, setLastName, "text", "Last name")}
-              {field("Phone", phone, setPhone, "tel", "Phone number")}
-              {field("Email", email, setEmail, "email", "Email address")}
-              {field("Confirm Email", confirmEmail, setConfirmEmail, "email", "Confirm email address")}
-              {field("Password", password, setPassword, "password", "Password")}
-              {field("Confirm Password", confirmPassword, setConfirmPassword, "password", "Confirm password")}
-
-              <button type="submit" style={buttonStyle}>
-                Create Account
-              </button>
-            </form>
-
-            <div
-              style={{
-                textAlign: "center",
-                marginTop: "25px",
-                color: "rgba(244,239,228,0.45)",
-                fontSize: "12px",
-              }}
-            >
-              Already have an account?{" "}
-              <button type="button" onClick={goLogin} style={secondaryButtonStyle}>
-                Sign in
-              </button>
-            </div>
-
-            <div style={{ textAlign: "center", marginTop: "14px" }}>
-              <button
-                type="button"
-                onClick={goHome}
-                style={{
-                  ...secondaryButtonStyle,
-                  color: "rgba(244,239,228,0.35)",
-                }}
-              >
-                Back
-              </button>
-            </div>
-          </div>
-        )}
-
-        {mode === "login" && (
-          <div style={{ width: "100%", maxWidth: "430px" }}>
-            <div style={{ textAlign: "center", marginBottom: "35px" }}>
-              <div
-                style={{
-                  color: "#c9a85c",
-                  fontSize: "10px",
-                  letterSpacing: "4px",
-                  textTransform: "uppercase",
-                  marginBottom: "12px",
-                }}
-              >
-                WELCOME BACK
-              </div>
-
-              <h2
-                style={{
-                  margin: 0,
-                  fontSize: "30px",
-                  fontWeight: 400,
-                  letterSpacing: "3px",
-                }}
-              >
-                Sign In
-              </h2>
-            </div>
-
-            {error && (
-              <div
-                style={{
-                  marginBottom: "20px",
-                  padding: "13px 15px",
-                  borderRadius: "9px",
-                  background: "rgba(180,60,60,0.10)",
-                  border: "1px solid rgba(220,100,100,0.25)",
-                  color: "#e5a4a4",
-                  fontSize: "13px",
-                  lineHeight: 1.5,
-                }}
-              >
-                {error}
-              </div>
-            )}
-
-            {success && (
-              <div
-                style={{
-                  marginBottom: "20px",
-                  padding: "13px 15px",
-                  borderRadius: "9px",
-                  background: "rgba(100,160,100,0.10)",
-                  border: "1px solid rgba(120,190,120,0.22)",
-                  color: "#a8d4a8",
-                  fontSize: "13px",
-                }}
-              >
-                {success}
-              </div>
-            )}
-
-            <form onSubmit={handleLogin}>
-              {field("Email", loginEmail, setLoginEmail, "email", "Email address")}
-              {field("Password", loginPassword, setLoginPassword, "password", "Password")}
-
-              <button type="submit" style={buttonStyle}>
-                Sign In
-              </button>
-            </form>
-
-            <div
-              style={{
-                textAlign: "center",
-                marginTop: "25px",
-                color: "rgba(244,239,228,0.45)",
-                fontSize: "12px",
-              }}
-            >
-              Don't have an account?{" "}
-              <button type="button" onClick={goRegister} style={secondaryButtonStyle}>
-                Create one
-              </button>
-            </div>
-
-            <div style={{ textAlign: "center", marginTop: "14px" }}>
-              <button
-                type="button"
-                onClick={goHome}
-                style={{
-                  ...secondaryButtonStyle,
-                  color: "rgba(244,239,228,0.35)",
-                }}
-              >
-                Back
-              </button>
-            </div>
-          </div>
-        )}
-
-        {mode === "business" && (
-          <div style={{ width: "100%", maxWidth: "430px" }}>
-            <div style={{ textAlign: "center", marginBottom: "35px" }}>
-              <div
-                style={{
-                  color: "#c9a85c",
-                  fontSize: "10px",
-                  letterSpacing: "4px",
-                  textTransform: "uppercase",
-                  marginBottom: "12px",
-                }}
-              >
-                NELA BUSINESS
-              </div>
-
-              <h2
-                style={{
-                  margin: 0,
-                  fontSize: "30px",
-                  fontWeight: 400,
-                  letterSpacing: "3px",
-                }}
-              >
-                Business Sign In
-              </h2>
-            </div>
-
-            {error && (
-              <div
-                style={{
-                  marginBottom: "20px",
-                  padding: "13px 15px",
-                  borderRadius: "9px",
-                  background: "rgba(180,60,60,0.10)",
-                  border: "1px solid rgba(220,100,100,0.25)",
-                  color: "#e5a4a4",
-                  fontSize: "13px",
-                  lineHeight: 1.5,
-                }}
-              >
-                {error}
-              </div>
-            )}
-
-            <form onSubmit={handleBusinessLogin}>
-              {field(
-                "Business Email",
-                businessEmail,
-                setBusinessEmail,
-                "email",
-                "Business email"
-              )}
-
-              {field(
-                "Password",
-                businessPassword,
-                setBusinessPassword,
-                "password",
-                "Password"
-              )}
-
-              <button type="submit" style={buttonStyle}>
-                Sign In
-              </button>
-            </form>
-
-            <div
-              style={{
-                textAlign: "center",
-                marginTop: "28px",
-                color: "rgba(244,239,228,0.38)",
-                fontSize: "11px",
-                lineHeight: 1.7,
-              }}
-            >
-              Authorized NELA business access only.
-            </div>
-
-            <div style={{ textAlign: "center", marginTop: "18px" }}>
-              <button
-                type="button"
-                onClick={goHome}
-                style={{
-                  ...secondaryButtonStyle,
-                  color: "rgba(244,239,228,0.35)",
-                }}
-              >
-                Back
-              </button>
-            </div>
-          </div>
-        )}
-      </main>
-
-      <footer
-        style={{
-          position: "relative",
-          zIndex: 2,
-          textAlign: "center",
-          padding: "20px",
-          color: "rgba(244,239,228,0.22)",
-          fontSize: "9px",
-          letterSpacing: "2px",
-          textTransform: "uppercase",
-        }}
-      >
-        NELA · AI RECEPTIONIST
-      </footer>
-    </div>
-  );
+function Field({ label, name, value, onChange, type = "text", autoComplete = "off" }) {
+  return <label className="form-field"><span>{label}</span><input required name={name} type={type} value={value} onChange={onChange} autoComplete={autoComplete} /></label>;
 }
