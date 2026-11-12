@@ -1,284 +1,509 @@
-/* Landing Page styles */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Jost:wght@300;400;500;600&display=swap');
+
+/* =====================================
+   NELA — PREMIUM DESIGN SYSTEM
+===================================== */
 
 .landing-shell {
-  --gold: #d7b96f;
-  --gold-light: #f0d99b;
-  --bg: #080907;
-  --panel: #11120f;
-  --text: #f3eee4;
-  --muted: #99958b;
+  --gold: #c9ad75;
+  --gold-light: #dfc99d;
+
+  --bg: #0b0b09;
+  --panel: #11110f;
+  --text: #e9e5dc;
+  --muted: #929087;
+  --border: rgba(201, 173, 117, 0.16);
 
   position: relative;
   min-height: 100vh;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+
   background:
-    radial-gradient(ellipse at 50% 42%, rgba(112, 83, 36, 0.13), transparent 45%),
+    radial-gradient(
+      ellipse at 50% 40%,
+      rgba(135, 105, 57, 0.075),
+      transparent 55%
+    ),
     var(--bg);
+
   color: var(--text);
-  font-family: 'Manrope', sans-serif;
+  font-family: 'DM Sans', sans-serif;
+
+  transition:
+    background 0.4s ease,
+    color 0.4s ease;
 }
 
-.landing-shell * {
+.landing-shell *,
+.landing-shell *::before,
+.landing-shell *::after {
   box-sizing: border-box;
 }
 
+/* =====================================
+   LIGHT MODE
+===================================== */
+
+.landing-shell.theme-light {
+  --bg: #f7f6f2;
+  --panel: #ffffff;
+  --text: #292720;
+  --muted: #858177;
+  --border: rgba(125, 102, 61, 0.17);
+
+  background:
+    radial-gradient(
+      ellipse at 50% 40%,
+      rgba(201, 173, 117, 0.10),
+      transparent 55%
+    ),
+    var(--bg);
+}
+
+.theme-light .landing-hero h1,
+.theme-light .hero-subtitle {
+  color: #373126;
+}
+
+.theme-light .hero-copy,
+.theme-light .hero-trust {
+  color: #77736a;
+}
+
+.theme-light .auth-card {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: var(--border);
+  box-shadow: 0 20px 70px rgba(50, 40, 20, 0.055);
+}
+
+.theme-light .form-field > span {
+  color: #686359;
+}
+
+.theme-light .form-field input {
+  background: #fbfaf7;
+  color: #292720;
+  border-color: rgba(125, 102, 61, 0.20);
+}
+
+.theme-light .auth-card h2 {
+  color: #55452b;
+}
+
+.theme-light .security-note {
+  color: #858075;
+}
+
+/* =====================================
+   BACKGROUND DETAILS
+===================================== */
+
 .landing-glow {
   position: absolute;
-  width: 450px;
-  height: 450px;
+  width: 400px;
+  height: 400px;
   border-radius: 50%;
   filter: blur(120px);
-  opacity: 0.12;
+  opacity: 0.07;
   pointer-events: none;
 }
 
 .landing-glow-a {
-  background: #c49a45;
-  top: 10%;
+  background: #c9ad75;
+  top: 5%;
   left: -250px;
 }
 
 .landing-glow-b {
-  background: #8b632d;
+  background: #80613b;
   bottom: 0;
   right: -250px;
 }
 
+/* =====================================
+   HEADER
+===================================== */
+
 .landing-header {
+  position: relative;
+  z-index: 5;
+
   width: 100%;
-  height: 95px;
+  min-height: 76px;
   padding: 0 7%;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(215, 185, 111, 0.12);
-  position: relative;
-  z-index: 2;
+
+  border-bottom: 1px solid var(--border);
 }
 
 .wordmark {
-  background: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 0;
+  background: transparent;
   border: none;
+
   color: var(--gold);
-  font-family: 'Cinzel', serif;
-  font-size: 30px;
-  font-weight: 600;
-  letter-spacing: 5px;
   cursor: pointer;
 }
 
-.wordmark span {
-  font-family: 'Manrope', sans-serif;
-  font-size: 10px;
+.wordmark-symbol {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--gold);
+}
+
+.wordmark-symbol svg {
+  width: 19px;
+  height: 19px;
+}
+
+.wordmark-text {
+  font-family: 'Jost', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 3.8px;
+}
+
+.wordmark-registered {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 7px;
   vertical-align: top;
-  margin-left: 3px;
+  margin-left: 2px;
 }
 
 .business-link {
-  background: none;
-  border: 1px solid rgba(215, 185, 111, 0.35);
-  color: var(--gold);
-  padding: 12px 20px;
-  font-size: 10px;
-  letter-spacing: 2px;
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 8px 0;
+
+  background: transparent;
+  border: none;
+
+  color: var(--muted);
+
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 1.7px;
+
   cursor: pointer;
-  transition: 0.3s ease;
+  transition: color 0.25s ease;
 }
 
 .business-link:hover {
-  background: var(--gold);
-  color: #080907;
+  color: var(--gold);
 }
 
-.business-link span {
-  margin-left: 8px;
-}
+/* =====================================
+   MAIN CONTENT
+===================================== */
 
 .landing-main {
   flex: 1;
   position: relative;
-  z-index: 1;
+  z-index: 2;
+
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 65px 20px 75px;
+
+  padding: 65px 24px 85px;
 }
 
 .landing-hero {
   width: 100%;
-  max-width: 850px;
+  max-width: 660px;
   text-align: center;
+
   animation: nelaFade 0.8s ease both;
 }
+
+/* Hide oversized duplicate NELA.
+   The compact logo remains in the header. */
+
+.landing-hero h1 {
+  display: none;
+}
+
+/* =====================================
+   HERO
+===================================== */
 
 .eyebrow {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 17px;
+  gap: 13px;
+
+  margin-bottom: 24px;
+
   color: var(--gold);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 4px;
-  margin-bottom: 28px;
+
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 2.6px;
 }
 
 .eyebrow-line {
-  width: 38px;
+  width: 24px;
   height: 1px;
-  background: rgba(215, 185, 111, 0.55);
-}
-
-.landing-hero h1 {
-  margin: 0;
-  font-family: 'Cinzel', serif;
-  font-size: clamp(90px, 15vw, 175px);
-  line-height: 1;
-  font-weight: 500;
-  letter-spacing: 18px;
-  padding-left: 18px;
-  color: var(--gold-light);
-  text-shadow: 0 0 55px rgba(215, 185, 111, 0.17);
+  background: var(--gold);
+  opacity: 0.55;
 }
 
 .hero-subtitle {
-  margin-top: 25px;
-  font-family: 'Cinzel', serif;
-  font-size: clamp(17px, 3vw, 25px);
-  letter-spacing: 1px;
-  color: #eee7d9;
+  margin-top: 0;
+
+  font-family: 'Jost', sans-serif;
+  font-size: clamp(25px, 4vw, 36px);
+  font-weight: 300;
+
+  letter-spacing: 1.2px;
+  color: var(--text);
 }
 
 .hero-subtitle span {
+  display: block;
+
+  margin-top: 9px;
+
   color: var(--gold);
+
+  font-family: 'Jost', sans-serif;
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: 2px;
 }
 
 .hero-copy {
+  margin: 27px 0 32px;
+
   color: var(--muted);
-  font-size: 14px;
+
+  font-size: 12px;
+  font-weight: 300;
   line-height: 2.1;
-  margin: 25px 0 35px;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.25px;
 }
+
+/* =====================================
+   BUTTONS
+===================================== */
 
 .hero-actions {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 14px;
+  gap: 18px;
   flex-wrap: wrap;
 }
 
 .btn {
-  min-height: 54px;
-  padding: 0 27px;
-  border-radius: 2px;
-  font-family: 'Manrope', sans-serif;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
+  min-height: 45px;
+  padding: 0 23px;
+
+  border-radius: 3px;
+
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.35px;
+
   cursor: pointer;
-  transition: 0.25s ease;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
 }
 
 .btn span {
-  margin-left: 12px;
-  font-size: 17px;
+  margin-left: 9px;
+  font-size: 14px;
 }
 
 .btn-gold {
-  color: #11100c;
-  background: linear-gradient(135deg, #f0d99b, #c5a45c);
+  background: var(--gold);
   border: 1px solid var(--gold);
-  box-shadow: 0 5px 25px rgba(215, 185, 111, 0.1);
+
+  color: #17150f;
 }
 
 .btn-gold:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(215, 185, 111, 0.23);
+  background: var(--gold-light);
+  border-color: var(--gold-light);
+  transform: translateY(-2px);
 }
 
 .btn-outline {
-  color: var(--gold);
   background: transparent;
-  border: 1px solid rgba(215, 185, 111, 0.55);
+  border: 1px solid var(--border);
+
+  color: var(--text);
 }
 
 .btn-outline:hover {
-  background: rgba(215, 185, 111, 0.1);
-  transform: translateY(-3px);
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
+.theme-light .btn-outline {
+  border-color: rgba(125, 102, 61, 0.25);
+  color: #514633;
+}
+
+/* =====================================
+   TRUST MESSAGE
+===================================== */
+
 .hero-trust {
-  margin-top: 55px;
-  color: #aaa397;
-  font-size: 11px;
-  letter-spacing: 0.5px;
+  margin-top: 42px;
+
+  color: var(--muted);
+
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.35px;
 }
 
 .hero-trust span {
   color: var(--gold);
-  margin-right: 8px;
+  margin-right: 7px;
 }
+
+/* =====================================
+   FOOTER
+===================================== */
 
 .landing-footer {
   position: relative;
-  z-index: 1;
-  min-height: 65px;
-  padding: 20px;
+  z-index: 2;
+
+  min-height: 58px;
+  padding: 17px 20px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
   flex-wrap: wrap;
-  border-top: 1px solid rgba(215, 185, 111, 0.12);
-  color: #77736a;
-  font-size: 9px;
-  letter-spacing: 2px;
+  gap: 8px;
+
+  border-top: 1px solid var(--border);
+
+  color: var(--muted);
+
+  font-size: 8px;
+  font-weight: 400;
+  letter-spacing: 1.5px;
   text-align: center;
 }
 
 .landing-footer > span:first-child {
   color: var(--gold);
-  font-family: 'Cinzel', serif;
-  font-size: 12px;
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
 }
 
 .footer-dot {
   color: var(--gold);
-  margin: 0 5px;
+  margin: 0 4px;
 }
 
-/* AUTHENTICATION PAGES */
+/* =====================================
+   DARK / LIGHT TOGGLE
+===================================== */
+
+.theme-toggle {
+  position: fixed;
+  z-index: 20;
+
+  left: 27px;
+  bottom: 24px;
+
+  width: 37px;
+  height: 37px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+
+  color: var(--gold);
+
+  cursor: pointer;
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(201, 173, 117, 0.09);
+  border-color: var(--gold);
+  transform: rotate(12deg);
+}
+
+/* =====================================
+   AUTHENTICATION
+===================================== */
 
 .landing-main.is-form {
   padding-top: 45px;
-  padding-bottom: 55px;
+  padding-bottom: 65px;
 }
 
 .auth-card {
+  position: relative;
+
   width: 100%;
-  max-width: 490px;
-  padding: 38px;
-  background: rgba(17, 18, 15, 0.94);
-  border: 1px solid rgba(215, 185, 111, 0.2);
-  box-shadow: 0 20px 90px rgba(0, 0, 0, 0.4);
+  max-width: 440px;
+
+  padding: 35px 34px;
+
+  background: rgba(17, 17, 15, 0.86);
+
+  border: 1px solid var(--border);
+  border-radius: 5px;
+
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.20);
+
   animation: nelaFade 0.5s ease both;
 }
 
 .back-link {
+  display: inline-block;
+
+  margin-bottom: 29px;
+  padding: 0;
+
   background: none;
   border: none;
+
   color: var(--gold);
-  font-family: 'Manrope', sans-serif;
-  font-size: 12px;
+
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+
   cursor: pointer;
-  padding: 0;
-  margin-bottom: 32px;
 }
 
 .back-link:hover {
@@ -286,32 +511,43 @@
 }
 
 .auth-kicker {
+  margin-bottom: 11px;
+
   color: var(--gold);
+
   font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 3px;
-  margin-bottom: 13px;
+  font-weight: 400;
+  letter-spacing: 2.3px;
 }
 
 .auth-card h2 {
-  font-family: 'Cinzel', serif;
-  font-size: 25px;
-  font-weight: 500;
-  line-height: 1.4;
-  margin: 0 0 10px;
-  color: var(--gold-light);
+  margin: 0 0 9px;
+
+  color: var(--text);
+
+  font-family: 'Jost', sans-serif;
+  font-size: 23px;
+  font-weight: 300;
+  line-height: 1.5;
 }
 
 .auth-description {
+  margin: 0 0 26px;
+
   color: var(--muted);
-  font-size: 12px;
-  margin: 0 0 27px;
+
+  font-size: 11px;
+  font-weight: 300;
 }
+
+/* =====================================
+   FORM
+===================================== */
 
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 17px;
+  gap: 16px;
 }
 
 .field-grid {
@@ -321,75 +557,159 @@
 }
 
 .form-field {
+  width: 100%;
+
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 100%;
 }
 
 .form-field > span {
-  color: #c7c0b2;
-  font-size: 11px;
-  font-weight: 600;
+  color: #bdb7a9;
+
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.25px;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
 }
 
 .form-field input {
   width: 100%;
-  height: 47px;
+  height: 43px;
+
   padding: 0 13px;
-  border: 1px solid rgba(215, 185, 111, 0.2);
+
+  background: #0c0c0a;
+
+  border: 1px solid rgba(201, 173, 117, 0.17);
+  border-radius: 3px;
+
   outline: none;
-  border-radius: 2px;
-  background: #090a08;
-  color: #f3eee4;
-  font-family: 'Manrope', sans-serif;
-  font-size: 13px;
-  transition: 0.2s ease;
+
+  color: var(--text);
+
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.input-wrapper input {
+  padding-right: 43px;
 }
 
 .form-field input:focus {
   border-color: var(--gold);
-  box-shadow: 0 0 0 2px rgba(215, 185, 111, 0.08);
 }
 
-.form-field input:focus-visible {
-  outline: none;
+.theme-light .form-field input {
+  background: #fbfaf7;
 }
+
+.form-field input::placeholder {
+  color: var(--muted);
+}
+
+/* =====================================
+   PASSWORD EYE
+===================================== */
+
+.password-toggle {
+  position: absolute;
+
+  top: 50%;
+  right: 11px;
+
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 25px;
+  height: 25px;
+
+  padding: 0;
+
+  background: transparent;
+  border: none;
+
+  color: var(--muted);
+
+  cursor: pointer;
+
+  transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+  color: var(--gold);
+}
+
+.password-toggle svg {
+  display: block;
+}
+
+/* =====================================
+   FULL WIDTH BUTTON
+===================================== */
 
 .full-width {
   width: 100%;
-  margin-top: 8px;
+  margin-top: 7px;
 }
 
 .full-width:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
 }
 
+/* =====================================
+   FORM MESSAGES
+===================================== */
+
 .form-error {
-  padding: 12px 14px;
-  margin-bottom: 18px;
-  border: 1px solid rgba(220, 90, 90, 0.35);
-  background: rgba(160, 45, 45, 0.1);
-  color: #ff9d9d;
-  font-size: 12px;
-  line-height: 1.6;
+  padding: 11px 13px;
+  margin-bottom: 17px;
+
+  border: 1px solid rgba(220, 90, 90, 0.3);
+  border-radius: 3px;
+
+  background: rgba(160, 45, 45, 0.08);
+
+  color: #e99595;
+
+  font-size: 11px;
+  line-height: 1.7;
 }
 
 .auth-switch {
-  margin: 25px 0 0;
+  margin: 23px 0 0;
+
   color: var(--muted);
+
   text-align: center;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .auth-switch button {
-  background: none;
+  padding: 0;
+
+  background: transparent;
   border: none;
+
   color: var(--gold);
-  font-family: 'Manrope', sans-serif;
-  font-size: 11px;
-  font-weight: 800;
+
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+
   cursor: pointer;
 }
 
@@ -398,82 +718,100 @@
 }
 
 .security-note {
-  color: #817b70;
-  font-size: 10px;
-  line-height: 1.7;
   margin: 0;
+
+  color: #817b70;
+
+  font-size: 9px;
+  line-height: 1.8;
 }
+
+/* =====================================
+   ANIMATION
+===================================== */
 
 @keyframes nelaFade {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(9px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* MOBILE */
+/* =====================================
+   MOBILE
+===================================== */
 
 @media (max-width: 600px) {
   .landing-header {
-    height: 75px;
-    padding: 0 20px;
+    min-height: 68px;
+    padding: 0 22px;
   }
 
-  .wordmark {
-    font-size: 25px;
+  .wordmark-text {
+    font-size: 14px;
+    letter-spacing: 3px;
+  }
+
+  .wordmark-symbol svg {
+    width: 17px;
+    height: 17px;
   }
 
   .business-link {
-    padding: 10px 12px;
-    font-size: 9px;
-    letter-spacing: 1px;
+    font-size: 8px;
+    letter-spacing: 1.1px;
   }
 
   .landing-main {
-    padding: 65px 20px;
-  }
-
-  .landing-hero h1 {
-    font-size: clamp(75px, 23vw, 115px);
-    letter-spacing: 10px;
-    padding-left: 10px;
+    padding: 65px 21px;
   }
 
   .eyebrow {
     font-size: 8px;
-    letter-spacing: 2px;
-    gap: 9px;
+    letter-spacing: 1.6px;
+    gap: 8px;
   }
 
   .eyebrow-line {
-    width: 20px;
+    width: 17px;
+  }
+
+  .hero-subtitle {
+    font-size: 27px;
+  }
+
+  .hero-subtitle span {
+    font-size: 13px;
   }
 
   .hero-copy {
-    font-size: 12px;
+    font-size: 11px;
+    line-height: 2;
   }
 
   .hero-actions {
     flex-direction: column;
-    width: 100%;
+    gap: 11px;
   }
 
   .hero-actions .btn {
     width: 100%;
+    max-width: 290px;
   }
 
   .hero-trust {
-    font-size: 10px;
+    margin-top: 32px;
+    font-size: 9px;
     line-height: 1.8;
-    margin-top: 35px;
   }
 
   .auth-card {
-    padding: 27px 20px;
+    padding: 27px 21px;
   }
 
   .auth-card h2 {
@@ -484,8 +822,29 @@
     grid-template-columns: 1fr;
   }
 
+  .theme-toggle {
+    left: 17px;
+    bottom: 17px;
+    width: 34px;
+    height: 34px;
+  }
+
   .landing-footer {
-    font-size: 8px;
+    padding-bottom: 22px;
+    font-size: 7px;
     letter-spacing: 1px;
+  }
+}
+
+/* =====================================
+   ACCESSIBILITY
+===================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-shell *,
+  .landing-shell *::before,
+  .landing-shell *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
