@@ -1,535 +1,570 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;500;600&display=swap');
-
-:root {
-  font-family: 'DM Sans', sans-serif;
-  color-scheme: dark;
-}
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap");
 
 * {
   box-sizing: border-box;
 }
 
-html,
-body,
-#root {
-  min-height: 100%;
-  margin: 0;
-}
-
 body {
-  background: #090907;
+  margin: 0;
+  font-family: "DM Sans", sans-serif;
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
-button {
-  cursor: pointer;
-}
+.nela-page {
+  --gold: #c6a15b;
+  --gold-light: #e0c48b;
+  --background: #090d0a;
+  --surface: rgba(15, 20, 15, 0.88);
+  --text: #f5f0e6;
+  --muted: #aaa99d;
+  --border: rgba(198, 161, 91, 0.25);
 
-.landing-shell {
-  --bg: #090907;
-  --surface: rgba(23, 22, 18, 0.82);
-  --surface-hover: rgba(35, 32, 25, 0.94);
-  --text: #eeeae0;
-  --muted: #aaa397;
-  --gold: #c5a875;
-  --gold-light: #dfc69a;
-  --border: rgba(197, 168, 117, 0.23);
-  --shadow: rgba(0, 0, 0, 0.35);
-
+  min-height: 100vh;
   position: relative;
-  isolation: isolate;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   overflow: hidden;
   color: var(--text);
-  background:
-    radial-gradient(ellipse at 50% 35%, rgba(107, 81, 43, 0.12), transparent 48%),
-    radial-gradient(ellipse at 10% 80%, rgba(75, 60, 36, 0.12), transparent 35%),
-    linear-gradient(145deg, #0d0c09 0%, #080807 55%, #15120d 100%);
-  transition: background 0.4s ease, color 0.4s ease;
+  background-color: var(--background);
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(5, 10, 6, 0.78),
+      rgba(5, 10, 6, 0.58),
+      rgba(5, 10, 6, 0.78)
+    ),
+    linear-gradient(
+      0deg,
+      rgba(5, 10, 6, 0.8),
+      rgba(5, 10, 6, 0.12)
+    ),
+    url("/nela-botanical-bg.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-.landing-shell::before,
-.landing-shell::after {
+.nela-page::before {
   content: "";
   position: absolute;
-  z-index: -1;
+  inset: 0;
   pointer-events: none;
-  width: 420px;
-  height: 620px;
-  opacity: 0.12;
-  filter: blur(2px);
-  background:
-    radial-gradient(ellipse at 50% 20%, rgba(178, 149, 94, 0.22), transparent 48%),
-    radial-gradient(ellipse at 30% 60%, rgba(126, 112, 77, 0.16), transparent 55%);
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    rgba(0, 0, 0, 0.24) 100%
+  );
 }
 
-.landing-shell::before {
-  left: -180px;
-  top: 10%;
+.nela-header,
+.nela-main,
+.nela-footer {
+  position: relative;
+  z-index: 1;
 }
 
-.landing-shell::after {
-  right: -180px;
-  top: 10%;
-}
-
-.landing-header {
+.nela-header {
+  height: 88px;
   width: 100%;
-  min-height: 88px;
-  padding: 24px clamp(22px, 6vw, 90px);
+  padding: 0 7%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(197, 168, 117, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.wordmark {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0;
+.nela-brand {
   border: 0;
   background: transparent;
   color: var(--text);
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 25px;
-  font-weight: 500;
-  letter-spacing: 0.28em;
-}
-
-.wordmark::before {
-  content: "N";
-  width: 31px;
-  height: 31px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--gold);
-  border-radius: 50%;
-  color: var(--gold-light);
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 20px;
-  letter-spacing: 0;
-}
-
-.wordmark span {
-  color: var(--gold);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 10px;
-  letter-spacing: 0;
-}
-
-.business-link {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 10px 17px;
-  color: var(--gold-light);
-  border: 1px solid var(--border);
-  border-radius: 30px;
-  background: rgba(197, 168, 117, 0.035);
-  font-size: 10px;
+  gap: 10px;
+  cursor: pointer;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 27px;
   font-weight: 600;
-  letter-spacing: 0.17em;
-  text-decoration: none;
+  letter-spacing: 5px;
+}
+
+.nela-brand-icon {
+  color: var(--gold);
+  font-size: 24px;
+}
+
+.nela-navigation {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nela-theme-button {
+  width: 39px;
+  height: 39px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  color: var(--gold-light);
+  background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  font-size: 19px;
+}
+
+.nela-business-button {
+  border: 1px solid var(--gold);
+  border-radius: 30px;
+  padding: 11px 22px;
+  background: rgba(0, 0, 0, 0.15);
+  color: var(--gold-light);
+  letter-spacing: 1.5px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.nela-business-button:hover {
+  background: var(--gold);
+  color: #10110d;
+}
+
+.nela-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 65px 20px;
+}
+
+.nela-hero {
+  width: 100%;
+  max-width: 720px;
+  text-align: center;
+  animation: nelaAppear 0.7s ease both;
+}
+
+.nela-emblem {
+  color: var(--gold);
+  font-size: 35px;
+  margin-bottom: 5px;
+}
+
+.nela-hero h1 {
+  margin: 0;
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(75px, 10vw, 112px);
+  font-weight: 500;
+  letter-spacing: 18px;
+  line-height: 1;
+  padding-left: 18px;
+  color: #d4b779;
+  text-shadow: 0 5px 30px rgba(0, 0, 0, 0.35);
+}
+
+.nela-tagline {
+  margin: 12px 0 0;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 25px;
+  letter-spacing: 1px;
+  color: var(--gold-light);
+}
+
+.nela-description {
+  margin: 28px auto 32px;
+  color: #d0d0c5;
+  font-size: 14px;
+  line-height: 2;
+  font-weight: 400;
+}
+
+.nela-hero-actions {
+  display: flex;
+  justify-content: center;
+  gap: 13px;
+  flex-wrap: wrap;
+}
+
+.nela-primary-button,
+.nela-secondary-button {
+  min-width: 175px;
+  min-height: 49px;
+  border-radius: 40px;
+  padding: 13px 25px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
   transition: 0.25s ease;
 }
 
-.business-link:hover {
+.nela-primary-button {
+  color: #17150f;
+  border: 1px solid var(--gold);
+  background: linear-gradient(135deg, #dfc48c, #b78e49);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.nela-primary-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(198, 161, 91, 0.2);
+}
+
+.nela-secondary-button {
   color: var(--text);
-  border-color: var(--gold);
-  background: rgba(197, 168, 117, 0.1);
-  transform: translateY(-1px);
+  border: 1px solid rgba(224, 196, 139, 0.65);
+  background: rgba(0, 0, 0, 0.18);
 }
 
-.business-link span {
-  font-size: 14px;
+.nela-secondary-button:hover {
+  background: rgba(198, 161, 91, 0.12);
+  transform: translateY(-2px);
 }
 
-.landing-main {
+.nela-trust {
+  margin-top: 32px;
+  color: #b9b7aa;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.nela-trust span {
+  color: var(--gold);
+  margin-right: 5px;
+}
+
+.nela-card {
   width: 100%;
-  max-width: 1180px;
-  flex: 1;
-  margin: 0 auto;
-  padding: 65px 25px 75px;
+  max-width: 470px;
+  padding: 35px 39px;
+  border: 1px solid var(--border);
+  border-radius: 25px;
+  background: var(--surface);
+  backdrop-filter: blur(22px);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.4);
+  animation: nelaAppear 0.35s ease both;
+}
+
+.nela-small-card {
+  max-width: 430px;
+}
+
+.nela-business-card {
+  max-width: 510px;
+  margin: auto 0;
+}
+
+.nela-back {
+  display: block;
+  border: 0;
+  background: transparent;
+  color: var(--gold-light);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+  margin-bottom: 26px;
+}
+
+.nela-card-heading {
+  text-align: center;
+  margin-bottom: 27px;
+}
+
+.nela-small-emblem {
+  display: block;
+  color: var(--gold);
+  font-size: 25px;
+  margin-bottom: 8px;
+}
+
+.nela-card-heading h2 {
+  margin: 0;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 34px;
+  font-weight: 500;
+  color: var(--gold-light);
+}
+
+.nela-card-heading p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.nela-field {
+  display: block;
+  margin-bottom: 17px;
+}
+
+.nela-field > span {
+  display: block;
+  margin-bottom: 8px;
+  color: #d9d3c5;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.nela-input-wrap {
+  position: relative;
+}
+
+.nela-field input,
+.nela-field select {
+  display: block;
+  width: 100%;
+  height: 48px;
+  border: 1px solid rgba(198, 161, 91, 0.22);
+  border-radius: 13px;
+  outline: none;
+  padding: 0 15px;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.24);
+  font-size: 12px;
+  transition: 0.2s;
+}
+
+.nela-field input:focus,
+.nela-field select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(198, 161, 91, 0.08);
+}
+
+.nela-field input::placeholder {
+  color: #77786f;
+}
+
+.nela-field select {
+  cursor: pointer;
+}
+
+.nela-field select option {
+  color: #f5f0e6;
+  background: #171b16;
+}
+
+.nela-eye {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: var(--gold-light);
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.nela-submit {
+  width: 100%;
+  margin-top: 9px;
+}
+
+.nela-switch {
+  margin: 23px 0 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.nela-switch button {
+  border: 0;
+  background: transparent;
+  color: var(--gold-light);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.nela-security-note {
+  text-align: center;
+  color: #88877c;
+  font-size: 10px;
+  line-height: 1.6;
+  margin: 18px 0 0;
+}
+
+.nela-message {
+  position: fixed;
+  z-index: 5;
+  bottom: 65px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100% - 30px);
+  padding: 13px 22px;
+  border-radius: 30px;
+  font-size: 12px;
+  text-align: center;
+  backdrop-filter: blur(15px);
+}
+
+.nela-message.error {
+  color: #ffd1d1;
+  background: rgba(110, 25, 25, 0.92);
+  border: 1px solid rgba(255, 100, 100, 0.3);
+}
+
+.nela-message.success {
+  color: #d8f5d6;
+  background: rgba(25, 85, 45, 0.92);
+  border: 1px solid rgba(100, 220, 120, 0.3);
+}
+
+.nela-footer {
+  min-height: 58px;
+  padding: 15px 7%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  color: #96978a;
+  font-size: 10px;
+  letter-spacing: 0.5px;
 }
 
-.landing-hero {
-  width: 100%;
-  max-width: 780px;
-  margin: auto;
-  text-align: center;
-  animation: nela-enter 0.8s ease both;
+/* LIGHT THEME */
+
+.nela-page.theme-light {
+  --background: #e9e5da;
+  --surface: rgba(250, 248, 241, 0.94);
+  --text: #26251f;
+  --muted: #777568;
+  --border: rgba(145, 111, 55, 0.3);
+
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(235, 230, 215, 0.82),
+      rgba(235, 230, 215, 0.68),
+      rgba(235, 230, 215, 0.82)
+    ),
+    url("/nela-botanical-bg.jpg");
 }
 
-@keyframes nela-enter {
+.theme-light .nela-header,
+.theme-light .nela-footer {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.theme-light .nela-brand {
+  color: #28261e;
+}
+
+.theme-light .nela-hero h1 {
+  color: #92703b;
+}
+
+.theme-light .nela-tagline,
+.theme-light .nela-card-heading h2,
+.theme-light .nela-back,
+.theme-light .nela-switch button {
+  color: #92703b;
+}
+
+.theme-light .nela-description,
+.theme-light .nela-trust {
+  color: #555448;
+}
+
+.theme-light .nela-card {
+  background: rgba(250, 248, 241, 0.94);
+  border-color: rgba(145, 111, 55, 0.28);
+}
+
+.theme-light .nela-field > span {
+  color: #48463c;
+}
+
+.theme-light .nela-field input,
+.theme-light .nela-field select {
+  color: #26251f;
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(145, 111, 55, 0.25);
+}
+
+.theme-light .nela-field input::placeholder {
+  color: #999486;
+}
+
+.theme-light .nela-field select option {
+  color: #26251f;
+  background: white;
+}
+
+.theme-light .nela-secondary-button {
+  color: #29271f;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.theme-light .nela-footer {
+  color: #666456;
+}
+
+@keyframes nelaAppear {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(12px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.eyebrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 27px;
-  color: var(--gold);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.24em;
-}
-
-.eyebrow-line {
-  width: 30px;
-  height: 1px;
-  background: var(--gold);
-  opacity: 0.55;
-}
-
-.landing-hero h1 {
-  margin: 0;
-  color: var(--gold-light);
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(66px, 10vw, 112px);
-  font-weight: 400;
-  line-height: 0.95;
-  letter-spacing: 0.2em;
-  text-indent: 0.2em;
-  text-shadow: 0 5px 35px rgba(197, 168, 117, 0.12);
-}
-
-.hero-subtitle {
-  margin-top: 17px;
-  color: var(--text);
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(23px, 3vw, 31px);
-  font-weight: 400;
-  letter-spacing: 0.07em;
-}
-
-.hero-subtitle span {
-  color: var(--muted);
-}
-
-.hero-copy {
-  max-width: 570px;
-  margin: 23px auto 35px;
-  color: var(--muted);
-  font-size: 14px;
-  font-weight: 300;
-  line-height: 1.9;
-}
-
-.hero-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
-.btn-gold,
-.btn-outline {
-  min-width: 190px;
-  min-height: 51px;
-  padding: 13px 25px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  border-radius: 40px;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.035em;
-  text-decoration: none;
-  transition: transform 0.25s ease, background 0.25s ease, border 0.25s ease, box-shadow 0.25s ease;
-}
-
-.btn-gold {
-  color: #17130c;
-  border: 1px solid var(--gold-light);
-  background: linear-gradient(120deg, #c5a875, #e0c99e);
-  box-shadow: 0 7px 25px rgba(197, 168, 117, 0.12);
-}
-
-.btn-gold:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(197, 168, 117, 0.23);
-}
-
-.btn-outline {
-  color: var(--text);
-  border: 1px solid rgba(197, 168, 117, 0.55);
-  background: rgba(255, 255, 255, 0.015);
-}
-
-.btn-outline:hover {
-  transform: translateY(-2px);
-  border-color: var(--gold-light);
-  background: rgba(197, 168, 117, 0.08);
-}
-
-.auth-card {
-  width: 100%;
-  max-width: 465px;
-  margin: 0 auto;
-  padding: 38px;
-  border: 1px solid var(--border);
-  border-radius: 22px;
-  background: var(--surface);
-  box-shadow: 0 20px 70px var(--shadow);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-}
-
-.auth-card h2 {
-  margin: 0 0 9px;
-  color: var(--text);
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 34px;
-  font-weight: 500;
-  text-align: center;
-}
-
-.auth-card > p {
-  margin: 0 0 28px;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.7;
-  text-align: center;
-}
-
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 17px;
-}
-
-.field-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 15px;
-}
-
-.form-field {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-}
-
-.form-field input {
-  width: 100%;
-  height: 47px;
-  padding: 0 15px;
-  outline: none;
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.2);
-  transition: border 0.2s ease, box-shadow 0.2s ease;
-}
-
-.form-field input:focus {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(197, 168, 117, 0.09);
-}
-
-.form-field input::placeholder {
-  color: rgba(170, 163, 151, 0.5);
-}
-
-.auth-form .btn-gold,
-.auth-form .btn-outline {
-  width: 100%;
-  margin-top: 7px;
-}
-
-.landing-footer {
-  width: 100%;
-  padding: 20px;
-  color: rgba(197, 168, 117, 0.68);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.23em;
-  text-align: center;
-  border-top: 1px solid rgba(197, 168, 117, 0.08);
-}
-
-.landing-footer span {
-  color: var(--gold);
-}
-
-/* Password visibility controls */
-.password-wrap {
-  position: relative;
-  width: 100%;
-}
-
-.password-wrap input {
-  padding-right: 48px;
-}
-
-.password-toggle {
-  position: absolute;
-  top: 50%;
-  right: 13px;
-  padding: 5px;
-  display: grid;
-  place-items: center;
-  transform: translateY(-50%);
-  color: var(--muted);
-  border: 0;
-  background: transparent;
-}
-
-.password-toggle:hover {
-  color: var(--gold-light);
-}
-
-/* Theme switch */
-.theme-toggle {
-  position: fixed;
-  z-index: 10;
-  left: 25px;
-  bottom: 25px;
-  width: 45px;
-  height: 45px;
-  display: grid;
-  place-items: center;
-  color: var(--gold-light);
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  background: rgba(15, 14, 11, 0.85);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-  transition: 0.25s ease;
-}
-
-.theme-toggle:hover {
-  transform: translateY(-3px);
-  border-color: var(--gold);
-}
-
-/* Light theme */
-.landing-shell.light-theme,
-.landing-shell[data-theme="light"] {
-  --bg: #f4f1e9;
-  --surface: rgba(255, 255, 255, 0.86);
-  --surface-hover: #fff;
-  --text: #25231e;
-  --muted: #777166;
-  --gold: #9b7946;
-  --gold-light: #866538;
-  --border: rgba(130, 102, 59, 0.24);
-  --shadow: rgba(50, 42, 29, 0.09);
-
-  color: var(--text);
-  background:
-    radial-gradient(ellipse at 50% 35%, rgba(197, 168, 117, 0.13), transparent 50%),
-    linear-gradient(145deg, #f7f5ef, #ece7dc);
-}
-
-.light-theme .auth-card,
-.landing-shell[data-theme="light"] .auth-card {
-  background: var(--surface);
-}
-
-.light-theme .form-field input,
-.landing-shell[data-theme="light"] .form-field input {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.75);
-}
-
-.light-theme .theme-toggle,
-.landing-shell[data-theme="light"] .theme-toggle {
-  color: var(--gold);
-  background: rgba(255, 255, 255, 0.9);
-}
-
-.light-theme .btn-outline,
-.landing-shell[data-theme="light"] .btn-outline {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.45);
-}
-
-/* Responsive layout */
-@media (max-width: 650px) {
-  .landing-header {
-    min-height: 72px;
-    padding: 18px 20px;
+@media (max-width: 600px) {
+  .nela-header {
+    height: 72px;
+    padding: 0 20px;
   }
 
-  .wordmark {
-    font-size: 21px;
+  .nela-brand {
+    font-size: 23px;
   }
 
-  .business-link {
-    padding: 9px 12px;
-    font-size: 8px;
+  .nela-navigation {
+    gap: 10px;
   }
 
-  .landing-main {
-    padding: 55px 20px;
+  .nela-business-button {
+    padding: 10px 13px;
+    font-size: 9px;
   }
 
-  .landing-hero h1 {
-    font-size: clamp(58px, 16vw, 82px);
+  .nela-main {
+    padding: 40px 16px;
   }
 
-  .hero-copy {
-    font-size: 13px;
+  .nela-hero h1 {
+    font-size: 76px;
+    letter-spacing: 12px;
+    padding-left: 12px;
   }
 
-  .hero-actions {
-    flex-direction: column;
+  .nela-tagline {
+    font-size: 22px;
   }
 
-  .btn-gold,
-  .btn-outline {
-    width: 100%;
-    max-width: 310px;
+  .nela-description {
+    font-size: 12px;
   }
 
-  .auth-card {
-    padding: 27px 21px;
-    border-radius: 18px;
+  .nela-card {
+    padding: 28px 22px;
+    border-radius: 20px;
   }
 
-  .field-grid {
-    grid-template-columns: 1fr;
+  .nela-card-heading h2 {
+    font-size: 30px;
   }
 
-  .theme-toggle {
-    left: 17px;
-    bottom: 17px;
-    width: 41px;
-    height: 41px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+  .nela-footer {
+    padding: 14px 18px;
+    font-size: 9px;
   }
 }
