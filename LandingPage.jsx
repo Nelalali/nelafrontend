@@ -2,103 +2,97 @@ import { useState } from "react";
 import "./LandingPage.css";
 
 const CLIENTS_KEY = "nelaClients";
-const BUSINESSES_KEY = "nelaBusinesses";
 const USER_KEY = "nelaUser";
-const ACTIVE_CLIENT_KEY = "nelaActiveClient";
-const HISTORY_KEY = "nelaConversationHistory";
+const BUSINESS_KEY = "nelaBusinesses";
+const BUSINESS_USER_KEY = "nelaBusinessUser";
 
-const readArray = (key) => {
+function readStorage(key, fallback = []) {
   try {
-    const value = JSON.parse(localStorage.getItem(key) || "[]");
-    return Array.isArray(value) ? value : [];
+    return JSON.parse(localStorage.getItem(key)) ?? fallback;
   } catch {
-    return [];
+    return fallback;
   }
-};
+}
 
-const normalizeEmail = (value = "") =>
-  String(value).trim().toLowerCase();
+function Field({
+  label,
+  name,
+  value,
+  onChange,
+  type = "text",
+  placeholder,
+  required = true,
+  options,
+  autoComplete,
+}) {
+  const [visible, setVisible] = useState(false);
+  const isPassword = type === "password";
 
-const normalizePhone = (value = "") =>
-  String(value).replace(/[^\d+]/g, "");
-
-const makeId = (prefix = "nela") =>
-  `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-
-function EyeIcon({ visible }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      width="19"
-      height="19"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      {visible ? (
-        <>
-          <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
-          <circle cx="12" cy="12" r="3" />
-        </>
+    <label className="nela-field">
+      <span>{label}</span>
+
+      {options ? (
+        <select
+          name={name}
+          value={value}
+          onChange={onChange}
+          required={required}
+        >
+          <option value="">Select category</option>
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
       ) : (
-        <>
-          <path d="m3 3 18 18" />
-          <path d="M10.6 5.1A10.8 10.8 0 0 1 12 5c6.5 0 10 7 10 7a16 16 0 0 1-3.1 3.9" />
-          <path d="M6.2 6.2C3.5 8 2 12 2 12s3.5 7 10 7c1.5 0 2.8-.3 4-1" />
-        </>
+        <div className="nela-input-wrap">
+          <input
+            name={name}
+            type={isPassword && visible ? "text" : type}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            required={required}
+            autoComplete={autoComplete}
+          />
+
+          {isPassword && (
+            <button
+              type="button"
+              className="nela-eye"
+              onClick={() => setVisible(!visible)}
+              aria-label="Toggle password visibility"
+            >
+              {visible ? "Hide" : "Show"}
+            </button>
+          )}
+        </div>
       )}
-    </svg>
+    </label>
   );
 }
 
-function LampIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="19"
-      height="19"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M9 18h6" />
-      <path d="M10 21h4" />
-      <path d="M8.2 14.5a7 7 0 1 1 7.6 0c-.8.5-1.3 1.3-1.3 2.2h-5c0-.9-.5-1.7-1.3-2.2Z" />
-      <path d="M12 2V1" />
-      <path d="m4.9 4.9-.7-.7" />
-      <path d="M19.1 4.9l.7-.7" />
-    </svg>
-  );
-}
-
-export default function LandingPage({ defaultMode = "home" }) {
-  const [mode, setMode] = useState(defaultMode);
-  const [lightMode, setLightMode] = useState(false);
-  const [visiblePasswords, setVisiblePasswords] = useState({});
+export default function LandingPage() {
+  const [mode, setMode] = useState("home");
+  const [theme, setTheme] = useState("dark");
+  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false);
 
-  const [clientForm, setClientForm] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
+  const [customer, setCustomer] = useState({
+    name: "",
     email: "",
-    confirmEmail: "",
     password: "",
     confirmPassword: "",
   });
 
-  const [businessForm, setBusinessForm] = useState({
+  const [business, setBusiness] = useState({
     businessName: "",
+    ownerName: "",
     email: "",
-    confirmEmail: "",
     phone: "",
+    category: "",
     password: "",
     confirmPassword: "",
   });
@@ -108,693 +102,583 @@ export default function LandingPage({ defaultMode = "home" }) {
     password: "",
   });
 
-  const [businessLogin, setBusinessLogin] = useState({
-    email: "",
-    password: "",
-  });
+  const categories = [
+    "Beauty Salon",
+    "Hair Salon",
+    "Barbershop",
+    "Nail Salon",
+    "Medical Clinic",
+    "Doctor",
+    "Psychologist",
+    "Dentist",
+    "Accountant",
+    "Fitness & Wellness",
+    "Other",
+  ];
 
-  const go = (next) => {
+  const updateCustomer = (event) => {
+    setCustomer({
+      ...customer,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const updateBusiness = (event) => {
+    setBusiness({
+      ...business,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const updateLogin = (event) => {
+    setLogin({
+      ...login,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const changeMode = (newMode) => {
     setError("");
-    setMode(next);
+    setMessage("");
+    setMode(newMode);
   };
 
-  const togglePassword = (key) => {
-    setVisiblePasswords((old) => ({
-      ...old,
-      [key]: !old[key],
-    }));
-  };
+  const validEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const updateClient = (e) => {
-    setClientForm((old) => ({
-      ...old,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const updateBusiness = (e) => {
-    setBusinessForm((old) => ({
-      ...old,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const updateLogin = (e) => {
-    setLogin((old) => ({
-      ...old,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const updateBusinessLogin = (e) => {
-    setBusinessLogin((old) => ({
-      ...old,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  function handleClientRegister(e) {
-    e.preventDefault();
+  const registerCustomer = (event) => {
+    event.preventDefault();
     setError("");
+    setMessage("");
 
-    const clean = {
-      ...clientForm,
-      firstName: clientForm.firstName.trim(),
-      lastName: clientForm.lastName.trim(),
-      phone: normalizePhone(clientForm.phone),
-      email: normalizeEmail(clientForm.email),
-      confirmEmail: normalizeEmail(clientForm.confirmEmail),
-    };
-
-    if (Object.values(clean).some((value) => !String(value).trim())) {
-      return setError("Please complete all fields.");
+    if (!validEmail(customer.email)) {
+      setError("Please enter a valid email address.");
+      return;
     }
 
-    if (clean.email !== clean.confirmEmail) {
-      return setError("Email addresses do not match.");
+    if (customer.password.length < 8) {
+      setError("Your password must contain at least 8 characters.");
+      return;
     }
 
-    if (clean.password !== clean.confirmPassword) {
-      return setError("Passwords do not match.");
+    if (customer.password !== customer.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
     }
 
-    if (clean.password.length < 8) {
-      return setError("Your password must contain at least 8 characters.");
-    }
+    const clients = readStorage(CLIENTS_KEY);
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean.email)) {
-      return setError("Please enter a valid email address.");
-    }
-
-    if (clean.phone.replace(/\D/g, "").length < 8) {
-      return setError("Please enter a valid phone number.");
-    }
-
-    const clients = readArray(CLIENTS_KEY);
-
-    if (
-      clients.some(
-        (client) => normalizeEmail(client?.email) === clean.email
-      )
-    ) {
-      return setError(
-        "An account with this email already exists. Please sign in."
-      );
-    }
-
-    if (
-      clients.some(
-        (client) => normalizePhone(client?.phone) === clean.phone
-      )
-    ) {
-      return setError("An account with this phone number already exists.");
-    }
-
-    const now = new Date().toISOString();
-
-    const client = {
-      id: makeId("client"),
-      firstName: clean.firstName,
-      lastName: clean.lastName,
-      phone: clean.phone,
-      email: clean.email,
-      password: clean.password,
-      appointments: [],
-      memory: [],
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    try {
-      localStorage.setItem(
-        CLIENTS_KEY,
-        JSON.stringify([...clients, client])
-      );
-
-      localStorage.setItem(
-        USER_KEY,
-        JSON.stringify({
-          id: client.id,
-          firstName: client.firstName,
-          lastName: client.lastName,
-          phone: client.phone,
-          email: client.email,
-        })
-      );
-
-      localStorage.setItem(ACTIVE_CLIENT_KEY, client.id);
-
-      localStorage.setItem(
-        "nelaClientMemory",
-        JSON.stringify({
-          name: `${client.firstName} ${client.lastName}`,
-          phone: client.phone,
-          visits: 0,
-          lastBooking: null,
-          preferences: [],
-        })
-      );
-
-      localStorage.removeItem(HISTORY_KEY);
-      window.location.replace("/");
-    } catch {
-      setError(
-        "Unable to save your account. Please check your browser storage."
-      );
-    }
-  }
-
-  function handleBusinessRegister(e) {
-    e.preventDefault();
-    setError("");
-
-    const clean = {
-      businessName: businessForm.businessName.trim(),
-      email: normalizeEmail(businessForm.email),
-      confirmEmail: normalizeEmail(businessForm.confirmEmail),
-      phone: normalizePhone(businessForm.phone),
-      password: businessForm.password,
-      confirmPassword: businessForm.confirmPassword,
-    };
-
-    if (Object.values(clean).some((value) => !String(value).trim())) {
-      return setError("Please complete all fields.");
-    }
-
-    if (clean.email !== clean.confirmEmail) {
-      return setError("Email addresses do not match.");
-    }
-
-    if (clean.password !== clean.confirmPassword) {
-      return setError("Passwords do not match.");
-    }
-
-    if (clean.password.length < 8) {
-      return setError("Your password must contain at least 8 characters.");
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean.email)) {
-      return setError("Please enter a valid email address.");
-    }
-
-    if (clean.phone.replace(/\D/g, "").length < 8) {
-      return setError("Please enter a valid phone number.");
-    }
-
-    const businesses = readArray(BUSINESSES_KEY);
-
-    if (
-      businesses.some(
-        (business) => normalizeEmail(business?.email) === clean.email
-      )
-    ) {
-      return setError(
-        "A business account with this email already exists."
-      );
-    }
-
-    const now = new Date().toISOString();
-
-    const business = {
-      id: makeId("business"),
-      businessName: clean.businessName,
-      email: clean.email,
-      phone: clean.phone,
-      password: clean.password,
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    try {
-      localStorage.setItem(
-        BUSINESSES_KEY,
-        JSON.stringify([...businesses, business])
-      );
-
-      localStorage.setItem(
-        "nelaBusinessUser",
-        JSON.stringify({
-          id: business.id,
-          businessName: business.businessName,
-          email: business.email,
-          loggedIn: true,
-          loggedInAt: now,
-        })
-      );
-
-      window.location.replace("/?admin=true");
-    } catch {
-      setError("Unable to create your account. Please try again.");
-    }
-  }
-
-  function handleClientLogin(e) {
-    e.preventDefault();
-    setError("");
-
-    const email = normalizeEmail(login.email);
-
-    if (!email || !login.password) {
-      return setError("Please enter your email and password.");
-    }
-
-    const client = readArray(CLIENTS_KEY).find(
-      (item) => normalizeEmail(item?.email) === email
+    const exists = clients.some(
+      (client) =>
+        client.email?.toLowerCase() === customer.email.toLowerCase()
     );
 
-    if (!client) {
-      return setError("No account was found with this email address.");
+    if (exists) {
+      setError("An account with this email already exists.");
+      return;
     }
 
-    if (String(client.password || "") !== login.password) {
-      return setError("Incorrect password.");
+    const newClient = {
+      id: crypto.randomUUID(),
+      name: customer.name.trim(),
+      email: customer.email.trim().toLowerCase(),
+      password: customer.password,
+      createdAt: new Date().toISOString(),
+    };
+
+    clients.push(newClient);
+
+    localStorage.setItem(CLIENTS_KEY, JSON.stringify(clients));
+
+    localStorage.setItem(
+      USER_KEY,
+      JSON.stringify({
+        id: newClient.id,
+        name: newClient.name,
+        email: newClient.email,
+      })
+    );
+
+    localStorage.setItem("nelaActiveClient", newClient.id);
+
+    setMessage("Your account has been created successfully.");
+
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 700);
+  };
+
+  const loginCustomer = (event) => {
+    event.preventDefault();
+    setError("");
+    setMessage("");
+
+    const clients = readStorage(CLIENTS_KEY);
+
+    const found = clients.find(
+      (client) =>
+        client.email?.toLowerCase() === login.email.toLowerCase() &&
+        client.password === login.password
+    );
+
+    if (!found) {
+      setError("Incorrect email or password.");
+      return;
     }
 
     localStorage.setItem(
       USER_KEY,
       JSON.stringify({
-        id: client.id,
-        firstName: client.firstName || "",
-        lastName: client.lastName || "",
-        phone: client.phone || "",
-        email,
+        id: found.id,
+        name: found.name,
+        email: found.email,
       })
     );
 
-    localStorage.setItem(ACTIVE_CLIENT_KEY, client.id);
+    localStorage.setItem("nelaActiveClient", found.id);
+
+    window.location.href = "/";
+  };
+
+  const registerBusiness = (event) => {
+    event.preventDefault();
+    setError("");
+    setMessage("");
+
+    if (!validEmail(business.email)) {
+      setError("Please enter a valid business email.");
+      return;
+    }
+
+    if (business.password.length < 8) {
+      setError("Your password must contain at least 8 characters.");
+      return;
+    }
+
+    if (business.password !== business.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    const businesses = readStorage(BUSINESS_KEY);
+
+    const exists = businesses.some(
+      (item) =>
+        item.email?.toLowerCase() === business.email.toLowerCase()
+    );
+
+    if (exists) {
+      setError("This business email is already registered.");
+      return;
+    }
+
+    const newBusiness = {
+      id: crypto.randomUUID(),
+      businessName: business.businessName.trim(),
+      ownerName: business.ownerName.trim(),
+      email: business.email.trim().toLowerCase(),
+      phone: business.phone.trim(),
+      category: business.category,
+      password: business.password,
+      createdAt: new Date().toISOString(),
+    };
+
+    businesses.push(newBusiness);
+
+    localStorage.setItem(BUSINESS_KEY, JSON.stringify(businesses));
 
     localStorage.setItem(
-      "nelaClientMemory",
+      BUSINESS_USER_KEY,
       JSON.stringify({
-        name: `${client.firstName || ""} ${client.lastName || ""}`.trim(),
-        phone: client.phone || "",
-        visits: Number(client.visits || 0),
-        lastBooking: client.lastBooking || null,
-        preferences: Array.isArray(client.preferences)
-          ? client.preferences
-          : [],
+        id: newBusiness.id,
+        businessName: newBusiness.businessName,
+        ownerName: newBusiness.ownerName,
+        email: newBusiness.email,
+        phone: newBusiness.phone,
+        category: newBusiness.category,
       })
     );
 
-    localStorage.removeItem(HISTORY_KEY);
-    window.location.replace("/");
-  }
+    setMessage("Your business account has been created.");
 
-  function handleBusinessLogin(e) {
-    e.preventDefault();
+    setTimeout(() => {
+      window.location.href = "/?admin=true";
+    }, 700);
+  };
+
+  const loginBusiness = (event) => {
+    event.preventDefault();
     setError("");
-    setBusy(true);
+    setMessage("");
 
-    const email = normalizeEmail(businessLogin.email);
+    const businesses = readStorage(BUSINESS_KEY);
 
-    const business = readArray(BUSINESSES_KEY).find(
-      (item) => normalizeEmail(item?.email) === email
+    const found = businesses.find(
+      (item) =>
+        item.email?.toLowerCase() === login.email.toLowerCase() &&
+        item.password === login.password
     );
 
-    if (
-      !business ||
-      String(business.password || "") !== businessLogin.password
-    ) {
-      setBusy(false);
-      return setError("Incorrect business email or password.");
+    if (!found) {
+      setError("Incorrect business email or password.");
+      return;
     }
 
     localStorage.setItem(
-      "nelaBusinessUser",
+      BUSINESS_USER_KEY,
       JSON.stringify({
-        id: business.id,
-        businessName: business.businessName,
-        email: business.email,
-        loggedIn: true,
-        loggedInAt: new Date().toISOString(),
+        id: found.id,
+        businessName: found.businessName,
+        ownerName: found.ownerName,
+        email: found.email,
+        phone: found.phone,
+        category: found.category,
       })
     );
 
-    window.location.replace("/?admin=true");
-  }
-
-  const isForm = mode !== "home";
+    window.location.href = "/?admin=true";
+  };
 
   return (
-    <div className={`landing-shell ${lightMode ? "theme-light" : "theme-dark"}`}>
-      <div className="landing-glow landing-glow-a" />
-      <div className="landing-glow landing-glow-b" />
-
-      <header className="landing-header">
+    <main className={`nela-page theme-${theme}`}>
+      <header className="nela-header">
         <button
-          className="wordmark"
-          onClick={() => go("home")}
-          type="button"
-          aria-label="NELA home"
+          className="nela-brand"
+          onClick={() => changeMode("home")}
         >
-          <span className="wordmark-symbol" aria-hidden="true">
-            <svg viewBox="0 0 32 32" width="25" height="25">
-              <path
-                d="M16 2.5 29.5 16 16 29.5 2.5 16 16 2.5Z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.2"
-              />
-              <path
-                d="M10 21V11l12 10V11"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
-          <span className="wordmark-text">
-            NELA<span className="wordmark-registered">®</span>
-          </span>
+          <span className="nela-brand-icon">✦</span>
+          <span>NELA</span>
         </button>
 
-        <button
-          className="business-link"
-          type="button"
-          onClick={() => go("business")}
-        >
-          FOR BUSINESS <span>↗</span>
-        </button>
+        <nav className="nela-navigation">
+          <button
+            className="nela-theme-button"
+            onClick={() =>
+              setTheme(theme === "dark" ? "light" : "dark")
+            }
+            aria-label="Change theme"
+          >
+            {theme === "dark" ? "☼" : "☾"}
+          </button>
+
+          <button
+            className="nela-business-button"
+            onClick={() => changeMode("business-login")}
+          >
+            FOR BUSINESS
+          </button>
+        </nav>
       </header>
 
-      <main className={`landing-main ${isForm ? "is-form" : ""}`}>
+      <section className="nela-main">
         {mode === "home" && (
-          <section className="landing-hero">
-            <div className="eyebrow">
-              <span className="eyebrow-line" />
-              YOUR AI BOOKING ASSISTANT
-              <span className="eyebrow-line" />
-            </div>
+          <div className="nela-hero">
+            <div className="nela-emblem">✧</div>
 
             <h1>NELA</h1>
 
-            <div className="hero-subtitle">Booking Simple</div>
-
-            <p className="hero-copy">
-              Smarter appointment management.
-              <br />
-              Personal service. Effortless bookings.
+            <p className="nela-tagline">
+              Booking, made simple.
             </p>
 
-            <div className="hero-actions">
+            <p className="nela-description">
+              Your personal assistant for everyday appointments.
+              <br />
+              Find, book and manage your appointments effortlessly.
+            </p>
+
+            <div className="nela-hero-actions">
               <button
-                className="btn btn-gold"
-                onClick={() => go("register")}
-                type="button"
+                className="nela-primary-button"
+                onClick={() => changeMode("register")}
               >
-                Create Account <span>→</span>
+                Create Account
               </button>
 
               <button
-                className="btn btn-outline"
-                onClick={() => go("login")}
-                type="button"
+                className="nela-secondary-button"
+                onClick={() => changeMode("login")}
               >
-                Sign In
+                Log In
               </button>
             </div>
 
-            <div className="business-cta">
-              <span>Are you a professional or business?</span>
-              <button type="button" onClick={() => go("businessRegister")}>
-                Create a Business Account <span>↗</span>
-              </button>
+            <div className="nela-trust">
+              <span>✦</span> Simple · Smart · Personal
             </div>
-
-            <div className="hero-trust">
-              <span>✦</span>
-              Better bookings. More personal service.
-            </div>
-          </section>
+          </div>
         )}
 
-        {mode !== "home" && (
-          <section className="auth-card">
+        {mode === "register" && (
+          <div className="nela-card">
             <button
-              className="back-link"
-              type="button"
-              onClick={() => go("home")}
+              className="nela-back"
+              onClick={() => changeMode("home")}
             >
-              ← Back to Home
+              ← Back
             </button>
 
-            <div className="auth-kicker">
-              {mode === "register"
-                ? "PERSONAL ACCOUNT"
-                : mode === "login"
-                ? "WELCOME BACK"
-                : mode === "businessRegister"
-                ? "JOIN NELA FOR BUSINESS"
-                : "NELA BUSINESS"}
+            <div className="nela-card-heading">
+              <span className="nela-small-emblem">✦</span>
+              <h2>Create your account</h2>
+              <p>Start booking smarter with NELA.</p>
             </div>
 
-            <h2>
-              {mode === "register"
-                ? "Create Your Account"
-                : mode === "login"
-                ? "Welcome Back"
-                : mode === "businessRegister"
-                ? "Create a Business Account"
-                : "Business Sign In"}
-            </h2>
+            <form onSubmit={registerCustomer}>
+              <Field
+                label="Full Name"
+                name="name"
+                value={customer.name}
+                onChange={updateCustomer}
+                placeholder="Your full name"
+                autoComplete="name"
+              />
 
-            <p className="auth-description">
-              {mode === "businessRegister"
-                ? "Bring smarter appointment management to your business."
-                : mode === "business"
-                ? "Sign in to manage your business."
-                : "Your next booking starts here."}
+              <Field
+                label="Email Address"
+                name="email"
+                type="email"
+                value={customer.email}
+                onChange={updateCustomer}
+                placeholder="you@example.com"
+                autoComplete="email"
+              />
+
+              <Field
+                label="Password"
+                name="password"
+                type="password"
+                value={customer.password}
+                onChange={updateCustomer}
+                placeholder="At least 8 characters"
+                autoComplete="new-password"
+              />
+
+              <Field
+                label="Confirm Password"
+                name="confirmPassword"
+                type="password"
+                value={customer.confirmPassword}
+                onChange={updateCustomer}
+                placeholder="Repeat your password"
+                autoComplete="new-password"
+              />
+
+              <button className="nela-primary-button nela-submit">
+                Create Account
+              </button>
+            </form>
+
+            <p className="nela-switch">
+              Already have an account?{" "}
+              <button onClick={() => changeMode("login")}>
+                Log in
+              </button>
             </p>
-
-            {error && (
-              <div className="form-error" role="alert">
-                {error}
-              </div>
-            )}
-
-            {mode === "register" && (
-              <form onSubmit={handleClientRegister} className="auth-form">
-                <div className="field-grid">
-                  <Field label="First Name" name="firstName"
-                    value={clientForm.firstName} onChange={updateClient}
-                    autoComplete="given-name" />
-                  <Field label="Last Name" name="lastName"
-                    value={clientForm.lastName} onChange={updateClient}
-                    autoComplete="family-name" />
-                </div>
-
-                <Field label="Phone Number" name="phone"
-                  value={clientForm.phone} onChange={updateClient}
-                  type="tel" autoComplete="tel" />
-
-                <Field label="Email Address" name="email"
-                  value={clientForm.email} onChange={updateClient}
-                  type="email" autoComplete="email" />
-
-                <Field label="Confirm Email" name="confirmEmail"
-                  value={clientForm.confirmEmail} onChange={updateClient}
-                  type="email" autoComplete="off" />
-
-                <div className="field-grid">
-                  <Field label="Password (8+ characters)" name="password"
-                    value={clientForm.password} onChange={updateClient}
-                    type={visiblePasswords.clientPassword ? "text" : "password"}
-                    showPassword={visiblePasswords.clientPassword}
-                    onTogglePassword={() => togglePassword("clientPassword")}
-                    autoComplete="new-password" />
-
-                  <Field label="Confirm Password" name="confirmPassword"
-                    value={clientForm.confirmPassword} onChange={updateClient}
-                    type={visiblePasswords.clientConfirmPassword ? "text" : "password"}
-                    showPassword={visiblePasswords.clientConfirmPassword}
-                    onTogglePassword={() => togglePassword("clientConfirmPassword")}
-                    autoComplete="new-password" />
-                </div>
-
-                <button className="btn btn-gold full-width" type="submit">
-                  Create Account <span>→</span>
-                </button>
-              </form>
-            )}
-
-            {mode === "businessRegister" && (
-              <form onSubmit={handleBusinessRegister} className="auth-form">
-                <Field label="Business Name" name="businessName"
-                  value={businessForm.businessName} onChange={updateBusiness}
-                  autoComplete="organization" />
-
-                <Field label="Business Email" name="email"
-                  value={businessForm.email} onChange={updateBusiness}
-                  type="email" autoComplete="email" />
-
-                <Field label="Confirm Business Email" name="confirmEmail"
-                  value={businessForm.confirmEmail} onChange={updateBusiness}
-                  type="email" autoComplete="off" />
-
-                <Field label="Business Phone Number" name="phone"
-                  value={businessForm.phone} onChange={updateBusiness}
-                  type="tel" autoComplete="tel" />
-
-                <div className="field-grid">
-                  <Field label="Password (8+ characters)" name="password"
-                    value={businessForm.password} onChange={updateBusiness}
-                    type={visiblePasswords.businessPassword ? "text" : "password"}
-                    showPassword={visiblePasswords.businessPassword}
-                    onTogglePassword={() => togglePassword("businessPassword")}
-                    autoComplete="new-password" />
-
-                  <Field label="Confirm Password" name="confirmPassword"
-                    value={businessForm.confirmPassword} onChange={updateBusiness}
-                    type={visiblePasswords.businessConfirmPassword ? "text" : "password"}
-                    showPassword={visiblePasswords.businessConfirmPassword}
-                    onTogglePassword={() => togglePassword("businessConfirmPassword")}
-                    autoComplete="new-password" />
-                </div>
-
-                <button className="btn btn-gold full-width" type="submit">
-                  Create Business Account <span>→</span>
-                </button>
-              </form>
-            )}
-
-            {mode === "login" && (
-              <form onSubmit={handleClientLogin} className="auth-form">
-                <Field label="Email Address" name="email"
-                  value={login.email} onChange={updateLogin}
-                  type="email" autoComplete="email" />
-
-                <Field label="Password" name="password"
-                  value={login.password} onChange={updateLogin}
-                  type={visiblePasswords.loginPassword ? "text" : "password"}
-                  showPassword={visiblePasswords.loginPassword}
-                  onTogglePassword={() => togglePassword("loginPassword")}
-                  autoComplete="current-password" />
-
-                <button className="btn btn-gold full-width" type="submit">
-                  Sign In <span>→</span>
-                </button>
-              </form>
-            )}
-
-            {mode === "business" && (
-              <form onSubmit={handleBusinessLogin} className="auth-form">
-                <Field label="Business Email" name="email"
-                  value={businessLogin.email} onChange={updateBusinessLogin}
-                  type="email" autoComplete="username" />
-
-                <Field label="Password" name="password"
-                  value={businessLogin.password} onChange={updateBusinessLogin}
-                  type={visiblePasswords.businessLoginPassword ? "text" : "password"}
-                  showPassword={visiblePasswords.businessLoginPassword}
-                  onTogglePassword={() => togglePassword("businessLoginPassword")}
-                  autoComplete="current-password" />
-
-                <button className="btn btn-gold full-width"
-                  type="submit" disabled={busy}>
-                  {busy ? "Signing In..." : "Access Dashboard"} <span>→</span>
-                </button>
-
-                <p className="security-note">
-                  New to NELA? Create your business account first.
-                </p>
-              </form>
-            )}
-
-            {mode === "register" && (
-              <p className="auth-switch">
-                Already have an account?{" "}
-                <button type="button" onClick={() => go("login")}>
-                  Sign In
-                </button>
-              </p>
-            )}
-
-            {mode === "login" && (
-              <p className="auth-switch">
-                Don't have an account?{" "}
-                <button type="button" onClick={() => go("register")}>
-                  Create one
-                </button>
-              </p>
-            )}
-
-            {mode === "businessRegister" && (
-              <p className="auth-switch">
-                Already registered your business?{" "}
-                <button type="button" onClick={() => go("business")}>
-                  Business Sign In
-                </button>
-              </p>
-            )}
-
-            {mode === "business" && (
-              <p className="auth-switch">
-                Don't have a business account?{" "}
-                <button type="button" onClick={() => go("businessRegister")}>
-                  Create one
-                </button>
-              </p>
-            )}
-          </section>
+          </div>
         )}
-      </main>
 
-      <button
-        className="theme-toggle"
-        type="button"
-        onClick={() => setLightMode((old) => !old)}
-        aria-label={lightMode ? "Switch to dark theme" : "Switch to light theme"}
-        title={lightMode ? "Dark Mode" : "Light Mode"}
-      >
-        <LampIcon />
-      </button>
+        {mode === "login" && (
+          <div className="nela-card nela-small-card">
+            <button
+              className="nela-back"
+              onClick={() => changeMode("home")}
+            >
+              ← Back
+            </button>
 
-      <footer className="landing-footer">
-        <span>NELA</span> · AI BOOKING ASSISTANT
-        <span className="footer-dot">✦</span>
-        MADE FOR BETTER EXPERIENCES
+            <div className="nela-card-heading">
+              <span className="nela-small-emblem">✦</span>
+              <h2>Welcome back</h2>
+              <p>Log in to your NELA account.</p>
+            </div>
+
+            <form onSubmit={loginCustomer}>
+              <Field
+                label="Email Address"
+                name="email"
+                type="email"
+                value={login.email}
+                onChange={updateLogin}
+                placeholder="you@example.com"
+                autoComplete="email"
+              />
+
+              <Field
+                label="Password"
+                name="password"
+                type="password"
+                value={login.password}
+                onChange={updateLogin}
+                placeholder="Your password"
+                autoComplete="current-password"
+              />
+
+              <button className="nela-primary-button nela-submit">
+                Log In
+              </button>
+            </form>
+
+            <p className="nela-switch">
+              Don't have an account?{" "}
+              <button onClick={() => changeMode("register")}>
+                Create one
+              </button>
+            </p>
+          </div>
+        )}
+
+        {mode === "business-login" && (
+          <div className="nela-card nela-small-card">
+            <button
+              className="nela-back"
+              onClick={() => changeMode("home")}
+            >
+              ← Back
+            </button>
+
+            <div className="nela-card-heading">
+              <span className="nela-small-emblem">✦</span>
+              <h2>Business Portal</h2>
+              <p>Manage your business with NELA.</p>
+            </div>
+
+            <form onSubmit={loginBusiness}>
+              <Field
+                label="Business Email"
+                name="email"
+                type="email"
+                value={login.email}
+                onChange={updateLogin}
+                placeholder="business@example.com"
+                autoComplete="email"
+              />
+
+              <Field
+                label="Password"
+                name="password"
+                type="password"
+                value={login.password}
+                onChange={updateLogin}
+                placeholder="Your password"
+                autoComplete="current-password"
+              />
+
+              <button className="nela-primary-button nela-submit">
+                Access Business Portal
+              </button>
+            </form>
+
+            <p className="nela-switch">
+              New to NELA Business?{" "}
+              <button onClick={() => changeMode("business-register")}>
+                Create Business Account
+              </button>
+            </p>
+          </div>
+        )}
+
+        {mode === "business-register" && (
+          <div className="nela-card nela-business-card">
+            <button
+              className="nela-back"
+              onClick={() => changeMode("business-login")}
+            >
+              ← Back to Business Login
+            </button>
+
+            <div className="nela-card-heading">
+              <span className="nela-small-emblem">✦</span>
+              <h2>Join NELA Business</h2>
+              <p>Create an account for your business.</p>
+            </div>
+
+            <form onSubmit={registerBusiness}>
+              <Field
+                label="Business Name"
+                name="businessName"
+                value={business.businessName}
+                onChange={updateBusiness}
+                placeholder="Your business name"
+              />
+
+              <Field
+                label="Owner's Full Name"
+                name="ownerName"
+                value={business.ownerName}
+                onChange={updateBusiness}
+                placeholder="Full name"
+              />
+
+              <Field
+                label="Business Email"
+                name="email"
+                type="email"
+                value={business.email}
+                onChange={updateBusiness}
+                placeholder="business@example.com"
+              />
+
+              <Field
+                label="Phone Number"
+                name="phone"
+                type="tel"
+                value={business.phone}
+                onChange={updateBusiness}
+                placeholder="+30 690 000 0000"
+              />
+
+              <Field
+                label="Business Category"
+                name="category"
+                value={business.category}
+                onChange={updateBusiness}
+                options={categories}
+              />
+
+              <Field
+                label="Password"
+                name="password"
+                type="password"
+                value={business.password}
+                onChange={updateBusiness}
+                placeholder="At least 8 characters"
+                autoComplete="new-password"
+              />
+
+              <Field
+                label="Confirm Password"
+                name="confirmPassword"
+                type="password"
+                value={business.confirmPassword}
+                onChange={updateBusiness}
+                placeholder="Repeat your password"
+                autoComplete="new-password"
+              />
+
+              <button className="nela-primary-button nela-submit">
+                Create Business Account
+              </button>
+            </form>
+
+            <p className="nela-security-note">
+              Demo account storage only. Production requires secure
+              backend authentication.
+            </p>
+          </div>
+        )}
+
+        {(error || message) && (
+          <div className={`nela-message ${error ? "error" : "success"}`}>
+            {error || message}
+          </div>
+        )}
+      </section>
+
+      <footer className="nela-footer">
+        <span>© {new Date().getFullYear()} NELA</span>
+        <span>Smart appointments. Effortlessly.</span>
       </footer>
-    </div>
-  );
-}
-
-function Field({
-  label,
-  name,
-  value,
-  onChange,
-  type = "text",
-  autoComplete = "off",
-  showPassword = false,
-  onTogglePassword,
-}) {
-  return (
-    <label className="form-field">
-      <span>{label}</span>
-      <div className="input-wrapper">
-        <input
-          required
-          name={name}
-          type={type}
-          value={value}
-          onChange={onChange}
-          autoComplete={autoComplete}
-        />
-
-        {onTogglePassword && (
-          <button
-            className="password-toggle"
-            type="button"
-            onClick={onTogglePassword}
-            aria-label={showPassword ? "Hide password" : "Show password"}
-            title={showPassword ? "Hide password" : "Show password"}
-          >
-            <EyeIcon visible={showPassword} />
-          </button>
-        )}
-      </div>
-    </label>
+    </main>
   );
 }
