@@ -2007,21 +2007,20 @@ export default function LandingPage() {
                       placeItems: "center",
                       margin: "0 auto 18px",
                       fontSize: "30px",
-                      color: "#c5e0ff",
-                      background:
-                        "linear-gradient(145deg,#315e91,#193b63)",
-                      boxShadow:
-                        "0 8px 25px rgba(40,105,175,0.25)",
+                      overflow: "hidden",
+                      border: "1px solid rgba(201,164,95,.28)",
+                      background: "linear-gradient(145deg,#302113,#120d08)",
+                      boxShadow: "0 8px 25px rgba(0,0,0,.3)",
                     }}
                   >
-                    ✦
+                    <img src={NELA_LOGO_DATA} alt="NELA" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                   </div>
 
                   <h2
                     style={{
                       ...sectionTitle,
                       color:
-                        theme === "dark" ? "#d8e9ff" : "#244d78",
+                        #ead5a6,
                     }}
                   >
                     Welcome,{" "}
@@ -2114,8 +2113,8 @@ export default function LandingPage() {
                       "1px solid rgba(201,164,95,0.2)",
                     background:
                       theme === "dark"
-                        ? "#1b2c42"
-                        : "#edf4fc",
+                        ? "#21170e"
+                        : "#21170e",
                     color:
                       theme === "dark" ? "#d8c59c" : "#d8c59c",
                     fontSize: "12px",
