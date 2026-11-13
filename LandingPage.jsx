@@ -59,6 +59,7 @@ function createId() {
 
   return Date.now() + "-" + Math.random().toString(36).slice(2);
 }
+
 function normalizeEmail(email) {
   return String(email || "").trim().toLowerCase();
 }
@@ -68,10 +69,10 @@ function getClientName(client) {
 
   if (client.name) return client.name;
 
-  return (
-    `${client.firstName || ""} ${client.lastName || ""}`.trim() ||
-    "Customer"
-  );
+  const firstName = client.firstName || "";
+  const lastName = client.lastName || "";
+
+  return (firstName + " " + lastName).trim() || "Customer";
 }
 
 function getAppointmentDate(appointment) {
@@ -839,12 +840,11 @@ export default function LandingPage() {
       });
 
       if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
+        throw new Error("Server error: " + response.status);
       }
 
       const data = await response.json();
 
-      // Supports the common response formats used by the backend.
       const reply =
         data.answer ||
         data.reply ||
@@ -996,8 +996,7 @@ export default function LandingPage() {
   ======================================================= */
 
   return (
-    <main className={`nela-page theme-${theme}`}>
-
+    <main className={"nela-page theme-" + theme}>
       {/* HEADER */}
 
       <header className="nela-header">
@@ -1010,7 +1009,6 @@ export default function LandingPage() {
         </button>
 
         <nav className="nela-navigation">
-
           <button
             className="nela-theme-button"
             onClick={() =>
@@ -1062,12 +1060,10 @@ export default function LandingPage() {
       {/* MAIN CONTENT */}
 
       <section className="nela-main">
-
         {/* HOME */}
 
         {mode === "home" && (
           <div className="nela-hero">
-
             <div className="nela-emblem">✧</div>
 
             <h1>NELA</h1>
@@ -1083,7 +1079,6 @@ export default function LandingPage() {
             </p>
 
             <div className="nela-hero-actions">
-
               <button
                 className="nela-primary-button"
                 onClick={() => changeMode("register")}
@@ -1097,7 +1092,6 @@ export default function LandingPage() {
               >
                 Log In
               </button>
-
             </div>
 
             <div className="nela-trust">
@@ -1110,7 +1104,6 @@ export default function LandingPage() {
 
         {mode === "register" && (
           <div className="nela-card">
-
             <button
               className="nela-back"
               onClick={() => changeMode("home")}
@@ -1125,7 +1118,6 @@ export default function LandingPage() {
             </div>
 
             <form onSubmit={registerCustomer}>
-
               <Field
                 label="Full Name"
                 name="name"
@@ -1168,7 +1160,6 @@ export default function LandingPage() {
               <button className="nela-primary-button nela-submit">
                 Create Account
               </button>
-
             </form>
 
             <p className="nela-switch">
@@ -1184,7 +1175,6 @@ export default function LandingPage() {
 
         {mode === "login" && (
           <div className="nela-card nela-small-card">
-
             <button
               className="nela-back"
               onClick={() => changeMode("home")}
@@ -1199,7 +1189,6 @@ export default function LandingPage() {
             </div>
 
             <form onSubmit={loginCustomer}>
-
               <Field
                 label="Email Address"
                 name="email"
@@ -1223,7 +1212,6 @@ export default function LandingPage() {
               <button className="nela-primary-button nela-submit">
                 Log In
               </button>
-
             </form>
 
             <p className="nela-switch">
@@ -1239,7 +1227,6 @@ export default function LandingPage() {
 
         {mode === "business-login" && (
           <div className="nela-card nela-small-card">
-
             <button
               className="nela-back"
               onClick={() => changeMode("home")}
@@ -1254,7 +1241,6 @@ export default function LandingPage() {
             </div>
 
             <form onSubmit={loginBusiness}>
-
               <Field
                 label="Business Email"
                 name="email"
@@ -1276,7 +1262,6 @@ export default function LandingPage() {
               <button className="nela-primary-button nela-submit">
                 Access Business Portal
               </button>
-
             </form>
 
             <p className="nela-switch">
@@ -1292,7 +1277,6 @@ export default function LandingPage() {
 
         {mode === "business-register" && (
           <div className="nela-card nela-business-card">
-
             <button
               className="nela-back"
               onClick={() => changeMode("business-login")}
@@ -1307,7 +1291,6 @@ export default function LandingPage() {
             </div>
 
             <form onSubmit={registerBusiness}>
-
               <Field
                 label="Business Name"
                 name="businessName"
@@ -1371,7 +1354,6 @@ export default function LandingPage() {
               <button className="nela-primary-button nela-submit">
                 Create Business Account
               </button>
-
             </form>
 
             <p className="nela-security-note">
@@ -1385,7 +1367,6 @@ export default function LandingPage() {
 
         {mode === "account" && currentUser && (
           <div style={panelStyle}>
-
             <button
               className="nela-back"
               onClick={() => changeMode("chat")}
@@ -1558,7 +1539,7 @@ export default function LandingPage() {
                   >
                     {chatMessages.map((item) => (
                       <div
-                        key={item.id || `${item.timestamp}-${item.role}`}
+                        key={item.id || String(item.timestamp) + item.role}
                         style={{
                           padding: "15px",
                           borderRadius: "13px",
@@ -1619,7 +1600,6 @@ export default function LandingPage() {
 
             {accountSection === "appointments" && (
               <div>
-
                 <h3 style={sectionTitle}>
                   {appointmentFilter === "upcoming"
                     ? "Upcoming Appointments"
@@ -1706,7 +1686,6 @@ export default function LandingPage() {
                     ))}
                   </div>
                 )}
-
               </div>
             )}
 
@@ -1718,7 +1697,6 @@ export default function LandingPage() {
                 Log Out
               </button>
             </div>
-
           </div>
         )}
 
@@ -1747,7 +1725,6 @@ export default function LandingPage() {
                   : "0 20px 65px rgba(30,70,120,0.12)",
             }}
           >
-
             {/* CHAT HEADER */}
 
             <div
@@ -1930,8 +1907,6 @@ export default function LandingPage() {
                       zIndex: 10,
                     }}
                   >
-                    {/* MENU PROFILE */}
-
                     <div
                       style={{
                         padding: "12px 13px 15px",
@@ -2050,7 +2025,6 @@ export default function LandingPage() {
                 gap: "16px",
               }}
             >
-
               {chatMessages.length === 0 && (
                 <div
                   style={{
@@ -2110,7 +2084,7 @@ export default function LandingPage() {
                   <div
                     key={
                       item.id ||
-                      `${item.timestamp || "message"}-${index}`
+                      String(item.timestamp || "message") + "-" + index
                     }
                     style={{
                       alignSelf: isUser
@@ -2144,7 +2118,7 @@ export default function LandingPage() {
                     }}
                   >
                     {item.content || item.message || ""}
-                    
+
                     {item.timestamp && (
                       <div
                         style={{
@@ -2186,7 +2160,6 @@ export default function LandingPage() {
                   NELA is thinking...
                 </div>
               )}
-
             </div>
 
             {/* CHAT INPUT */}
@@ -2206,7 +2179,6 @@ export default function LandingPage() {
                 borderRadius: "0 0 22px 22px",
               }}
             >
-
               <input
                 type="text"
                 value={chatInput}
@@ -2256,9 +2228,7 @@ export default function LandingPage() {
               >
                 Send
               </button>
-
             </form>
-
           </div>
         )}
 
@@ -2266,14 +2236,11 @@ export default function LandingPage() {
 
         {(error || message) && (
           <div
-            className={`nela-message ${
-              error ? "error" : "success"
-            }`}
+            className={"nela-message " + (error ? "error" : "success")}
           >
             {error || message}
           </div>
         )}
-
       </section>
 
       {/* FOOTER */}
@@ -2282,7 +2249,6 @@ export default function LandingPage() {
         <span>© {new Date().getFullYear()} NELA</span>
         <span>Smart appointments. Effortlessly.</span>
       </footer>
-
     </main>
   );
 }
