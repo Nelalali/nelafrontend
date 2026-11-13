@@ -639,8 +639,15 @@ function getAvailableTimes(dateValue, currentBookings = [], duration = 30) {
   const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
   const hours = getBusinessConfig()?.openingHours?.[dayNames[date.getDay()]];
   if (!hours || (typeof hours === "string" && normalizeText(hours).includes("κλειστα"))) return [];
+  const isInFuture = (time) => {
+    if (dateKey !== toLocalDateKey(new Date())) return true;
+    const [hour, minute] = String(time).split(":").map(Number);
+    const slotTime = new Date();
+    slotTime.setHours(hour, minute, 0, 0);
+    return slotTime.getTime() > Date.now();
+  };
   if (Array.isArray(hours)) {
-    return hours.filter((time) => /^\d{1,2}:\d{2}$/.test(String(time)) && !isTimeUnavailable(dateKey, time, duration, currentBookings));
+    return hours.filter((time) => /^\d{1,2}:\d{2}$/.test(String(time)) && isInFuture(time) && !isTimeUnavailable(dateKey, time, duration, currentBookings));
   }
   if (typeof hours !== "string" || !hours.includes("-")) return [];
   const [opening, closing] = hours.split("-").map((value) => value.trim());
@@ -654,7 +661,7 @@ function getAvailableTimes(dateValue, currentBookings = [], duration = 30) {
   const slots = [];
   for (let minute = start; minute + Math.max(15, Number(duration) || 30) <= end; minute += 30) {
     const time = `${String(Math.floor(minute / 60)).padStart(2, "0")}:${String(minute % 60).padStart(2, "0")}`;
-    if (!isTimeUnavailable(dateKey, time, duration, currentBookings)) slots.push(time);
+    if (isInFuture(time) && !isTimeUnavailable(dateKey, time, duration, currentBookings)) slots.push(time);
   }
   return slots;
 }
@@ -2796,6 +2803,7 @@ function ChatApp() {
           {booking.active && booking.service && !booking.date && (
             <div style={{ position: "relative", zIndex: 3, margin: "12px 0 22px", padding: "18px", borderRadius: "20px", border: "1px solid rgba(214,183,106,.32)", background: "linear-gradient(145deg,rgba(42,29,14,.97),rgba(10,8,5,.99))", boxShadow: "0 16px 38px rgba(0,0,0,.28)" }}>
               <div style={{ color: "#f0d99f", fontFamily: "Georgia,serif", fontSize: "20px", marginBottom: "5px" }}>Επιλέξτε ημέρα</div>
+              <div style={{ color: "#9e8a67", fontSize: "10px", letterSpacing: "1.2px", textTransform: "uppercase", marginBottom: "8px" }}>{new Date().toLocaleDateString("el-GR", { month: "long", year: "numeric" })}</div>
               <div style={{ color: "#b9aa88", fontSize: "11px", marginBottom: "14px" }}>Επιλέξτε μία ημέρα. Οι μη διαθέσιμες ημέρες είναι απενεργοποιημένες.</div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(7,minmax(0,1fr))", gap: "8px" }}>
                 {["Κυ","Δε","Τρ","Τε","Πε","Πα","Σα"].map((day) => <div key={day} style={{ textAlign: "center", color: "#9c8968", fontSize: "10px", padding: "4px 0" }}>{day}</div>)}
