@@ -821,6 +821,10 @@ export default function LandingPage() {
     setChatLoading(true);
 
     try {
+      if (!API_URL) {
+        throw new Error("NELA AI server is not configured. Set VITE_API_URL in the frontend environment.");
+      }
+
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
