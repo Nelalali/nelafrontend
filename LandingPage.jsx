@@ -1860,7 +1860,7 @@ export default function LandingPage() {
                       position: "absolute",
                       top: "72px",
                       right: "20px",
-                      width: "260px",
+                      width: "min(280px, calc(100vw - 40px))",
                       padding: "13px",
                       borderRadius: "17px",
                       border: "1px solid rgba(201,164,95,0.34)",
@@ -1899,12 +1899,14 @@ export default function LandingPage() {
                       </div>
                     </div>
 
+                    <div style={{ padding: "8px 13px 4px", color: "#9d8358", fontSize: "9px", letterSpacing: "1.5px", fontWeight: 700 }}>APPOINTMENTS</div>
+
                     <button
                       style={menuButtonStyle}
                       onClick={() => openAppointments("upcoming")}
                     >
                       <span>📅</span>
-                      <span>Upcoming appointments</span>
+                      <span>My appointments</span>
                     </button>
 
                     <button
@@ -1912,10 +1914,11 @@ export default function LandingPage() {
                       onClick={() => openAppointments("previous")}
                     >
                       <span>🗓</span>
-                      <span>Previous appointments</span>
+                      <span>Appointment history</span>
                     </button>
 
                     <div style={menuDivider} />
+                    <div style={{ padding: "8px 13px 4px", color: "#9d8358", fontSize: "9px", letterSpacing: "1.5px", fontWeight: 700 }}>PERSONAL SPACE</div>
 
                     <button
                       style={menuButtonStyle}
@@ -1944,7 +1947,7 @@ export default function LandingPage() {
                       }
                     >
                       <span>👤</span>
-                      <span>My profile</span>
+                      <span>Profile & settings</span>
                     </button>
 
                     <div style={menuDivider} />
