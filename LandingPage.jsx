@@ -1,6 +1,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import "./LandingPage.css";
+import { NELA_LOGO_DATA } from "./NelaLogo";
 
 const CLIENTS_KEY = "nelaClients";
 const USER_KEY = "nelaUser";
@@ -1032,6 +1033,9 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
 
   return (
     <main className={"nela-page theme-" + theme}>
+      <div className="nela-brand-watermark" aria-hidden="true">
+        <img src={NELA_LOGO_DATA} alt="" />
+      </div>
       {/* HEADER */}
 
       <header className="nela-header">
@@ -1039,7 +1043,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
           className="nela-brand"
           onClick={() => changeMode("home")}
         >
-          <span className="nela-monogram" aria-label="NELA">N</span>
+          <span className="nela-monogram" aria-label="NELA"><img src={NELA_LOGO_DATA} alt="" /></span>
         </button>
 
         <nav className="nela-navigation">
