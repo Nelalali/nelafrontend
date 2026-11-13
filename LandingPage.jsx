@@ -212,13 +212,7 @@ function Field({
 export default function LandingPage() {
   const [mode, setMode] = useState("home");
 
-  const [theme, setTheme] = useState(() => {
-    try {
-      return localStorage.getItem(THEME_KEY) === "light" ? "light" : "dark";
-    } catch {
-      return "dark";
-    }
-  });
+  const [theme, setTheme] = useState("dark");;
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -1026,15 +1020,7 @@ export default function LandingPage() {
         </button>
 
         <nav className="nela-navigation">
-          <button
-            className="nela-theme-button"
-            onClick={() =>
-              setTheme(theme === "dark" ? "light" : "dark")
-            }
-            aria-label="Change theme"
-          >
-            {theme === "dark" ? "☼" : "☾"}
-          </button>
+
 
           {currentUser && mode !== "home" && (
             <button
