@@ -685,10 +685,17 @@ button { -webkit-tap-highlight-color: transparent; }
   padding-left: .20em !important;
 }
 .nela-hero h1 {
+  display: block !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  text-align: center !important;
+  text-indent: 0 !important;
   font-family: "Outfit", sans-serif !important;
+  font-size: clamp(82px,12vw,142px) !important;
   font-weight: 500 !important;
-  letter-spacing: .16em !important;
-  padding-left: .16em !important;
+  letter-spacing: .12em !important;
 }
 .nela-tagline,.nela-card-heading h2,.nela-card h2,.nela-card h3 {
   font-family: "Sora", sans-serif !important;
@@ -806,9 +813,10 @@ button { -webkit-tap-highlight-color: transparent; }
   display: block !important;
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover !important;
-  object-position: center 12% !important;
-  transform: scale(1.12);
+  padding: 3px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  transform: none !important;
 }
 .nela-chat-panel h2 {
   margin: 0 !important;
@@ -888,13 +896,26 @@ button { -webkit-tap-highlight-color: transparent; }
   background: linear-gradient(125deg,#f0d9a5,#c49b5b) !important;
 }
 .nela-chat-welcome-monogram {
-  width: 82px !important;
-  height: 82px !important;
-  margin: 0 auto 15px !important;
-  border: 1px solid rgba(216,184,115,.34) !important;
+  width: 94px !important;
+  height: 94px !important;
+  margin: 0 auto 18px !important;
+  padding: 8px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(216,184,115,.38) !important;
   border-radius: 50% !important;
-  background: rgba(216,184,115,.045) !important;
-  color: #e6c98f !important;
+  background: radial-gradient(circle,rgba(216,184,115,.10),rgba(216,184,115,.025) 70%) !important;
+  box-shadow: 0 0 32px rgba(216,184,115,.09),inset 0 0 18px rgba(216,184,115,.045) !important;
+  color: transparent !important;
+}
+.nela-chat-welcome-monogram img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  transform: none !important;
 }
 .nela-chat-composer {
   position: relative !important;
@@ -1003,3 +1024,19 @@ button { -webkit-tap-highlight-color: transparent; }
   .nela-chat-panel > div:first-of-type { min-height: 66px !important; }
   .nela-chat-messages { padding-top: 12px !important; padding-bottom: 12px !important; }
 }
+
+/* Final typography and true optical centering for the NELA marks. */
+.nela-chat-panel .nela-chat-title {
+  font-family: "Outfit", sans-serif !important;
+  font-size: 21px !important;
+  font-weight: 600 !important;
+  letter-spacing: .17em !important;
+  line-height: 1.15 !important;
+  padding-left: .17em !important;
+  color: #f1dfb9 !important;
+}
+.nela-chat-panel .nela-chat-welcome-monogram {
+  margin-inline: auto !important;
+}
+.nela-hero { text-align: center !important; }
+.nela-hero h1 { position: relative; left: 0 !important; transform: none !important; }
