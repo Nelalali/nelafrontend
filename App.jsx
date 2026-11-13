@@ -851,30 +851,26 @@ async function askNelaAI(
   clients
 ) {
   try {
-    const response =
-      if (!CHAT_ENDPOINT) {
-        throw new Error("NELA AI server is not configured. Set VITE_API_URL in the frontend environment.");
+    if (!CHAT_ENDPOINT) {
+      throw new Error("NELA AI server is not configured. Set VITE_API_URL in the frontend environment.");
+    }
+
+    const response = await fetch(
+      CHAT_ENDPOINT,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message,
+          memory,
+          booking,
+          clients,
+          business: getBusinessConfig(),
+        }),
       }
-
-      await fetch(
-        CHAT_ENDPOINT,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-
-          body: JSON.stringify({
-            message,
-            memory,
-            booking,
-            clients,
-            business: getBusinessConfig(),
-          }),
-        }
-      );
+    );
 
     if (!response.ok) {
       throw new Error(
