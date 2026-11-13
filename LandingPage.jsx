@@ -2020,7 +2020,7 @@ export default function LandingPage() {
                     style={{
                       ...sectionTitle,
                       color:
-                        #ead5a6,
+                        "#ead5a6",
                     }}
                   >
                     Welcome,{" "}
