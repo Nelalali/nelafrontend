@@ -3066,6 +3066,6 @@ export default function App() {
 
   if (isAdminRoute && businessSession?.id) return <ChatApp />;
   if (isAdminRoute) return <LandingPage defaultMode="business" />;
-  if (customerSession?.id) return <ChatApp />;
+  if (customerSession?.id) return <LandingPage defaultMode="chat" />;
   return <LandingPage />;
 }
