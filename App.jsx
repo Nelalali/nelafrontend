@@ -908,6 +908,15 @@ function ChatApp() {
     getBusinessConfig()?.businessName ||
     "NELA";
 
+  const [theme, setTheme] = useState(() => {
+    try { return localStorage.getItem("nelaTheme") || "dark"; }
+    catch { return "dark"; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem("nelaTheme", theme); } catch {}
+  }, [theme]);
+  const lightTheme = theme === "light";
+
   /* =======================================================
      MESSAGES
      ======================================================= */
@@ -1903,24 +1912,10 @@ function ChatApp() {
       alignItems: "center",
       justifyContent: "center",
 
-      background: `
-        radial-gradient(
-          circle at 15% 5%,
-          rgba(214,183,106,.18),
-          transparent 28%
-        ),
-        radial-gradient(
-          circle at 90% 95%,
-          rgba(69,45,18,.20),
-          transparent 30%
-        ),
-        linear-gradient(
-          135deg,
-          #020304 0%,
-          #080c10 45%,
-          #030405 100%
-        )
-      `,
+      background: lightTheme
+        ? "radial-gradient(circle at 15% 5%,rgba(190,145,55,.16),transparent 28%),linear-gradient(135deg,#f7f2e7,#e9dfca)"
+        : "radial-gradient(circle at 15% 5%,rgba(214,183,106,.22),transparent 28%),radial-gradient(circle at 90% 95%,rgba(69,45,18,.24),transparent 30%),linear-gradient(135deg,#020304 0%,#080c10 45%,#030405 100%)",
+
 
       fontFamily:
         '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
@@ -1986,8 +1981,9 @@ function ChatApp() {
        * ώστε να περνάει το background.
        */
 
-      background:
-        "linear-gradient(145deg, rgba(12,17,23,.72), rgba(3,5,8,.62))",
+      background: lightTheme
+        ? "linear-gradient(145deg,rgba(255,253,247,.98),rgba(246,239,222,.97))"
+        : "linear-gradient(145deg,rgba(8,10,12,.98),rgba(2,3,4,.99))",
 
       backdropFilter:
         "blur(28px)",
@@ -1995,19 +1991,18 @@ function ChatApp() {
       WebkitBackdropFilter:
         "blur(28px)",
 
-      border:
-        "1px solid rgba(243,223,170,.20)",
+      border: lightTheme ? "1px solid rgba(173,126,38,.52)" : "1px solid rgba(232,190,91,.62)",
 
-      boxShadow:
-        "0 60px 160px rgba(0,0,0,.82), inset 0 1px rgba(255,255,255,.07), 0 0 120px rgba(214,183,106,.045)",
+      boxShadow: lightTheme
+        ? "0 35px 90px rgba(85,61,20,.18), inset 0 1px rgba(255,255,255,.9), 0 0 55px rgba(184,137,43,.14)"
+        : "0 60px 160px rgba(0,0,0,.82), inset 0 1px rgba(255,255,255,.07), 0 0 90px rgba(214,183,106,.14)",
     },
 
     header: {
       padding:
         "25px 27px 20px",
 
-      background:
-        "linear-gradient(135deg, rgba(2,5,8,.82), rgba(25,19,11,.48))",
+      background: lightTheme ? "linear-gradient(135deg,#fffdf7,#eee2c6)" : "linear-gradient(135deg,#030303,#1c1509)",
 
       borderBottom:
         "1px solid rgba(243,223,170,.12)",
@@ -2062,7 +2057,7 @@ function ChatApp() {
     subtitle: {
       marginTop: "5px",
 
-      color: "#8d887b",
+      color: lightTheme ? "#786039" : "#c9b477",
 
       fontSize: "8px",
 
@@ -2080,7 +2075,7 @@ function ChatApp() {
 
       gap: "7px",
 
-      color: "#a7aaa9",
+      color: lightTheme ? "#75613c" : "#d2c5a5",
 
       fontSize: "8px",
 
@@ -2096,8 +2091,8 @@ function ChatApp() {
       border: "1px solid rgba(243,223,170,.28)",
       borderRadius: "999px",
       padding: "9px 13px",
-      background: "rgba(3,6,10,.45)",
-      color: "#e5d2a0",
+      background: lightTheme ? "rgba(255,250,237,.94)" : "rgba(3,6,10,.92)",
+      color: lightTheme ? "#795817" : "#f5d98e",
       fontSize: "9px",
       fontWeight: "700",
       letterSpacing: ".4px",
@@ -2121,10 +2116,9 @@ function ChatApp() {
       padding:
         "12px 24px",
 
-      color: "#90979c",
+      color: lightTheme ? "#715b32" : "#e0d0aa",
 
-      background:
-        "rgba(2,6,10,.42)",
+      background: lightTheme ? "rgba(238,226,202,.9)" : "rgba(2,6,10,.92)",
 
       borderBottom:
         "1px solid rgba(243,223,170,.07)",
@@ -2172,8 +2166,7 @@ function ChatApp() {
       padding:
         "10px 22px 11px",
 
-      background:
-        "rgba(3,6,9,.42)",
+      background: lightTheme ? "rgba(237,226,204,.92)" : "rgba(3,6,9,.94)",
 
       borderBottom:
         "1px solid rgba(243,223,170,.07)",
@@ -2193,7 +2186,7 @@ function ChatApp() {
 
       alignItems: "center",
 
-      color: "#777f85",
+      color: lightTheme ? "#765c2c" : "#d9bd78",
 
       fontSize: "8px",
 
@@ -2359,18 +2352,17 @@ function ChatApp() {
       borderRadius:
         "22px 22px 22px 7px",
 
-      color:
-        COLORS.text,
+      color: lightTheme ? "#332712" : "#fff5dc",
 
       /*
        * Τα bubbles επίσης είναι διάφανα.
        */
 
-      background:
-        "linear-gradient(145deg, rgba(29,42,54,.48), rgba(9,16,23,.40))",
+      background: lightTheme
+        ? "linear-gradient(145deg,#fffdf7,#f1e5ca)"
+        : "linear-gradient(145deg,#211b10,#090908)",
 
-      border:
-        "1px solid rgba(243,223,170,.12)",
+      border: lightTheme ? "1px solid rgba(174,128,40,.52)" : "1px solid rgba(226,183,82,.5)",
 
       boxShadow:
         "0 16px 38px rgba(0,0,0,.27)",
@@ -2418,11 +2410,9 @@ function ChatApp() {
       padding:
         "12px 14px 16px",
 
-      background:
-        "rgba(3,6,10,.76)",
+      background: lightTheme ? "rgba(250,246,235,.99)" : "rgba(2,3,4,.98)",
 
-      borderTop:
-        "1px solid rgba(243,223,170,.13)",
+      borderTop: lightTheme ? "1px solid rgba(174,128,40,.5)" : "1px solid rgba(226,183,82,.5)",
 
       backdropFilter:
         "blur(25px)",
@@ -2454,14 +2444,11 @@ function ChatApp() {
       padding:
         "9px 14px",
 
-      border:
-        "1px solid rgba(243,223,170,.16)",
+      border: lightTheme ? "1px solid rgba(174,128,40,.58)" : "1px solid rgba(226,183,82,.58)",
 
-      background:
-        "linear-gradient(145deg, rgba(30,42,53,.72), rgba(15,22,29,.68))",
+      background: lightTheme ? "linear-gradient(145deg,#fffaf0,#f0e3c5)" : "linear-gradient(145deg,#211b10,#0b0b09)",
 
-      color:
-        "#d9cda9",
+      color: lightTheme ? "#76551a" : "#f3d990",
 
       fontSize: "9px",
 
@@ -2486,11 +2473,9 @@ function ChatApp() {
       borderRadius:
         "21px",
 
-      background:
-        "rgba(18,27,36,.72)",
+      background: lightTheme ? "rgba(255,252,243,.99)" : "rgba(12,12,10,.98)",
 
-      border:
-        "1px solid rgba(243,223,170,.19)",
+      border: lightTheme ? "1px solid rgba(174,128,40,.62)" : "1px solid rgba(226,183,82,.62)",
 
       boxShadow:
         "inset 0 1px rgba(255,255,255,.025), 0 12px 35px rgba(0,0,0,.22)",
@@ -2555,7 +2540,7 @@ function ChatApp() {
 
       textAlign: "center",
 
-      color: "#555d63",
+      color: lightTheme ? "#81652e" : "#d4b76c",
 
       fontSize: "7px",
 
@@ -2636,6 +2621,16 @@ function ChatApp() {
 
               ONLINE
             </div>
+
+            <button
+              type="button"
+              style={{ ...styles.logout, marginLeft: "auto", background: lightTheme ? "#fff8e8" : "#211909", borderColor: lightTheme ? "#b88a32" : "#e3bd65", color: lightTheme ? "#795817" : "#f5d98e", minWidth: "40px" }}
+              onClick={() => setTheme(lightTheme ? "dark" : "light")}
+              aria-label="Αλλαγή θέματος"
+              title={lightTheme ? "Σκούρο θέμα" : "Λευκό θέμα"}
+            >
+              {lightTheme ? "☾" : "☼"}
+            </button>
 
             {!isAdmin && (
               <button
