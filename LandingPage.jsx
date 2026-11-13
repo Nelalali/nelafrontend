@@ -1,4 +1,4 @@
-```jsx
+
 import { useEffect, useMemo, useState } from "react";
 import "./LandingPage.css";
 
