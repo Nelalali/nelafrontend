@@ -20,9 +20,12 @@ function getBusinessConfig() {
 }
 
 const API_BASE_URL = (
+  import.meta.env.VITE_API_URL ||
   import.meta.env.VITE_API_BASE_URL ||
   (["localhost", "127.0.0.1"].includes(window.location.hostname) ? "http://localhost:3001" : "")
-).replace(/\/+$/, "");
+).replace(/\/+$/, "").replace(/\/chat$/i, "");
+
+const CHAT_ENDPOINT = API_BASE_URL ? `${API_BASE_URL}/chat` : null;
 
 const COLORS = {
   gold: "#d6b76a",
@@ -849,8 +852,12 @@ async function askNelaAI(
 ) {
   try {
     const response =
+      if (!CHAT_ENDPOINT) {
+        throw new Error("NELA AI server is not configured. Set VITE_API_URL in the frontend environment.");
+      }
+
       await fetch(
-        `${API_BASE_URL}/chat`,
+        CHAT_ENDPOINT,
         {
           method: "POST",
 
@@ -915,6 +922,16 @@ function ChatApp() {
   useEffect(() => {
     try { localStorage.setItem("nelaTheme", theme); } catch {}
   }, [theme]);
+
+  useEffect(() => {
+    const syncTheme = (event) => {
+      if (event.key === "nelaTheme") {
+        setTheme(event.newValue === "light" ? "light" : "dark");
+      }
+    };
+    window.addEventListener("storage", syncTheme);
+    return () => window.removeEventListener("storage", syncTheme);
+  }, []);
   const lightTheme = theme === "light";
 
   /* =======================================================
