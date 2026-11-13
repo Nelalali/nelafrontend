@@ -1764,8 +1764,7 @@ export default function LandingPage() {
                     style={{
                       margin: 0,
                       fontSize: "20px",
-                      color:
-                        #ead5a6,
+                      color: "#ead5a6",
                       fontFamily:
                         '"Cormorant Garamond", serif',
                       letterSpacing: "1px",
@@ -1778,8 +1777,7 @@ export default function LandingPage() {
                     style={{
                       margin: "3px 0 0",
                       fontSize: "10px",
-                      color:
-                        #a99572,
+                      color: "#a99572",
                     }}
                   >
                     Your personal appointment assistant
