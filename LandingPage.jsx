@@ -12,8 +12,13 @@ const HISTORY_KEY = "nelaConversationHistory";
 const MEMORY_KEY = "nelaClientMemory";
 const THEME_KEY = "nelaTheme";
 
-const API_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:3001/chat";
+const API_BASE_URL = (
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_API_BASE_URL ||
+  (["localhost", "127.0.0.1"].includes(window.location.hostname) ? "http://localhost:3001" : "")
+).replace(/\/+$/, "").replace(/\/chat$/i, "");
+
+const API_URL = API_BASE_URL ? `${API_BASE_URL}/chat` : null;
 
 const categories = [
   "Beauty Salon",
@@ -207,9 +212,13 @@ function Field({
 export default function LandingPage() {
   const [mode, setMode] = useState("home");
 
-  const [theme, setTheme] = useState(() =>
-    readStorage(THEME_KEY, "dark")
-  );
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem(THEME_KEY) === "light" ? "light" : "dark";
+    } catch {
+      return "dark";
+    }
+  });
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -262,8 +271,22 @@ export default function LandingPage() {
   ======================================================= */
 
   useEffect(() => {
-    writeStorage(THEME_KEY, theme);
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch (error) {
+      console.error("NELA theme preference could not be saved:", error);
+    }
   }, [theme]);
+
+  useEffect(() => {
+    const syncTheme = (event) => {
+      if (event.key === THEME_KEY) {
+        setTheme(event.newValue === "light" ? "light" : "dark");
+      }
+    };
+    window.addEventListener("storage", syncTheme);
+    return () => window.removeEventListener("storage", syncTheme);
+  }, []);
 
   useEffect(() => {
     if (!currentUser?.id) return;
@@ -821,6 +844,10 @@ export default function LandingPage() {
     setChatLoading(true);
 
     try {
+      if (!API_URL) {
+        throw new Error("NELA AI server is not configured. Set VITE_API_URL in the frontend environment.");
+      }
+
       if (!API_URL) {
         throw new Error("NELA AI server is not configured. Set VITE_API_URL in the frontend environment.");
       }
