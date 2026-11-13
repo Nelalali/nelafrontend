@@ -568,3 +568,47 @@ select {
     font-size: 9px;
   }
 }
+
+
+/* NELA professional refinement */
+.nela-page {
+  font-family: "DM Sans", sans-serif;
+  letter-spacing: .01em;
+}
+.nela-header {
+  min-height: 82px;
+  backdrop-filter: blur(18px);
+}
+.nela-brand {
+  letter-spacing: .28em;
+}
+.nela-card {
+  border-radius: 22px;
+  box-shadow: 0 28px 80px rgba(0,0,0,.42), inset 0 1px rgba(255,255,255,.045);
+}
+.nela-field input,
+.nela-field select {
+  min-height: 50px;
+  border-radius: 12px;
+}
+.nela-primary-button,
+.nela-secondary-button,
+.nela-business-button {
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.nela-primary-button:hover,
+.nela-secondary-button:hover,
+.nela-business-button:hover {
+  transform: translateY(-1px);
+}
+.nela-message {
+  box-shadow: 0 14px 40px rgba(0,0,0,.25);
+}
+.theme-light .nela-page { color-scheme: light; }
+.theme-light .nela-field input,
+.theme-light .nela-field select { color-scheme: light; }
+@media (max-width: 600px) {
+  .nela-header { min-height: 72px; }
+  .nela-navigation { gap: 7px; }
+  .nela-theme-button { width: 36px; height: 36px; }
+}
