@@ -1,3 +1,4 @@
+```jsx
 import { useEffect, useMemo, useState } from "react";
 import "./LandingPage.css";
 
@@ -68,14 +69,24 @@ function getClientName(client) {
 
   if (client.name) return client.name;
 
-  return `${client.firstName || ""} ${client.lastName || ""}`.trim() ||
-    "Customer";
+  return (
+    `${client.firstName || ""} ${client.lastName || ""}`.trim() ||
+    "Customer"
+  );
 }
 
 function getAppointmentDate(appointment) {
-  return new Date(
-    appointment.date || appointment.datetime || appointment.start || 0
-  );
+  const value =
+    appointment.date ||
+    appointment.datetime ||
+    appointment.start ||
+    "";
+
+  if (!value) return new Date(0);
+
+  const date = new Date(value);
+
+  return Number.isNaN(date.getTime()) ? new Date(0) : date;
 }
 
 function getClientAppointments(client) {
@@ -90,7 +101,8 @@ function getClientAppointments(client) {
         (booking) =>
           booking.clientId === client?.id ||
           booking.userId === client?.id ||
-          normalizeEmail(booking.email) === normalizeEmail(client?.email)
+          normalizeEmail(booking.email) ===
+            normalizeEmail(client?.email)
       )
     : [];
 
@@ -112,9 +124,15 @@ function getHistoryForClient(clientId) {
 
   if (!Array.isArray(history)) return [];
 
-  return history.filter(
-    (item) => item.clientId === clientId || !item.clientId
-  );
+  return history
+    .filter(
+      (item) => item.clientId === clientId || !item.clientId
+    )
+    .sort(
+      (a, b) =>
+        new Date(a.timestamp || 0) -
+        new Date(b.timestamp || 0)
+    );
 }
 
 /* =========================================================
@@ -234,9 +252,10 @@ export default function LandingPage() {
   const [appointments, setAppointments] = useState([]);
 
   const [accountSection, setAccountSection] = useState("upcoming");
-
   const [appointmentFilter, setAppointmentFilter] =
     useState("upcoming");
+
+  const [menuOpen, setMenuOpen] = useState(false);
 
   /* =======================================================
      INITIALIZATION
@@ -247,24 +266,25 @@ export default function LandingPage() {
   }, [theme]);
 
   useEffect(() => {
-    if (currentUser?.id) {
-      const clients = readStorage(CLIENTS_KEY, []);
+    if (!currentUser?.id) return;
 
-      const found = clients.find(
-        (client) => client.id === currentUser.id
+    const clients = readStorage(CLIENTS_KEY, []);
+
+    const found = clients.find(
+      (client) => client.id === currentUser.id
+    );
+
+    if (found) {
+      setCurrentUser(found);
+      setAppointments(getClientAppointments(found));
+
+      setClientMemory(
+        readStorage(MEMORY_KEY, {})[found.id] ||
+          found.memory ||
+          {}
       );
 
-      if (found) {
-        setCurrentUser(found);
-        setAppointments(getClientAppointments(found));
-        setClientMemory(
-          readStorage(MEMORY_KEY, {})[found.id] ||
-            found.memory ||
-            {}
-        );
-
-        setChatMessages(getHistoryForClient(found.id));
-      }
+      setChatMessages(getHistoryForClient(found.id));
     }
   }, []);
 
@@ -278,6 +298,7 @@ export default function LandingPage() {
   const changeMode = (newMode) => {
     setError("");
     setMessage("");
+    setMenuOpen(false);
     setMode(newMode);
   };
 
@@ -570,6 +591,8 @@ export default function LandingPage() {
     setAppointments([]);
     setChatMessages([]);
     setClientMemory({});
+    setMenuOpen(false);
+
     setLogin({
       email: "",
       password: "",
@@ -715,12 +738,14 @@ export default function LandingPage() {
         )
       : [];
 
+    const userHistory = newHistory.map((item) => ({
+      ...item,
+      clientId: currentUser.id,
+    }));
+
     writeStorage(HISTORY_KEY, [
       ...otherMessages,
-      ...newHistory.map((item) => ({
-        ...item,
-        clientId: currentUser.id,
-      })),
+      ...userHistory,
     ]);
 
     setChatMessages(newHistory);
@@ -820,16 +845,22 @@ export default function LandingPage() {
 
       const data = await response.json();
 
+      // Supports the common response formats used by the backend.
       const reply =
+        data.answer ||
         data.reply ||
         data.message ||
         data.response ||
+        data.output_text ||
         "I am here to help you.";
 
       const assistantMessage = {
         id: createId(),
         role: "assistant",
-        content: reply,
+        content:
+          typeof reply === "string"
+            ? reply
+            : JSON.stringify(reply),
         timestamp: new Date().toISOString(),
         clientId: currentUser.id,
       };
@@ -880,7 +911,24 @@ export default function LandingPage() {
   };
 
   /* =======================================================
-     UI HELPERS
+     MENU NAVIGATION
+  ======================================================= */
+
+  const openAccountSection = (section) => {
+    setAccountSection(section);
+    setMenuOpen(false);
+    setMode("account");
+  };
+
+  const openAppointments = (filter) => {
+    setAppointmentFilter(filter);
+    setAccountSection("appointments");
+    setMenuOpen(false);
+    setMode("account");
+  };
+
+  /* =======================================================
+     UI STYLES
   ======================================================= */
 
   const panelStyle = {
@@ -922,6 +970,28 @@ export default function LandingPage() {
       ? upcomingAppointments
       : previousAppointments;
 
+  const menuButtonStyle = {
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    gap: "13px",
+    padding: "14px 15px",
+    border: "none",
+    borderRadius: "11px",
+    background: "transparent",
+    color: "#dce9f8",
+    textAlign: "left",
+    fontSize: "12px",
+    cursor: "pointer",
+    transition: "background 0.2s ease",
+  };
+
+  const menuDivider = {
+    height: "1px",
+    background: "rgba(150,180,220,0.14)",
+    margin: "9px 0",
+  };
+
   /* =======================================================
      MAIN RENDER
   ======================================================= */
@@ -952,22 +1022,31 @@ export default function LandingPage() {
             {theme === "dark" ? "☼" : "☾"}
           </button>
 
-          {currentUser && (
-            <>
-              <button
-                style={actionButton}
-                onClick={() => changeMode("account")}
-              >
-                MY ACCOUNT
-              </button>
+          {currentUser && mode !== "home" && (
+            <button
+              style={actionButton}
+              onClick={() => changeMode("chat")}
+            >
+              NELA CHAT
+            </button>
+          )}
 
-              <button
-                style={actionButton}
-                onClick={logout}
-              >
-                LOG OUT
-              </button>
-            </>
+          {currentUser && (
+            <button
+              style={actionButton}
+              onClick={() => changeMode("account")}
+            >
+              MY ACCOUNT
+            </button>
+          )}
+
+          {currentUser && (
+            <button
+              style={actionButton}
+              onClick={logout}
+            >
+              LOG OUT
+            </button>
           )}
 
           {!currentUser && (
@@ -1321,6 +1400,8 @@ export default function LandingPage() {
               <p>Your personal NELA dashboard.</p>
             </div>
 
+            {/* PROFILE SUMMARY */}
+
             <div
               style={{
                 padding: "22px",
@@ -1345,6 +1426,8 @@ export default function LandingPage() {
               </p>
             </div>
 
+            {/* ACCOUNT NAVIGATION */}
+
             <div
               style={{
                 display: "flex",
@@ -1355,20 +1438,14 @@ export default function LandingPage() {
             >
               <button
                 style={actionButton}
-                onClick={() => {
-                  setAppointmentFilter("upcoming");
-                  setAccountSection("appointments");
-                }}
+                onClick={() => openAppointments("upcoming")}
               >
                 Upcoming Appointments
               </button>
 
               <button
                 style={actionButton}
-                onClick={() => {
-                  setAppointmentFilter("previous");
-                  setAccountSection("appointments");
-                }}
+                onClick={() => openAppointments("previous")}
               >
                 Previous Appointments
               </button>
@@ -1382,11 +1459,27 @@ export default function LandingPage() {
 
               <button
                 style={actionButton}
+                onClick={() => setAccountSection("memory")}
+              >
+                NELA Memory
+              </button>
+
+              <button
+                style={actionButton}
+                onClick={() => setAccountSection("history")}
+              >
+                Chat History
+              </button>
+
+              <button
+                style={actionButton}
                 onClick={() => changeMode("chat")}
               >
                 NELA Chat
               </button>
             </div>
+
+            {/* PROFILE */}
 
             {accountSection === "profile" && (
               <div>
@@ -1406,6 +1499,124 @@ export default function LandingPage() {
                 </p>
               </div>
             )}
+
+            {/* MEMORY */}
+
+            {accountSection === "memory" && (
+              <div>
+                <h3 style={sectionTitle}>NELA Memory</h3>
+
+                <p style={mutedText}>
+                  Information NELA has saved about you.
+                </p>
+
+                {Object.keys(clientMemory || {}).length === 0 ? (
+                  <p style={mutedText}>
+                    NELA has not saved any personal preferences yet.
+                    As you use the assistant, supported memory
+                    information may appear here.
+                  </p>
+                ) : (
+                  <pre
+                    style={{
+                      whiteSpace: "pre-wrap",
+                      overflowWrap: "anywhere",
+                      color: "var(--text)",
+                      background: "rgba(0,0,0,0.15)",
+                      padding: "18px",
+                      borderRadius: "14px",
+                      fontSize: "12px",
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    {JSON.stringify(clientMemory, null, 2)}
+                  </pre>
+                )}
+              </div>
+            )}
+
+            {/* CHAT HISTORY */}
+
+            {accountSection === "history" && (
+              <div>
+                <h3 style={sectionTitle}>Conversation History</h3>
+
+                <p style={mutedText}>
+                  Your saved conversations with NELA.
+                </p>
+
+                {chatMessages.length === 0 ? (
+                  <p style={mutedText}>
+                    No conversation history yet.
+                  </p>
+                ) : (
+                  <div
+                    style={{
+                      display: "grid",
+                      gap: "12px",
+                      marginTop: "18px",
+                    }}
+                  >
+                    {chatMessages.map((item) => (
+                      <div
+                        key={item.id || `${item.timestamp}-${item.role}`}
+                        style={{
+                          padding: "15px",
+                          borderRadius: "13px",
+                          border: "1px solid var(--border)",
+                          background: "rgba(0,0,0,0.12)",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            gap: "10px",
+                            flexWrap: "wrap",
+                            marginBottom: "8px",
+                          }}
+                        >
+                          <strong
+                            style={{
+                              color:
+                                item.role === "user"
+                                  ? "#78b8ff"
+                                  : "var(--gold-light)",
+                              fontSize: "11px",
+                            }}
+                          >
+                            {item.role === "user" ? "YOU" : "NELA"}
+                          </strong>
+
+                          <span style={mutedText}>
+                            {item.timestamp
+                              ? new Date(
+                                  item.timestamp
+                                ).toLocaleString()
+                              : ""}
+                          </span>
+                        </div>
+
+                        <p
+                          style={{
+                            color: "var(--text)",
+                            fontSize: "12px",
+                            lineHeight: 1.7,
+                            whiteSpace: "pre-wrap",
+                            overflowWrap: "anywhere",
+                            margin: 0,
+                          }}
+                        >
+                          {item.content || item.message || ""}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* APPOINTMENTS */}
 
             {accountSection === "appointments" && (
               <div>
@@ -1469,16 +1680,20 @@ export default function LandingPage() {
                           {appointment.status || "Pending"}
                         </p>
 
-                        {String(appointment.status || "").toLowerCase() !==
-                          "cancelled" &&
-                          String(appointment.status || "").toLowerCase() !==
-                            "completed" &&
-                          getAppointmentDate(appointment) >= new Date() && (
+                        {String(
+                          appointment.status || ""
+                        ).toLowerCase() !== "cancelled" &&
+                          String(
+                            appointment.status || ""
+                          ).toLowerCase() !== "completed" &&
+                          getAppointmentDate(appointment) >=
+                            new Date() && (
                             <button
                               style={{
                                 ...actionButton,
                                 color: "#e8aaaa",
-                                borderColor: "rgba(220,100,100,0.5)",
+                                borderColor:
+                                  "rgba(220,100,100,0.5)",
                                 marginTop: "10px",
                               }}
                               onClick={() =>
@@ -1513,14 +1728,24 @@ export default function LandingPage() {
         {mode === "chat" && currentUser && (
           <div
             style={{
-              ...panelStyle,
+              width: "100%",
               maxWidth: "950px",
               height: "min(720px, 80vh)",
               minHeight: "500px",
               display: "flex",
               flexDirection: "column",
-              padding: "0",
-              overflow: "hidden",
+              position: "relative",
+              overflow: "visible",
+              borderRadius: "22px",
+              border: "1px solid rgba(85,145,210,0.28)",
+              background:
+                theme === "dark"
+                  ? "linear-gradient(145deg,#101b2b,#101725 55%,#111c2c)"
+                  : "linear-gradient(145deg,#f5f9ff,#edf4fc)",
+              boxShadow:
+                theme === "dark"
+                  ? "0 25px 75px rgba(0,0,0,0.45)"
+                  : "0 20px 65px rgba(30,70,120,0.12)",
             }}
           >
 
@@ -1528,61 +1753,290 @@ export default function LandingPage() {
 
             <div
               style={{
-                padding: "20px 25px",
-                borderBottom: "1px solid var(--border)",
+                padding: "18px 22px",
+                borderBottom:
+                  "1px solid rgba(105,160,220,0.18)",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                gap: "10px",
-                flexWrap: "wrap",
+                gap: "12px",
+                position: "relative",
+                zIndex: 5,
               }}
             >
-              <div>
-                <h2
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                }}
+              >
+                <div
                   style={{
-                    ...sectionTitle,
-                    margin: 0,
+                    width: "43px",
+                    height: "43px",
+                    borderRadius: "14px",
+                    display: "grid",
+                    placeItems: "center",
+                    color: "#d9eaff",
+                    fontSize: "22px",
+                    background:
+                      "linear-gradient(145deg,#315e91,#193b63)",
+                    boxShadow:
+                      "0 5px 18px rgba(42,105,170,0.25)",
                   }}
                 >
-                  NELA <span style={{ color: "var(--gold)" }}>✦</span>
-                </h2>
+                  ✦
+                </div>
 
-                <p style={mutedText}>
-                  Your personal appointment assistant
-                </p>
+                <div>
+                  <h2
+                    style={{
+                      margin: 0,
+                      fontSize: "20px",
+                      color:
+                        theme === "dark" ? "#e4efff" : "#183454",
+                      fontFamily:
+                        '"Cormorant Garamond", serif',
+                      letterSpacing: "1px",
+                    }}
+                  >
+                    NELA
+                  </h2>
+
+                  <p
+                    style={{
+                      margin: "3px 0 0",
+                      fontSize: "10px",
+                      color:
+                        theme === "dark" ? "#8ca8c9" : "#66809e",
+                    }}
+                  >
+                    Your personal appointment assistant
+                  </p>
+                </div>
               </div>
+
+              {/* HEADER ACTIONS */}
 
               <div
                 style={{
                   display: "flex",
+                  alignItems: "center",
                   gap: "9px",
-                  flexWrap: "wrap",
                 }}
               >
                 <button
-                  style={actionButton}
-                  onClick={() => setTheme(
-                    theme === "dark" ? "light" : "dark"
-                  )}
-                  title="Change chat appearance"
+                  onClick={() =>
+                    setTheme(
+                      theme === "dark" ? "light" : "dark"
+                    )
+                  }
+                  title="Change appearance"
+                  style={{
+                    width: "39px",
+                    height: "39px",
+                    borderRadius: "12px",
+                    border:
+                      "1px solid rgba(115,165,220,0.25)",
+                    background: "rgba(65,120,180,0.10)",
+                    color:
+                      theme === "dark" ? "#b7d6ff" : "#315e91",
+                    cursor: "pointer",
+                    fontSize: "17px",
+                  }}
                 >
-                  {theme === "dark" ? "☼ Light" : "☾ Dark"}
+                  {theme === "dark" ? "☼" : "☾"}
                 </button>
 
-                <button
-                  style={actionButton}
-                  onClick={() => changeMode("account")}
-                >
-                  My Account
-                </button>
+                {/* HAMBURGER MENU */}
 
                 <button
-                  style={actionButton}
-                  onClick={clearChat}
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  aria-label="Open account menu"
+                  aria-expanded={menuOpen}
+                  style={{
+                    width: "43px",
+                    height: "43px",
+                    borderRadius: "12px",
+                    border:
+                      "1px solid rgba(115,165,220,0.3)",
+                    background: menuOpen
+                      ? "rgba(70,130,200,0.25)"
+                      : "rgba(65,120,180,0.10)",
+                    color:
+                      theme === "dark" ? "#dceaff" : "#315e91",
+                    cursor: "pointer",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "5px",
+                  }}
                 >
-                  Clear Chat
+                  <span
+                    style={{
+                      width: "18px",
+                      height: "2px",
+                      background: "currentColor",
+                      borderRadius: "3px",
+                    }}
+                  />
+                  <span
+                    style={{
+                      width: "18px",
+                      height: "2px",
+                      background: "currentColor",
+                      borderRadius: "3px",
+                    }}
+                  />
+                  <span
+                    style={{
+                      width: "18px",
+                      height: "2px",
+                      background: "currentColor",
+                      borderRadius: "3px",
+                    }}
+                  />
                 </button>
               </div>
+
+              {/* DROPDOWN MENU */}
+
+              {menuOpen && (
+                <>
+                  <div
+                    onClick={() => setMenuOpen(false)}
+                    style={{
+                      position: "fixed",
+                      inset: 0,
+                      zIndex: 8,
+                    }}
+                  />
+
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "72px",
+                      right: "20px",
+                      width: "260px",
+                      padding: "13px",
+                      borderRadius: "17px",
+                      border:
+                        "1px solid rgba(105,160,220,0.3)",
+                      background:
+                        "linear-gradient(145deg,#17283e,#101c2d)",
+                      boxShadow:
+                        "0 20px 55px rgba(0,0,0,0.45)",
+                      zIndex: 10,
+                    }}
+                  >
+                    {/* MENU PROFILE */}
+
+                    <div
+                      style={{
+                        padding: "12px 13px 15px",
+                        borderBottom:
+                          "1px solid rgba(150,180,220,0.14)",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: "13px",
+                          color: "#e5f0ff",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {getClientName(currentUser)}
+                      </div>
+
+                      <div
+                        style={{
+                          fontSize: "10px",
+                          color: "#8faaca",
+                          marginTop: "5px",
+                          overflowWrap: "anywhere",
+                        }}
+                      >
+                        {currentUser.email}
+                      </div>
+                    </div>
+
+                    <button
+                      style={menuButtonStyle}
+                      onClick={() => openAppointments("upcoming")}
+                    >
+                      <span>📅</span>
+                      <span>Upcoming appointments</span>
+                    </button>
+
+                    <button
+                      style={menuButtonStyle}
+                      onClick={() => openAppointments("previous")}
+                    >
+                      <span>🗓</span>
+                      <span>Previous appointments</span>
+                    </button>
+
+                    <div style={menuDivider} />
+
+                    <button
+                      style={menuButtonStyle}
+                      onClick={() =>
+                        openAccountSection("history")
+                      }
+                    >
+                      <span>💬</span>
+                      <span>Conversation history</span>
+                    </button>
+
+                    <button
+                      style={menuButtonStyle}
+                      onClick={() =>
+                        openAccountSection("memory")
+                      }
+                    >
+                      <span>✧</span>
+                      <span>What NELA remembers</span>
+                    </button>
+
+                    <button
+                      style={menuButtonStyle}
+                      onClick={() =>
+                        openAccountSection("profile")
+                      }
+                    >
+                      <span>👤</span>
+                      <span>My profile</span>
+                    </button>
+
+                    <div style={menuDivider} />
+
+                    <button
+                      style={menuButtonStyle}
+                      onClick={() => {
+                        setMenuOpen(false);
+                        clearChat();
+                      }}
+                    >
+                      <span>🧹</span>
+                      <span>Clear conversation</span>
+                    </button>
+
+                    <button
+                      style={{
+                        ...menuButtonStyle,
+                        color: "#f0a6a6",
+                      }}
+                      onClick={logout}
+                    >
+                      <span>↪</span>
+                      <span>Log out</span>
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* CHAT MESSAGES */}
@@ -1594,7 +2048,7 @@ export default function LandingPage() {
                 padding: "25px",
                 display: "flex",
                 flexDirection: "column",
-                gap: "15px",
+                gap: "16px",
               }}
             >
 
@@ -1606,46 +2060,109 @@ export default function LandingPage() {
                     maxWidth: "400px",
                   }}
                 >
-                  <div className="nela-emblem">✧</div>
+                  <div
+                    style={{
+                      width: "65px",
+                      height: "65px",
+                      borderRadius: "22px",
+                      display: "grid",
+                      placeItems: "center",
+                      margin: "0 auto 18px",
+                      fontSize: "30px",
+                      color: "#c5e0ff",
+                      background:
+                        "linear-gradient(145deg,#315e91,#193b63)",
+                      boxShadow:
+                        "0 8px 25px rgba(40,105,175,0.25)",
+                    }}
+                  >
+                    ✦
+                  </div>
 
-                  <h2 style={sectionTitle}>
-                    Welcome, {getClientName(currentUser).split(" ")[0]}
+                  <h2
+                    style={{
+                      ...sectionTitle,
+                      color:
+                        theme === "dark" ? "#d8e9ff" : "#244d78",
+                    }}
+                  >
+                    Welcome,{" "}
+                    {getClientName(currentUser).split(" ")[0]}
                   </h2>
 
-                  <p style={mutedText}>
+                  <p
+                    style={{
+                      ...mutedText,
+                      color:
+                        theme === "dark" ? "#9bb3d0" : "#627d9c",
+                      lineHeight: 1.8,
+                    }}
+                  >
                     I'm NELA, your personal appointment assistant.
                     How can I help you today?
                   </p>
                 </div>
               )}
 
-              {chatMessages.map((item) => {
+              {chatMessages.map((item, index) => {
                 const isUser = item.role === "user";
 
                 return (
                   <div
-                    key={item.id || createId()}
+                    key={
+                      item.id ||
+                      `${item.timestamp || "message"}-${index}`
+                    }
                     style={{
-                      alignSelf: isUser ? "flex-end" : "flex-start",
+                      alignSelf: isUser
+                        ? "flex-end"
+                        : "flex-start",
                       maxWidth: "82%",
                       padding: "14px 18px",
-                      borderRadius: "18px",
+                      borderRadius: isUser
+                        ? "18px 18px 5px 18px"
+                        : "18px 18px 18px 5px",
                       background: isUser
-                        ? "linear-gradient(135deg,#dfc48c,#b78e49)"
+                        ? "linear-gradient(135deg,#397fc0,#24558b)"
                         : theme === "dark"
-                          ? "rgba(255,255,255,0.07)"
-                          : "rgba(0,0,0,0.06)",
-                      color: isUser ? "#17150f" : "var(--text)",
+                          ? "linear-gradient(145deg,#1b2c42,#172438)"
+                          : "linear-gradient(145deg,#ffffff,#eaf2fc)",
+                      color: isUser
+                        ? "#ffffff"
+                        : theme === "dark"
+                          ? "#dceaff"
+                          : "#263f5d",
                       border: isUser
-                        ? "none"
-                        : "1px solid var(--border)",
+                        ? "1px solid rgba(130,190,255,0.25)"
+                        : "1px solid rgba(105,155,210,0.2)",
+                      boxShadow: isUser
+                        ? "0 5px 18px rgba(35,95,160,0.18)"
+                        : "0 4px 15px rgba(0,0,0,0.08)",
                       whiteSpace: "pre-wrap",
                       overflowWrap: "anywhere",
                       fontSize: "13px",
-                      lineHeight: 1.7,
+                      lineHeight: 1.75,
                     }}
                   >
                     {item.content || item.message || ""}
+                    
+                    {item.timestamp && (
+                      <div
+                        style={{
+                          fontSize: "9px",
+                          opacity: 0.55,
+                          marginTop: "7px",
+                          textAlign: "right",
+                        }}
+                      >
+                        {new Date(
+                          item.timestamp
+                        ).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -1655,9 +2172,15 @@ export default function LandingPage() {
                   style={{
                     alignSelf: "flex-start",
                     padding: "13px 18px",
-                    borderRadius: "18px",
-                    border: "1px solid var(--border)",
-                    color: "var(--gold-light)",
+                    borderRadius: "18px 18px 18px 5px",
+                    border:
+                      "1px solid rgba(105,155,210,0.2)",
+                    background:
+                      theme === "dark"
+                        ? "#1b2c42"
+                        : "#edf4fc",
+                    color:
+                      theme === "dark" ? "#a9cefa" : "#426d9b",
                     fontSize: "12px",
                   }}
                 >
@@ -1675,40 +2198,61 @@ export default function LandingPage() {
                 display: "flex",
                 gap: "10px",
                 padding: "18px",
-                borderTop: "1px solid var(--border)",
+                borderTop:
+                  "1px solid rgba(105,160,220,0.18)",
+                background:
+                  theme === "dark"
+                    ? "rgba(9,18,30,0.45)"
+                    : "rgba(235,243,253,0.75)",
+                borderRadius: "0 0 22px 22px",
               }}
             >
 
               <input
                 type="text"
                 value={chatInput}
-                onChange={(event) => setChatInput(event.target.value)}
+                onChange={(event) =>
+                  setChatInput(event.target.value)
+                }
                 placeholder="Write your message to NELA..."
                 disabled={chatLoading}
                 style={{
                   flex: 1,
                   minWidth: 0,
-                  height: "48px",
+                  height: "49px",
                   borderRadius: "30px",
-                  padding: "0 18px",
+                  padding: "0 19px",
                   outline: "none",
-                  border: "1px solid var(--border)",
+                  border:
+                    "1px solid rgba(105,155,210,0.3)",
                   background:
                     theme === "dark"
-                      ? "rgba(0,0,0,0.25)"
-                      : "rgba(255,255,255,0.75)",
-                  color: "var(--text)",
+                      ? "rgba(255,255,255,0.055)"
+                      : "#ffffff",
+                  color:
+                    theme === "dark" ? "#e2efff" : "#243e5b",
                   fontSize: "12px",
                 }}
               />
 
               <button
                 type="submit"
-                className="nela-primary-button"
                 disabled={chatLoading || !chatInput.trim()}
                 style={{
                   minWidth: "95px",
-                  opacity: chatLoading || !chatInput.trim() ? 0.5 : 1,
+                  border: "none",
+                  borderRadius: "30px",
+                  padding: "0 20px",
+                  color: "#ffffff",
+                  background:
+                    "linear-gradient(135deg,#397fc0,#24558b)",
+                  cursor: "pointer",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  opacity:
+                    chatLoading || !chatInput.trim() ? 0.5 : 1,
+                  boxShadow:
+                    "0 5px 18px rgba(35,95,160,0.2)",
                 }}
               >
                 Send
@@ -1743,3 +2287,4 @@ export default function LandingPage() {
     </main>
   );
 }
+```
