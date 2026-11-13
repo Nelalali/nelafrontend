@@ -707,3 +707,38 @@ select {
   background: linear-gradient(145deg,#fffdf7,#f0e5d0) !important;
   border-color: rgba(151,112,45,.35) !important;
 }
+
+/* Logo artwork remains intact in both themes */
+.theme-light .nela-brand-logo {
+  filter: drop-shadow(0 5px 14px rgba(0,0,0,.18)) !important;
+  background: #100b06;
+  border-radius: 8px;
+}
+.theme-light-chat img[alt="NELA"] {
+  filter: none !important;
+  background: #100b06;
+  border-radius: 10px;
+}
+/* Refined chat panel in light mode */
+.nela-chat-panel.theme-light-chat {
+  color: #342817 !important;
+}
+.theme-light-chat > div[style*="overflow-y: auto"] {
+  color: #342817 !important;
+}
+.theme-light-chat > div[style*="overflow-y: auto"] > div {
+  color: #342817;
+}
+.theme-light-chat input,
+.theme-light-chat textarea {
+  color: #342817 !important;
+}
+.theme-light-chat input::placeholder,
+.theme-light-chat textarea::placeholder {
+  color: #96866a !important;
+}
+.theme-light-chat button[aria-label="Open account menu"] {
+  background: rgba(255,255,255,.65) !important;
+  color: #72551f !important;
+  border-color: rgba(151,112,45,.35) !important;
+}
