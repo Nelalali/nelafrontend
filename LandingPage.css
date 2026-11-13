@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Italiana&family=Manrope:wght@400;500;600;700&display=swap");
 
 * {
   box-sizing: border-box;
@@ -1983,4 +1983,268 @@ body, button, input, select { font-family: "Manrope", sans-serif; }
   .nela-primary-button, .nela-secondary-button, .nela-business-button, .nela-theme-button {
     transition: all .25s cubic-bezier(.2,.75,.25,1) !important;
   }
+}
+
+
+/* =========================================================
+   NELA SIGNATURE — NOIR & CHAMPAGNE
+   One coherent dark espresso canvas, warm metallic type,
+   sculpted monogram and unified chat surfaces.
+   ========================================================= */
+.nela-page {
+  --nela-black: #090806;
+  --nela-espresso: #17110c;
+  --nela-espresso-2: #21170f;
+  --nela-gold: #d4bd8d;
+  --nela-gold-bright: #ead9b5;
+  --nela-gold-dim: #a58b5d;
+  --nela-copy: #d8c9a8;
+  --nela-muted: #a99a7d;
+  --background: #090806;
+  --surface: rgba(23,17,12,.96);
+  --text: #d8c9a8;
+  --muted: #a99a7d;
+  --gold: #d4bd8d;
+  --gold-light: #ead9b5;
+  --gold-deep: #a58b5d;
+  --border: rgba(212,189,141,.22);
+  background:
+    radial-gradient(ellipse at 50% 12%, rgba(104,75,39,.17), transparent 42%),
+    radial-gradient(ellipse at 50% 100%, rgba(58,38,21,.18), transparent 48%),
+    linear-gradient(145deg,#080705 0%,#100c08 52%,#080705 100%) !important;
+  color: var(--nela-gold) !important;
+  font-family: "Manrope", sans-serif !important;
+}
+.nela-page::before {
+  background: radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,.36) 100%) !important;
+}
+.nela-header {
+  background: rgba(9,8,6,.84) !important;
+  border-bottom: 1px solid rgba(212,189,141,.15) !important;
+  backdrop-filter: blur(24px) !important;
+}
+.nela-brand {
+  color: var(--nela-gold-bright) !important;
+  font-family: "Italiana","Cormorant Garamond",serif !important;
+  font-size: 29px !important;
+  font-weight: 400 !important;
+  letter-spacing: .22em !important;
+}
+.nela-monogram,.nela-chat-monogram,.nela-chat-welcome-monogram {
+  font-family: "Italiana","Cormorant Garamond",serif !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  color: transparent !important;
+  background: linear-gradient(145deg,#fff0c9 5%,#d8bd86 42%,#927449 78%,#ead8b2 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  text-shadow: 0 0 26px rgba(212,189,141,.13) !important;
+}
+.nela-monogram {
+  position: relative !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 43px !important;
+  height: 48px !important;
+  font-size: 47px !important;
+  letter-spacing: -.08em !important;
+  padding-right: .08em !important;
+}
+.nela-monogram::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 3px 1px 2px !important;
+  border: 1px solid rgba(212,189,141,.42) !important;
+  border-radius: 50% !important;
+  transform: scaleX(.78) !important;
+  pointer-events: none !important;
+}
+.nela-navigation button { color: var(--nela-gold) !important; }
+.nela-business-button,.nela-secondary-button {
+  color: var(--nela-gold-bright) !important;
+  border-color: rgba(212,189,141,.42) !important;
+  background: rgba(212,189,141,.035) !important;
+}
+.nela-business-button:hover,.nela-secondary-button:hover {
+  background: rgba(212,189,141,.12) !important;
+  color: #f1e4c8 !important;
+}
+.nela-theme-button {
+  color: var(--nela-gold) !important;
+  border-color: rgba(212,189,141,.35) !important;
+  background: rgba(212,189,141,.045) !important;
+}
+.nela-hero::before { color: #b49a6b !important; }
+.nela-hero h1 {
+  font-family: "Italiana","Cormorant Garamond",serif !important;
+  font-weight: 400 !important;
+  color: transparent !important;
+  background: linear-gradient(115deg,#f0dfb8 8%,#c9ad78 48%,#f1e1bd 88%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  text-shadow: 0 8px 42px rgba(0,0,0,.48) !important;
+  letter-spacing: .16em !important;
+}
+.nela-tagline,.nela-card-heading h2,.nela-card h2,.nela-card h3 {
+  color: var(--nela-gold-bright) !important;
+  font-family: "Cormorant Garamond",serif !important;
+  font-weight: 500 !important;
+}
+.nela-description,.nela-trust { color: #c2b18e !important; }
+.nela-trust span { color: #e8d5aa !important; }
+.nela-primary-button {
+  color: #171008 !important;
+  border: 1px solid #e2c995 !important;
+  background: linear-gradient(135deg,#ead8ae 0%,#c5a66e 52%,#a98951 100%) !important;
+  box-shadow: 0 9px 30px rgba(0,0,0,.35),inset 0 1px rgba(255,255,255,.52) !important;
+}
+.nela-card {
+  background: linear-gradient(145deg,rgba(31,23,15,.97),rgba(13,10,7,.98)) !important;
+  border-color: rgba(212,189,141,.25) !important;
+}
+.nela-field > span { color: #cdb98f !important; }
+.nela-field input,.nela-field select {
+  color: #ead9b5 !important;
+  background: rgba(0,0,0,.30) !important;
+  border-color: rgba(212,189,141,.24) !important;
+}
+.nela-footer { color: #9f8b68 !important; border-color: rgba(212,189,141,.13) !important; }
+
+/* Keep every part of the chat in the same espresso family. */
+.nela-chat-panel {
+  width: min(100%,454px) !important;
+  max-width: 454px !important;
+  height: min(820px,calc(100dvh - 116px)) !important;
+  min-height: 560px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(212,189,141,.28) !important;
+  border-radius: 27px !important;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(110,78,39,.15),transparent 48%),
+    linear-gradient(155deg,#1c140d 0%,#120d08 55%,#0b0906 100%) !important;
+  box-shadow: 0 32px 95px rgba(0,0,0,.62),inset 0 1px rgba(255,235,194,.055) !important;
+  color: var(--nela-gold) !important;
+  font-family: "Manrope",sans-serif !important;
+}
+.nela-chat-panel > div:first-of-type {
+  background: rgba(17,12,8,.96) !important;
+  border-bottom: 1px solid rgba(212,189,141,.19) !important;
+}
+.nela-chat-monogram {
+  position: relative !important;
+  width: 46px !important;
+  height: 46px !important;
+  display: grid !important;
+  place-items: center !important;
+  font-size: 45px !important;
+  letter-spacing: -.08em !important;
+}
+.nela-chat-monogram::after,.nela-chat-welcome-monogram::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 3px !important;
+  border: 1px solid rgba(212,189,141,.34) !important;
+  border-radius: 50% !important;
+  transform: scaleX(.78) !important;
+  pointer-events: none !important;
+}
+.nela-chat-panel h2,.nela-chat-messages h2 {
+  color: #e6d2a8 !important;
+  font-family: "Cormorant Garamond",serif !important;
+  font-weight: 500 !important;
+}
+.nela-chat-panel p,.nela-chat-messages p { color: #b9a47d !important; }
+.nela-chat-messages {
+  background: rgba(13,9,6,.30) !important;
+  scrollbar-color: rgba(212,189,141,.30) transparent !important;
+}
+.nela-chat-welcome-monogram {
+  position: relative !important;
+  width: 76px !important;
+  height: 76px !important;
+  display: grid !important;
+  place-items: center !important;
+  margin: 0 auto 18px !important;
+  font-size: 76px !important;
+  letter-spacing: -.09em !important;
+}
+.nela-chat-watermark {
+  color: rgba(212,189,141,.045) !important;
+  font-family: "Italiana","Cormorant Garamond",serif !important;
+}
+/* Assistant and customer messages are related shades, never blue/grey. */
+.nela-chat-messages > div[style*="flex-start"] {
+  background: linear-gradient(145deg,#2a1e13,#1d140c) !important;
+  color: #e4d2ad !important;
+  border: 1px solid rgba(212,189,141,.18) !important;
+  border-radius: 19px 19px 19px 6px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.22),inset 0 1px rgba(255,231,190,.035) !important;
+  font-family: "Manrope",sans-serif !important;
+}
+.nela-chat-messages > div[style*="flex-end"] {
+  background: linear-gradient(135deg,#b99a62,#8e7040) !important;
+  color: #fff4dc !important;
+  border: 1px solid rgba(238,216,174,.38) !important;
+  border-radius: 19px 19px 6px 19px !important;
+  box-shadow: 0 8px 22px rgba(0,0,0,.24),inset 0 1px rgba(255,245,220,.20) !important;
+  font-family: "Manrope",sans-serif !important;
+}
+.nela-chat-composer {
+  background: #100b07 !important;
+  border-top: 1px solid rgba(212,189,141,.19) !important;
+}
+.nela-chat-composer input {
+  color: #ead9b5 !important;
+  background: #1b130c !important;
+  border: 1px solid rgba(212,189,141,.26) !important;
+  border-radius: 999px !important;
+  font-family: "Manrope",sans-serif !important;
+}
+.nela-chat-composer input::placeholder { color: #9d8965 !important; }
+.nela-chat-composer button {
+  background: linear-gradient(135deg,#e7d3a6,#b18d52) !important;
+  color: #1a1208 !important;
+  border: 1px solid rgba(241,220,179,.55) !important;
+  border-radius: 999px !important;
+}
+.nela-chat-panel button[aria-label="Open account menu"],.nela-chat-panel .nela-theme-button {
+  color: #e0c99b !important;
+  border: 1px solid rgba(212,189,141,.30) !important;
+  background: rgba(212,189,141,.055) !important;
+  border-radius: 50% !important;
+}
+.nela-chat-panel button[aria-label="Open account menu"] span { background: currentColor !important; }
+
+/* The theme toggle remains available; light mode is a warm ivory variation. */
+.theme-light.nela-page {
+  background: linear-gradient(145deg,#f1e9d9,#e6dcc9 55%,#f3ecdf) !important;
+  color: #765d36 !important;
+}
+.theme-light .nela-header { background: rgba(245,237,222,.92) !important; border-color: rgba(130,100,57,.18) !important; }
+.theme-light .nela-brand,.theme-light .nela-hero h1 { color: #8b7046 !important; }
+.theme-light .nela-tagline,.theme-light .nela-description,.theme-light .nela-trust { color: #735c39 !important; }
+.theme-light .nela-card { background: rgba(250,245,235,.97) !important; border-color: rgba(130,100,57,.22) !important; }
+.theme-light .nela-card-heading h2,.theme-light .nela-card h2,.theme-light .nela-card h3 { color: #80633b !important; }
+.theme-light .nela-field > span { color: #80633b !important; }
+.theme-light .nela-field input,.theme-light .nela-field select { background: #fffaf0 !important; color: #46351f !important; }
+.nela-chat-panel.theme-light-chat {
+  background: linear-gradient(155deg,#f5ecdc,#e9ddc8 60%,#f4ead8) !important;
+  color: #765d36 !important;
+}
+.theme-light-chat > div:first-of-type,.theme-light-chat .nela-chat-composer { background: rgba(242,232,214,.98) !important; }
+.theme-light-chat .nela-chat-panel h2,.theme-light-chat h2 { color: #80633b !important; }
+.theme-light-chat p { color: #806b49 !important; }
+.theme-light-chat .nela-chat-messages { background: rgba(241,231,213,.30) !important; }
+.theme-light-chat .nela-chat-messages > div[style*="flex-start"] { background: #fff8ec !important; color: #58452b !important; }
+.theme-light-chat .nela-chat-messages > div[style*="flex-end"] { background: linear-gradient(135deg,#b99a62,#8e7040) !important; color: #fff4dc !important; }
+.theme-light-chat .nela-chat-composer input { background: #fffaf0 !important; color: #58452b !important; }
+.theme-light-chat .nela-chat-monogram,.theme-light-chat .nela-chat-welcome-monogram { color: #a18450 !important; }
+.theme-light-chat .nela-chat-watermark { color: rgba(130,100,57,.055) !important; }
+
+@media(max-width:680px) {
+ .nela-chat-panel { width:100% !important;max-width:none !important;height:calc(100dvh - 72px) !important;min-height:0 !important;border-radius:0 !important;border-left:0 !important;border-right:0 !important;border-bottom:0 !important; }
+ .nela-main:has(.nela-chat-panel) { padding:0 !important;height:calc(100dvh - 72px) !important;min-height:0 !important; }
+ .nela-chat-panel > div:first-of-type { min-height:68px !important;padding:12px 15px !important; }
+ .nela-chat-messages { padding:18px 14px !important; }
+ .nela-chat-composer { padding-bottom:max(12px,env(safe-area-inset-bottom)) !important; }
 }
