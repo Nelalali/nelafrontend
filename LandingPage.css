@@ -643,3 +643,43 @@ select {
   outline: 2px solid #ead5a6;
   outline-offset: 3px;
 }
+
+
+/* NELA identity, authentication and premium chat finish */
+.nela-brand {
+  gap: 0;
+  padding: 0;
+  text-decoration: none;
+}
+.nela-brand-logo {
+  display: block;
+  width: 112px;
+  height: 54px;
+  object-fit: contain;
+  object-position: left center;
+  filter: drop-shadow(0 5px 16px rgba(0,0,0,.28));
+}
+.nela-card {
+  border-color: rgba(201,164,95,.34);
+  background: linear-gradient(150deg,rgba(31,22,13,.96),rgba(10,8,5,.98));
+  box-shadow: 0 28px 90px rgba(0,0,0,.58), inset 0 1px rgba(255,255,255,.035);
+}
+.nela-card-heading h2 { color: #ead5a6; }
+.nela-card-heading p, .nela-switch { color: #b9aa8d; }
+.nela-card input, .nela-card select {
+  background: rgba(5,4,3,.62);
+  border-color: rgba(201,164,95,.28);
+  color: #f1e8d6;
+}
+.nela-card input:focus, .nela-card select:focus {
+  border-color: rgba(220,187,120,.8);
+  box-shadow: 0 0 0 3px rgba(201,164,95,.1);
+}
+.nela-back, .nela-switch button { color: #d9b978; }
+.nela-chat-menu-button:hover {
+  background: rgba(201,164,95,.10);
+}
+@media (max-width: 600px) {
+  .nela-header { height: 72px; padding: 0 5%; }
+  .nela-brand-logo { width: 94px; height: 48px; }
+}
