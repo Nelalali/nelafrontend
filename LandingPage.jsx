@@ -467,9 +467,16 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
     writeStorage(USER_KEY, publicUser);
     writeStorage(ACTIVE_CLIENT_KEY, found.id);
 
-    // Route authenticated customers through App.jsx immediately.
-    // This avoids displaying the legacy blue chat before refresh.
-    window.location.assign("/");
+    // Enter the premium chat immediately without returning to the public homepage.
+    setCurrentUser(found);
+    setAppointments(getClientAppointments(found));
+    setClientMemory(
+      readStorage(MEMORY_KEY, {})[found.id] || found.memory || {}
+    );
+    setChatMessages(getHistoryForClient(found.id));
+    setLogin({ email: "", password: "" });
+    setMode("chat");
+    setMenuOpen(false);
   };
 
   /* =======================================================
@@ -1024,7 +1031,8 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
           className="nela-brand"
           onClick={() => changeMode("home")}
         >
-          <img src={NELA_LOGO_DATA} alt="NELA" className="nela-brand-logo" />
+          <img src={NELA_LOGO_DATA} alt="" aria-hidden="true" className="nela-brand-logo" />
+          <span className="nela-brand-wordmark">NELA</span>
         </button>
 
         <nav className="nela-navigation">
