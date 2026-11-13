@@ -1776,13 +1776,11 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
                 <div className="nela-chat-monogram" aria-label="NELA"><img src={NELA_LOGO_DATA} alt="" /></div>
 
                 <div>
-                  <h2
+                  <h2 className="nela-chat-title"
                     style={{
                       margin: 0,
                       fontSize: "20px",
                       color: "#ead5a6",
-                      fontFamily:
-                        '"Cormorant Garamond", serif',
                       letterSpacing: "1px",
                     }}
                   >
@@ -2017,7 +2015,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
                     maxWidth: "400px",
                   }}
                 >
-                  <div className="nela-chat-welcome-monogram" aria-hidden="true">N</div>
+                  <div className="nela-chat-welcome-monogram" aria-hidden="true"><img src={NELA_LOGO_DATA} alt="" /></div>
 
                   <h2
                     style={{
