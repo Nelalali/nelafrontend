@@ -890,3 +890,153 @@ button { -webkit-tap-highlight-color: transparent; }
 .theme-light .nela-chat-welcome-monogram::after {
   filter: drop-shadow(0 0 7px rgba(142,105,47,.13)) !important;
 }
+
+
+/* =========================================================
+   NELA — youthful premium identity / original emblem
+   ========================================================= */
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap");
+
+.nela-page,
+.nela-page button,
+.nela-page input,
+.nela-page select,
+.nela-page textarea {
+  font-family: "Manrope", sans-serif !important;
+}
+
+.nela-page {
+  --bg: #050403;
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(104,70,29,.13) 0%, transparent 42%),
+    radial-gradient(ellipse at 12% 82%, rgba(110,75,31,.09) 0%, transparent 32%),
+    linear-gradient(145deg,#050403 0%,#0a0806 52%,#040302 100%) !important;
+}
+.nela-page::before {
+  opacity: .12 !important;
+  background-size: 92px 92px !important;
+}
+.nela-page::after { display: none !important; }
+
+/* Original circular NELA seal as a soft, oversized background signature. */
+.nela-brand-watermark {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  width: min(590px, 78vw);
+  height: min(690px, 82vh);
+  left: 50%;
+  top: 49%;
+  transform: translate(-50%,-50%);
+  opacity: .105;
+  filter: brightness(1.12) saturate(.78);
+}
+.nela-brand-watermark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.nela-header,.nela-main,.nela-footer { position: relative; z-index: 1; }
+.nela-header {
+  background: linear-gradient(180deg,rgba(5,4,3,.94),rgba(5,4,3,.72)) !important;
+  border-bottom-color: rgba(216,184,115,.10) !important;
+}
+.nela-brand { gap: 12px !important; }
+.nela-brand::after {
+  content: "NELA" !important;
+  font-family: "Sora", sans-serif !important;
+  font-size: 19px !important;
+  font-weight: 600 !important;
+  letter-spacing: .24em !important;
+  padding-left: .24em !important;
+  color: #f2dfb8 !important;
+}
+.nela-monogram {
+  width: 48px !important;
+  height: 48px !important;
+  overflow: hidden;
+  border-radius: 50% !important;
+  border: 1px solid rgba(225,193,128,.48) !important;
+  background: rgba(225,193,128,.055) !important;
+  box-shadow: 0 0 24px rgba(216,184,115,.10) !important;
+}
+.nela-monogram::after { display: none !important; }
+.nela-monogram img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 12%;
+  transform: scale(1.12);
+}
+.nela-hero h1,
+.nela-tagline,
+.nela-card-heading h2,
+.nela-card h2,
+.nela-card h3 {
+  font-family: "Sora", sans-serif !important;
+  font-weight: 500 !important;
+  letter-spacing: -.035em !important;
+}
+.nela-hero h1 {
+  letter-spacing: .13em !important;
+  padding-left: .13em !important;
+  font-weight: 500 !important;
+  filter: drop-shadow(0 10px 38px rgba(190,145,65,.19)) !important;
+}
+.nela-tagline { font-weight: 400 !important; letter-spacing: -.025em !important; }
+.nela-hero::before { letter-spacing: .25em !important; color: #c4a66d !important; }
+.nela-description { color: #c0b39c !important; }
+
+/* Softer, more welcoming pill-shaped controls. */
+.nela-primary-button,.nela-secondary-button {
+  min-height: 54px !important;
+  border-radius: 999px !important;
+  padding: 15px 30px !important;
+  font-family: "Manrope",sans-serif !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: .12em !important;
+}
+.nela-primary-button { box-shadow: 0 12px 32px rgba(174,127,52,.22),inset 0 1px rgba(255,255,255,.62) !important; }
+.nela-secondary-button { border-radius: 999px !important; }
+.nela-business-button { border-radius: 999px !important; }
+.nela-card {
+  border-radius: 26px !important;
+  background: linear-gradient(145deg,rgba(24,19,13,.97),rgba(9,7,5,.985)) !important;
+  border-color: rgba(216,184,115,.24) !important;
+}
+.nela-field input,.nela-field select {
+  border-radius: 15px !important;
+  height: 54px !important;
+  padding-left: 18px !important;
+}
+.nela-submit { border-radius: 999px !important; }
+.nela-theme-button { border-radius: 50% !important; }
+.nela-back { border-radius: 999px !important; }
+.nela-message { border-radius: 18px !important; }
+
+/* Keep the existing chat image watermark; soften the frame and round its controls. */
+.nela-chat-panel {
+  border-radius: 32px !important;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(104,70,29,.14),transparent 48%),
+    linear-gradient(145deg,#17110b 0%,#0b0805 52%,#050403 100%) !important;
+}
+.nela-chat-composer input { border-radius: 999px !important; }
+.nela-chat-composer button { border-radius: 999px !important; }
+.nela-chat-panel button[aria-label="Open account menu"] { border-radius: 15px !important; }
+
+.theme-light .nela-brand-watermark { opacity: .065; filter: sepia(.18) saturate(.7); }
+.theme-light .nela-page { background: linear-gradient(145deg,#e9e1d2,#f3ecdf 54%,#e7dece) !important; }
+.theme-light .nela-brand::after { color: #604a2c !important; }
+.theme-light .nela-card { border-radius: 26px !important; }
+.theme-light .nela-primary-button,.theme-light .nela-secondary-button { border-radius: 999px !important; }
+
+@media (max-width: 600px) {
+  .nela-brand-watermark { width: 92vw; height: 68vh; top: 48%; opacity: .075; }
+  .nela-brand::after { font-size: 17px !important; }
+  .nela-primary-button,.nela-secondary-button { min-width: 150px !important; }
+}
