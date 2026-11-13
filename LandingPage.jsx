@@ -215,8 +215,8 @@ function Field({
    MAIN LANDING PAGE
 ========================================================= */
 
-export default function LandingPage() {
-  const [mode, setMode] = useState("home");
+export default function LandingPage({ defaultMode = "home" } = {}) {
+  const [mode, setMode] = useState(defaultMode);
 
   const [theme, setTheme] = useState(() => readStorage(THEME_KEY, "dark") === "light" ? "light" : "dark");
 
@@ -2074,12 +2074,12 @@ export default function LandingPage() {
                         ? "linear-gradient(135deg,#d9bd80,#a77b3c)"
                         : theme === "dark"
                           ? "linear-gradient(145deg,#261b10,#171008)"
-                          : "linear-gradient(145deg,#261b10,#171008)",
+                          : "linear-gradient(145deg,#fffdf8,#f1e7d3)",
                       color: isUser
                         ? "#ffffff"
                         : theme === "dark"
                           ? "#eee4d0"
-                          : "#eee4d0",
+                          : "#46371f",
                       border: isUser
                         ? "1px solid rgba(201,164,95,0.24)"
                         : "1px solid rgba(201,164,95,0.2)",
@@ -2126,9 +2126,9 @@ export default function LandingPage() {
                     background:
                       theme === "dark"
                         ? "#21170e"
-                        : "#21170e",
+                        : "#fff8e9",
                     color:
-                      theme === "dark" ? "#d8c59c" : "#d8c59c",
+                      theme === "dark" ? "#d8c59c" : "#72551f",
                     fontSize: "12px",
                   }}
                 >
@@ -2149,8 +2149,8 @@ export default function LandingPage() {
                   "1px solid rgba(201,164,95,0.18)",
                 background:
                   theme === "dark"
-                    ? "rgba(9,18,30,0.45)"
-                    : "rgba(235,243,253,0.75)",
+                    ? "rgba(9,7,5,0.78)"
+                    : "rgba(255,250,239,0.92)",
                 borderRadius: "0 0 22px 22px",
               }}
             >
@@ -2174,9 +2174,9 @@ export default function LandingPage() {
                   background:
                     theme === "dark"
                       ? "rgba(255,255,255,0.055)"
-                      : "#ffffff",
+                      : "#fffdf8",
                   color:
-                    theme === "dark" ? "#eee4d0" : "#eee4d0",
+                    theme === "dark" ? "#eee4d0" : "#46371f",
                   fontSize: "12px",
                 }}
               />
