@@ -427,10 +427,9 @@ export default function LandingPage() {
 
     setMessage("Your account has been created successfully.");
 
-    setTimeout(() => {
-      setMessage("");
-      setMode("chat");
-    }, 700);
+    // Send newly registered customers through the main app router,
+    // so they see the same premium chat as returning customers.
+    window.location.assign("/");
   };
 
   /* =======================================================
@@ -468,18 +467,9 @@ export default function LandingPage() {
     writeStorage(USER_KEY, publicUser);
     writeStorage(ACTIVE_CLIENT_KEY, found.id);
 
-    setCurrentUser(found);
-    setAppointments(getClientAppointments(found));
-
-    const memory =
-      readStorage(MEMORY_KEY, {})[found.id] ||
-      found.memory ||
-      {};
-
-    setClientMemory(memory);
-    setChatMessages(getHistoryForClient(found.id));
-
-    setMode("chat");
+    // Route authenticated customers through App.jsx immediately.
+    // This avoids displaying the legacy blue chat before refresh.
+    window.location.assign("/");
   };
 
   /* =======================================================
