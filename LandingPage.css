@@ -683,3 +683,27 @@ select {
   .nela-header { height: 72px; padding: 0 5%; }
   .nela-brand-logo { width: 94px; height: 48px; }
 }
+
+
+/* Accessible light/dark theme control */
+.nela-theme-button {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+.nela-theme-button:hover { transform: translateY(-1px); background: rgba(201,164,95,.16); }
+.nela-chat-panel.theme-light-chat {
+  background: linear-gradient(145deg,#fffdf8 0%,#f5efe3 58%,#eee4d2 100%) !important;
+  border-color: rgba(151,112,45,.35) !important;
+  box-shadow: 0 24px 70px rgba(55,40,18,.16) !important;
+}
+.theme-light-chat > div:first-child { border-bottom-color: rgba(151,112,45,.22) !important; }
+.theme-light-chat h2 { color: #59421d !important; }
+.theme-light-chat p { color: #75664d !important; }
+.theme-light-chat input { background: #fffdf8 !important; color: #332817 !important; border-color: rgba(151,112,45,.35) !important; }
+.theme-light-chat button { color: #70521f; }
+.theme-light-chat [style*="linear-gradient(145deg,#21170e"] {
+  background: linear-gradient(145deg,#fffdf7,#f0e5d0) !important;
+  border-color: rgba(151,112,45,.35) !important;
+}
