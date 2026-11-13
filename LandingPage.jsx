@@ -1751,7 +1751,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
               boxShadow: "0 28px 85px rgba(0,0,0,0.58), inset 0 1px rgba(255,255,255,0.025)",
             }}
           >
-            <span className="nela-chat-watermark" aria-hidden="true">N</span>
+            <span className="nela-chat-watermark" aria-hidden="true"><img src={NELA_LOGO_DATA} alt="" /></span>
             {/* CHAT HEADER */}
 
             <div
@@ -1773,7 +1773,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
                   gap: "12px",
                 }}
               >
-                <div className="nela-chat-monogram" aria-label="NELA">N</div>
+                <div className="nela-chat-monogram" aria-label="NELA"><img src={NELA_LOGO_DATA} alt="" /></div>
 
                 <div>
                   <h2
