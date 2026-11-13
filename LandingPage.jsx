@@ -2028,8 +2028,7 @@ export default function LandingPage() {
                   <p
                     style={{
                       ...mutedText,
-                      color:
-                        #b9aa8d,
+                      color: "#b9aa8d",
                       lineHeight: 1.8,
                     }}
                   >
