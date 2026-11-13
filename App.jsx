@@ -33,9 +33,9 @@ const COLORS = {
   goldDark: "#9d762d",
 
   black: "#020304",
-  dark: "#06090d",
-  panel: "#0c1218",
-  panel2: "#111922",
+  dark: "#0b0806",
+  panel: "#15100b",
+  panel2: "#1d160f",
 
   text: "#eee9dc",
   muted: "#8d969d",
@@ -53,6 +53,7 @@ const NELA_LOGO_DATA = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDA
 const BOOKINGS_KEY = "nelaBookings";
 const CLIENTS_KEY = "nelaClients";
 const HISTORY_KEY = "nelaConversationHistory";
+const CONTEXT_HISTORY_KEY = "nelaConversationContext";
 const MEMORY_KEY = "nelaClientMemory";
 
 /* =========================================================
@@ -588,58 +589,74 @@ function getTodayName() {
   ];
 }
 
-function getAvailableTimes() {
-  const day = getTodayName();
+function toLocalDateKey(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
 
-  const hours =
-    getBusinessConfig()?.openingHours?.[day];
+function getDateKey(value) {
+  if (!value) return "";
+  const raw = String(value).trim();
+  if (/^\\d{4}-\\d{2}-\\d{2}$/.test(raw)) return raw;
+  const normalized = normalizeText(raw);
+  const date = new Date();
+  if (normalized === "σημερα") return toLocalDateKey(date);
+  if (normalized === "αυριο" || normalized === "μεθαυριο") {
+    date.setDate(date.getDate() + (normalized === "αυριο" ? 1 : 2));
+    return toLocalDateKey(date);
+  }
+  const weekday = WEEKDAYS.indexOf(normalized);
+  if (weekday >= 0) {
+    let delta = (weekday - date.getDay() + 7) % 7;
+    if (!delta) delta = 7;
+    date.setDate(date.getDate() + delta);
+    return toLocalDateKey(date);
+  }
+  return raw;
+}
 
+function isTimeUnavailable(dateKey, time, duration = 30, currentBookings = []) {
+  const minutes = (value) => {
+    const match = String(value || "").match(/^(\\d{1,2}):(\\d{2})$/);
+    return match ? Number(match[1]) * 60 + Number(match[2]) : NaN;
+  };
+  const start = minutes(time);
+  if (!Number.isFinite(start)) return false;
+  const end = start + Math.max(15, Number(duration) || 30);
+  return (Array.isArray(currentBookings) ? currentBookings : []).some((item) => {
+    if (item.cancelled || normalizeText(item.status || "") === "cancelled") return false;
+    if (getDateKey(item.date) !== dateKey) return false;
+    const existingStart = minutes(item.time);
+    if (!Number.isFinite(existingStart)) return false;
+    const existingEnd = existingStart + Math.max(15, Number(item.duration || item.serviceDuration || 30));
+    return start < existingEnd && existingStart < end;
+  });
+}
+
+function getAvailableTimes(dateValue, currentBookings = [], duration = 30) {
+  const dateKey = getDateKey(dateValue);
+  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(dateKey)) return [];
+  const date = new Date(`${dateKey}T12:00:00`);
+  const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+  const hours = getBusinessConfig()?.openingHours?.[dayNames[date.getDay()]];
+  if (!hours || (typeof hours === "string" && normalizeText(hours).includes("κλειστα"))) return [];
   if (Array.isArray(hours)) {
-    return hours.filter(Boolean);
+    return hours.filter((time) => /^\\d{1,2}:\\d{2}$/.test(String(time)) && !isTimeUnavailable(dateKey, time, duration, currentBookings));
   }
-
-  if (typeof hours === "string") {
-    if (!hours.includes("-")) {
-      return hours
-        ? [hours]
-        : [];
-    }
-
-    const [start, end] =
-      hours.split("-");
-
-    const result = [];
-
-    if (start?.trim()) {
-      result.push(start.trim());
-    }
-
-    for (
-      let hour = 10;
-      hour <= 20;
-      hour++
-    ) {
-      result.push(
-        `${String(hour).padStart(
-          2,
-          "0"
-        )}:00`
-      );
-    }
-
-    if (
-      end?.trim() &&
-      !result.includes(end.trim())
-    ) {
-      result.push(end.trim());
-    }
-
-    return [
-      ...new Set(result),
-    ];
+  if (typeof hours !== "string" || !hours.includes("-")) return [];
+  const [opening, closing] = hours.split("-").map((value) => value.trim());
+  const toMinutes = (value) => {
+    const match = String(value || "").match(/^(\\d{1,2}):(\\d{2})$/);
+    return match ? Number(match[1]) * 60 + Number(match[2]) : NaN;
+  };
+  const start = toMinutes(opening);
+  const end = toMinutes(closing);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return [];
+  const slots = [];
+  for (let minute = start; minute + Math.max(15, Number(duration) || 30) <= end; minute += 30) {
+    const time = `${String(Math.floor(minute / 60)).padStart(2, "0")}:${String(minute % 60).padStart(2, "0")}`;
+    if (!isTimeUnavailable(dateKey, time, duration, currentBookings)) slots.push(time);
   }
-
-  return [];
+  return slots;
 }
 
 /* =========================================================
@@ -867,6 +884,7 @@ async function askNelaAI(
           memory,
           booking,
           clients,
+          history: safeStorageGet(CONTEXT_HISTORY_KEY, []).map((item) => ({ role: item.role, content: item.content || item.text || "" })),
           business: getBusinessConfig(),
         }),
       }
@@ -934,35 +952,7 @@ function ChatApp() {
      MESSAGES
      ======================================================= */
 
-  const [messages, setMessages] =
-    useState(() => {
-      const history =
-        safeStorageGet(
-          HISTORY_KEY,
-          null
-        );
-
-      if (
-        Array.isArray(history) &&
-        history.length > 0
-      ) {
-        return history;
-      }
-
-      return [
-        {
-          id: createId(),
-
-          role: "assistant",
-
-          text:
-            `Καλώς ήρθατε στο ${businessName}. ✦\n\n` +
-            "Είμαι η NELA, η προσωπική σας AI receptionist.\n\n" +
-            "Μπορείτε να μου μιλήσετε φυσικά. " +
-            "Μπορώ να σας βοηθήσω με ραντεβού, υπηρεσίες, ώρες λειτουργίας και πληροφορίες.",
-        },
-      ];
-    });
+  const [messages, setMessages] = useState([]);
 
   const [input, setInput] =
     useState("");
@@ -996,15 +986,18 @@ function ChatApp() {
     useRef(null);
 
   /* =======================================================
-     SAVE CHAT
+     SAVE CONTEXT WITHOUT RESTORING THE OLD CHAT WINDOW
      ======================================================= */
 
-  useEffect(() => {
-    safeStorageSet(
-      HISTORY_KEY,
-      messages.slice(-150)
-    );
-  }, [messages]);
+  function saveContextMessage(role, text) {
+    const stored = safeStorageGet(CONTEXT_HISTORY_KEY, []);
+    const next = [...(Array.isArray(stored) ? stored : []), {
+      role,
+      content: text,
+      timestamp: new Date().toISOString(),
+    }].slice(-30);
+    safeStorageSet(CONTEXT_HISTORY_KEY, next);
+  }
 
   /* =======================================================
      SAVE CLIENTS
@@ -1067,21 +1060,9 @@ function ChatApp() {
      ADD MESSAGE
      ======================================================= */
 
-  function addMessage(
-    role,
-    text
-  ) {
-    setMessages(
-      (current) => [
-        ...current,
-
-        {
-          id: createId(),
-          role,
-          text,
-        },
-      ]
-    );
+  function addMessage(role, text) {
+    setMessages((current) => [...current, { id: createId(), role, text }]);
+    saveContextMessage(role, text);
   }
 
   /* =======================================================
@@ -1569,23 +1550,13 @@ function ChatApp() {
 
     if (!current.time) {
       const times =
-        getAvailableTimes();
+        getAvailableTimes(current.date, bookings, current.service?.duration || 30);
 
       addMessage(
         "assistant",
-        "Ποια ώρα σας εξυπηρετεί;\n\n" +
-          (
-            times.length
-              ? "Ενδεικτικές ώρες:\n" +
-                times
-                  .slice(0, 12)
-                  .map(
-                    (time) =>
-                      `• ${time}`
-                  )
-                  .join("\n")
-              : "Πείτε μου απλά την ώρα, π.χ. «11» ή «18:30»."
-          )
+        times.length
+          ? "Επιλέξτε μία από τις διαθέσιμες ώρες παρακάτω. ✦"
+          : "Δεν υπάρχουν διαθέσιμες ώρες για αυτή την ημέρα. Επιλέξτε άλλη ημερομηνία."
       );
 
       return;
@@ -1911,6 +1882,34 @@ function ChatApp() {
         )
       : 0;
 
+  const upcomingBookableDates = Array.from({ length: 21 }, (_, index) => {
+    const date = new Date();
+    date.setDate(date.getDate() + index);
+    const key = toLocalDateKey(date);
+    return { key, date, slots: getAvailableTimes(key, bookings, booking.service?.duration || 30) };
+  }).filter((item) => item.slots.length > 0);
+
+  function chooseBookingDate(dateKey) {
+    setBooking({ ...booking, date: dateKey, time: null, confirm: false });
+    addMessage("assistant", "Η ημέρα επιλέχθηκε. ✦ Τώρα διαλέξτε μία διαθέσιμη ώρα.");
+  }
+
+  function chooseBookingTime(time) {
+    if (!booking.date || isTimeUnavailable(booking.date, time, booking.service?.duration || 30, bookings)) {
+      addMessage("assistant", "Αυτή η ώρα δεν είναι πλέον διαθέσιμη. Επιλέξτε μία άλλη.");
+      return;
+    }
+    const next = { ...booking, time, confirm: false };
+    setBooking(next);
+    if (!next.name) addMessage("assistant", "Τέλεια επιλογή. ✦ Ποιο είναι το ονοματεπώνυμό σας;");
+    else if (!next.phone) addMessage("assistant", `Ευχαριστώ, ${next.name}. ✦ Ποιο είναι το τηλέφωνό σας;`);
+    else {
+      const finalBooking = { ...next, confirm: true };
+      setBooking(finalBooking);
+      addMessage("assistant", getBookingSummary(finalBooking));
+    }
+  }
+
   const styles = {
     page: {
       position: "fixed",
@@ -1927,7 +1926,7 @@ function ChatApp() {
 
       background: lightTheme
         ? "radial-gradient(circle at 15% 5%,rgba(190,145,55,.16),transparent 28%),linear-gradient(135deg,#f7f2e7,#e9dfca)"
-        : "radial-gradient(circle at 15% 5%,rgba(214,183,106,.22),transparent 28%),radial-gradient(circle at 90% 95%,rgba(69,45,18,.24),transparent 30%),linear-gradient(135deg,#020304 0%,#080c10 45%,#030405 100%)",
+        : "radial-gradient(circle at 15% 5%,rgba(214,183,106,.22),transparent 28%),radial-gradient(circle at 90% 95%,rgba(91,55,23,.24),transparent 30%),linear-gradient(135deg,#020304 0%,#100b07 45%,#030405 100%)",
 
 
       fontFamily:
@@ -1996,7 +1995,7 @@ function ChatApp() {
 
       background: lightTheme
         ? "linear-gradient(145deg,rgba(255,253,247,.98),rgba(246,239,222,.97))"
-        : "linear-gradient(145deg,rgba(8,10,12,.98),rgba(2,3,4,.99))",
+        : "linear-gradient(145deg,rgba(20,14,8,.98),rgba(4,3,2,.99))",
 
       backdropFilter:
         "blur(28px)",
@@ -2015,7 +2014,7 @@ function ChatApp() {
       padding:
         "25px 27px 20px",
 
-      background: lightTheme ? "linear-gradient(135deg,#fffdf7,#eee2c6)" : "linear-gradient(135deg,#030303,#1c1509)",
+      background: lightTheme ? "linear-gradient(135deg,#fffdf7,#eee2c6)" : "linear-gradient(135deg,#030201,#24180b)",
 
       borderBottom:
         "1px solid rgba(243,223,170,.12)",
@@ -2373,7 +2372,7 @@ function ChatApp() {
 
       background: lightTheme
         ? "linear-gradient(145deg,#fffdf7,#f1e5ca)"
-        : "linear-gradient(145deg,#211b10,#090908)",
+        : "linear-gradient(145deg,#2a1d0e,#100b06)",
 
       border: lightTheme ? "1px solid rgba(174,128,40,.52)" : "1px solid rgba(226,183,82,.5)",
 
@@ -2459,7 +2458,7 @@ function ChatApp() {
 
       border: lightTheme ? "1px solid rgba(174,128,40,.58)" : "1px solid rgba(226,183,82,.58)",
 
-      background: lightTheme ? "linear-gradient(145deg,#fffaf0,#f0e3c5)" : "linear-gradient(145deg,#211b10,#0b0b09)",
+      background: lightTheme ? "linear-gradient(145deg,#fffaf0,#f0e3c5)" : "linear-gradient(145deg,#2a1d0e,#100b06)",
 
       color: lightTheme ? "#76551a" : "#f3d990",
 
@@ -2794,6 +2793,37 @@ function ChatApp() {
                 </div>
               );
             }
+          )}
+
+          {/* VISUAL DATE AND TIME PICKER */}
+          {booking.active && booking.service && !booking.date && (
+            <div style={{ position: "relative", zIndex: 3, margin: "12px 0 22px", padding: "18px", borderRadius: "20px", border: "1px solid rgba(214,183,106,.32)", background: "linear-gradient(145deg,rgba(42,29,14,.97),rgba(10,8,5,.99))", boxShadow: "0 16px 38px rgba(0,0,0,.28)" }}>
+              <div style={{ color: "#f0d99f", fontFamily: "Georgia,serif", fontSize: "20px", marginBottom: "5px" }}>Επιλέξτε ημέρα</div>
+              <div style={{ color: "#b9aa88", fontSize: "11px", marginBottom: "14px" }}>Μόνο ημέρες με διαθέσιμα ραντεβού.</div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(112px,1fr))", gap: "8px" }}>
+                {upcomingBookableDates.map((item) => (
+                  <button key={item.key} type="button" onClick={() => chooseBookingDate(item.key)} style={{ border: "1px solid rgba(214,183,106,.35)", borderRadius: "12px", padding: "11px 8px", background: "linear-gradient(145deg,#302314,#100b06)", color: "#f2dfb2", cursor: "pointer", textAlign: "center" }}>
+                    <span style={{ display: "block", fontSize: "10px", color: "#c7a96a", textTransform: "capitalize" }}>{item.date.toLocaleDateString("el-GR", { weekday: "long" })}</span>
+                    <strong style={{ display: "block", fontSize: "16px", marginTop: "3px" }}>{item.date.toLocaleDateString("el-GR", { day: "numeric", month: "short" })}</strong>
+                    <span style={{ display: "block", fontSize: "9px", color: "#9e906f", marginTop: "4px" }}>{item.slots.length} ώρες διαθέσιμες</span>
+                  </button>
+                ))}
+              </div>
+              {!upcomingBookableDates.length && <p style={{ color: "#c8b98f", fontSize: "12px" }}>Δεν βρέθηκαν διαθέσιμες ημέρες στο επόμενο διάστημα.</p>}
+            </div>
+          )}
+
+          {booking.active && booking.service && booking.date && !booking.time && (
+            <div style={{ position: "relative", zIndex: 3, margin: "12px 0 22px", padding: "18px", borderRadius: "20px", border: "1px solid rgba(214,183,106,.32)", background: "linear-gradient(145deg,rgba(42,29,14,.97),rgba(10,8,5,.99))", boxShadow: "0 16px 38px rgba(0,0,0,.28)" }}>
+              <div style={{ color: "#f0d99f", fontFamily: "Georgia,serif", fontSize: "20px", marginBottom: "5px" }}>Επιλέξτε ώρα</div>
+              <div style={{ color: "#b9aa88", fontSize: "11px", marginBottom: "14px" }}>{new Date(`${booking.date}T12:00:00`).toLocaleDateString("el-GR", { weekday: "long", day: "numeric", month: "long" })}</div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(76px,1fr))", gap: "8px" }}>
+                {getAvailableTimes(booking.date, bookings, booking.service?.duration || 30).map((time) => (
+                  <button key={time} type="button" onClick={() => chooseBookingTime(time)} style={{ border: "1px solid rgba(214,183,106,.4)", borderRadius: "11px", padding: "12px 8px", background: "linear-gradient(145deg,#302314,#100b06)", color: "#f6e5bd", cursor: "pointer", fontSize: "13px", fontWeight: 700 }}>{time}</button>
+                ))}
+              </div>
+              <button type="button" onClick={() => setBooking({ ...booking, date: null, time: null })} style={{ marginTop: "13px", border: 0, background: "transparent", color: "#c5a76a", cursor: "pointer", fontSize: "11px" }}>← Αλλαγή ημέρας</button>
+            </div>
           )}
 
           {/* TYPING */}
