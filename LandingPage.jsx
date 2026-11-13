@@ -210,10 +210,10 @@ function Field({
    MAIN LANDING PAGE
 ========================================================= */
 
-export default function LandingPage() {
-  const [mode, setMode] = useState("home");
+export default function LandingPage({ defaultMode = "home" } = {}) {
+  const [mode, setMode] = useState(defaultMode);
 
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState(() => readStorage(THEME_KEY, "dark") === "light" ? "light" : "dark");
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
