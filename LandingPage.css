@@ -1219,3 +1219,16 @@ select {
     font-size: min(112vw,500px);
   }
 }
+
+/* Keep the watermark as a centered typographic layer in both themes. */
+.nela-chat-watermark {
+  display: grid !important;
+  place-items: center;
+  width: 100% !important;
+  height: 100% !important;
+  text-align: center;
+}
+.theme-light-chat .nela-chat-watermark {
+  display: grid !important;
+  color: rgba(173,129,56,.075) !important;
+}
