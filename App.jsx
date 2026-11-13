@@ -596,7 +596,7 @@ function toLocalDateKey(date) {
 function getDateKey(value) {
   if (!value) return "";
   const raw = String(value).trim();
-  if (/^\\d{4}-\\d{2}-\\d{2}$/.test(raw)) return raw;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
   const normalized = normalizeText(raw);
   const date = new Date();
   if (normalized === "σημερα") return toLocalDateKey(date);
@@ -616,7 +616,7 @@ function getDateKey(value) {
 
 function isTimeUnavailable(dateKey, time, duration = 30, currentBookings = []) {
   const minutes = (value) => {
-    const match = String(value || "").match(/^(\\d{1,2}):(\\d{2})$/);
+    const match = String(value || "").match(/^(\d{1,2}):(\d{2})$/);
     return match ? Number(match[1]) * 60 + Number(match[2]) : NaN;
   };
   const start = minutes(time);
@@ -634,18 +634,18 @@ function isTimeUnavailable(dateKey, time, duration = 30, currentBookings = []) {
 
 function getAvailableTimes(dateValue, currentBookings = [], duration = 30) {
   const dateKey = getDateKey(dateValue);
-  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(dateKey)) return [];
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) return [];
   const date = new Date(`${dateKey}T12:00:00`);
   const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
   const hours = getBusinessConfig()?.openingHours?.[dayNames[date.getDay()]];
   if (!hours || (typeof hours === "string" && normalizeText(hours).includes("κλειστα"))) return [];
   if (Array.isArray(hours)) {
-    return hours.filter((time) => /^\\d{1,2}:\\d{2}$/.test(String(time)) && !isTimeUnavailable(dateKey, time, duration, currentBookings));
+    return hours.filter((time) => /^\d{1,2}:\d{2}$/.test(String(time)) && !isTimeUnavailable(dateKey, time, duration, currentBookings));
   }
   if (typeof hours !== "string" || !hours.includes("-")) return [];
   const [opening, closing] = hours.split("-").map((value) => value.trim());
   const toMinutes = (value) => {
-    const match = String(value || "").match(/^(\\d{1,2}):(\\d{2})$/);
+    const match = String(value || "").match(/^(\d{1,2}):(\d{2})$/);
     return match ? Number(match[1]) * 60 + Number(match[2]) : NaN;
   };
   const start = toMinutes(opening);
@@ -1180,13 +1180,11 @@ function ChatApp() {
       return false;
     }
 
-    return bookings.some(
-      (booking) =>
-        normalizeText(
-          booking.date
-        ) ===
-          normalizeText(date) &&
-        booking.time === time
+    return isTimeUnavailable(
+      getDateKey(date),
+      time,
+      booking.service?.duration || 30,
+      bookings
     );
   }
 
@@ -1888,12 +1886,13 @@ function ChatApp() {
         )
       : 0;
 
-  const upcomingBookableDates = Array.from({ length: 21 }, (_, index) => {
+  const calendarDays = Array.from({ length: 42 }, (_, index) => {
     const date = new Date();
-    date.setDate(date.getDate() + index);
+    date.setDate(date.getDate() - date.getDay() + index);
     const key = toLocalDateKey(date);
-    return { key, date, slots: getAvailableTimes(key, bookings, booking.service?.duration || 30) };
-  }).filter((item) => item.slots.length > 0);
+    const isPast = key < toLocalDateKey(new Date());
+    return { key, date, isPast, slots: isPast ? [] : getAvailableTimes(key, bookings, booking.service?.duration || 30) };
+  });
 
   function chooseBookingDate(dateKey) {
     setBooking({ ...booking, date: dateKey, time: null, confirm: false });
@@ -2797,17 +2796,18 @@ function ChatApp() {
           {booking.active && booking.service && !booking.date && (
             <div style={{ position: "relative", zIndex: 3, margin: "12px 0 22px", padding: "18px", borderRadius: "20px", border: "1px solid rgba(214,183,106,.32)", background: "linear-gradient(145deg,rgba(42,29,14,.97),rgba(10,8,5,.99))", boxShadow: "0 16px 38px rgba(0,0,0,.28)" }}>
               <div style={{ color: "#f0d99f", fontFamily: "Georgia,serif", fontSize: "20px", marginBottom: "5px" }}>Επιλέξτε ημέρα</div>
-              <div style={{ color: "#b9aa88", fontSize: "11px", marginBottom: "14px" }}>Μόνο ημέρες με διαθέσιμα ραντεβού.</div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(112px,1fr))", gap: "8px" }}>
-                {upcomingBookableDates.map((item) => (
-                  <button key={item.key} type="button" onClick={() => chooseBookingDate(item.key)} style={{ border: "1px solid rgba(214,183,106,.35)", borderRadius: "12px", padding: "11px 8px", background: "linear-gradient(145deg,#302314,#100b06)", color: "#f2dfb2", cursor: "pointer", textAlign: "center" }}>
-                    <span style={{ display: "block", fontSize: "10px", color: "#c7a96a", textTransform: "capitalize" }}>{item.date.toLocaleDateString("el-GR", { weekday: "long" })}</span>
+              <div style={{ color: "#b9aa88", fontSize: "11px", marginBottom: "14px" }}>Επιλέξτε μία ημέρα. Οι μη διαθέσιμες ημέρες είναι απενεργοποιημένες.</div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(7,minmax(0,1fr))", gap: "8px" }}>
+                {["Κυ","Δε","Τρ","Τε","Πε","Πα","Σα"].map((day) => <div key={day} style={{ textAlign: "center", color: "#9c8968", fontSize: "10px", padding: "4px 0" }}>{day}</div>)}
+                {calendarDays.map((item) => (
+                  <button key={item.key} type="button" onClick={() => chooseBookingDate(item.key)} disabled={!item.slots.length} style={{ border: "1px solid rgba(214,183,106,.35)", borderRadius: "10px", padding: "9px 3px", minWidth: 0, background: item.slots.length ? "linear-gradient(145deg,#302314,#100b06)" : "rgba(255,255,255,.025)", color: item.slots.length ? "#f2dfb2" : "#655c4c", cursor: item.slots.length ? "pointer" : "not-allowed", opacity: item.slots.length ? 1 : .45, textAlign: "center" }}>
+                    <span style={{ display: "block", fontSize: "10px", color: "#c7a96a", textTransform: "capitalize" }}>{item.date.toLocaleDateString("el-GR", { weekday: "short" })}</span>
                     <strong style={{ display: "block", fontSize: "16px", marginTop: "3px" }}>{item.date.toLocaleDateString("el-GR", { day: "numeric", month: "short" })}</strong>
-                    <span style={{ display: "block", fontSize: "9px", color: "#9e906f", marginTop: "4px" }}>{item.slots.length} ώρες διαθέσιμες</span>
+                    <span style={{ display: "block", fontSize: "9px", color: "#9e906f", marginTop: "4px" }}>{item.slots.length ? `${item.slots.length} ώρες` : "Κλειστά"}</span>
                   </button>
                 ))}
               </div>
-              {!upcomingBookableDates.length && <p style={{ color: "#c8b98f", fontSize: "12px" }}>Δεν βρέθηκαν διαθέσιμες ημέρες στο επόμενο διάστημα.</p>}
+              
             </div>
           )}
 
