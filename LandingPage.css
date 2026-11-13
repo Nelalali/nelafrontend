@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Marcellus&family=Sora:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Marcellus&family=Outfit:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap");
 
 :root { color-scheme: dark; }
 * { box-sizing: border-box; }
@@ -684,8 +684,13 @@ button { -webkit-tap-highlight-color: transparent; }
   letter-spacing: .20em !important;
   padding-left: .20em !important;
 }
-.nela-hero h1,.nela-tagline,.nela-card-heading h2,
-.nela-card h2,.nela-card h3 {
+.nela-hero h1 {
+  font-family: "Outfit", sans-serif !important;
+  font-weight: 500 !important;
+  letter-spacing: .16em !important;
+  padding-left: .16em !important;
+}
+.nela-tagline,.nela-card-heading h2,.nela-card h2,.nela-card h3 {
   font-family: "Sora", sans-serif !important;
   font-weight: 500 !important;
   letter-spacing: -.025em !important;
@@ -807,10 +812,10 @@ button { -webkit-tap-highlight-color: transparent; }
 }
 .nela-chat-panel h2 {
   margin: 0 !important;
-  font-family: "Sora",sans-serif !important;
-  font-size: 19px !important;
+  font-family: "Outfit",sans-serif !important;
+  font-size: 20px !important;
   font-weight: 600 !important;
-  letter-spacing: .10em !important;
+  letter-spacing: .13em !important;
   color: #f1dfb9 !important;
 }
 .nela-chat-panel p {
