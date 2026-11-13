@@ -1,6 +1,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import "./LandingPage.css";
+import { NELA_LOGO_DATA } from "./NelaLogo.js";
 
 const CLIENTS_KEY = "nelaClients";
 const USER_KEY = "nelaUser";
@@ -989,7 +990,7 @@ export default function LandingPage() {
     border: "none",
     borderRadius: "11px",
     background: "transparent",
-    color: "#dce9f8",
+    color: "#e9dcc0",
     textAlign: "left",
     fontSize: "12px",
     cursor: "pointer",
@@ -998,7 +999,7 @@ export default function LandingPage() {
 
   const menuDivider = {
     height: "1px",
-    background: "rgba(150,180,220,0.14)",
+    background: "rgba(201,164,95,0.18)",
     margin: "9px 0",
   };
 
@@ -1015,8 +1016,7 @@ export default function LandingPage() {
           className="nela-brand"
           onClick={() => changeMode("home")}
         >
-          <span className="nela-brand-icon">✦</span>
-          <span>NELA</span>
+          <img src={NELA_LOGO_DATA} alt="NELA" className="nela-brand-logo" />
         </button>
 
         <nav className="nela-navigation">
@@ -1717,15 +1717,9 @@ export default function LandingPage() {
               position: "relative",
               overflow: "visible",
               borderRadius: "22px",
-              border: "1px solid rgba(85,145,210,0.28)",
-              background:
-                theme === "dark"
-                  ? "linear-gradient(145deg,#101b2b,#101725 55%,#111c2c)"
-                  : "linear-gradient(145deg,#f5f9ff,#edf4fc)",
-              boxShadow:
-                theme === "dark"
-                  ? "0 25px 75px rgba(0,0,0,0.45)"
-                  : "0 20px 65px rgba(30,70,120,0.12)",
+              border: "1px solid rgba(201,164,95,0.30)",
+              background: "linear-gradient(145deg,#17110b 0%,#0c0906 58%,#080604 100%)",
+              boxShadow: "0 28px 85px rgba(0,0,0,0.58), inset 0 1px rgba(255,255,255,0.025)",
             }}
           >
             {/* CHAT HEADER */}
@@ -1733,8 +1727,7 @@ export default function LandingPage() {
             <div
               style={{
                 padding: "18px 22px",
-                borderBottom:
-                  "1px solid rgba(105,160,220,0.18)",
+                borderBottom: "1px solid rgba(201,164,95,0.18)",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
@@ -1757,15 +1750,13 @@ export default function LandingPage() {
                     borderRadius: "14px",
                     display: "grid",
                     placeItems: "center",
-                    color: "#d9eaff",
-                    fontSize: "22px",
-                    background:
-                      "linear-gradient(145deg,#315e91,#193b63)",
-                    boxShadow:
-                      "0 5px 18px rgba(42,105,170,0.25)",
+                    overflow: "hidden",
+                    border: "1px solid rgba(201,164,95,.28)",
+                    background: "#100b06",
+                    boxShadow: "0 6px 20px rgba(0,0,0,.3)",
                   }}
                 >
-                  ✦
+                  <img src={NELA_LOGO_DATA} alt="NELA" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
 
                 <div>
@@ -1774,7 +1765,7 @@ export default function LandingPage() {
                       margin: 0,
                       fontSize: "20px",
                       color:
-                        theme === "dark" ? "#e4efff" : "#183454",
+                        #ead5a6,
                       fontFamily:
                         '"Cormorant Garamond", serif',
                       letterSpacing: "1px",
@@ -1788,7 +1779,7 @@ export default function LandingPage() {
                       margin: "3px 0 0",
                       fontSize: "10px",
                       color:
-                        theme === "dark" ? "#8ca8c9" : "#66809e",
+                        #a99572,
                     }}
                   >
                     Your personal appointment assistant
@@ -1805,29 +1796,6 @@ export default function LandingPage() {
                   gap: "9px",
                 }}
               >
-                <button
-                  onClick={() =>
-                    setTheme(
-                      theme === "dark" ? "light" : "dark"
-                    )
-                  }
-                  title="Change appearance"
-                  style={{
-                    width: "39px",
-                    height: "39px",
-                    borderRadius: "12px",
-                    border:
-                      "1px solid rgba(115,165,220,0.25)",
-                    background: "rgba(65,120,180,0.10)",
-                    color:
-                      theme === "dark" ? "#b7d6ff" : "#315e91",
-                    cursor: "pointer",
-                    fontSize: "17px",
-                  }}
-                >
-                  {theme === "dark" ? "☼" : "☾"}
-                </button>
-
                 {/* HAMBURGER MENU */}
 
                 <button
@@ -1838,13 +1806,9 @@ export default function LandingPage() {
                     width: "43px",
                     height: "43px",
                     borderRadius: "12px",
-                    border:
-                      "1px solid rgba(115,165,220,0.3)",
-                    background: menuOpen
-                      ? "rgba(70,130,200,0.25)"
-                      : "rgba(65,120,180,0.10)",
-                    color:
-                      theme === "dark" ? "#dceaff" : "#315e91",
+                    border: "1px solid rgba(201,164,95,0.36)",
+                    background: menuOpen ? "rgba(201,164,95,0.16)" : "rgba(201,164,95,0.055)",
+                    color: "#ead5a6",
                     cursor: "pointer",
                     display: "flex",
                     flexDirection: "column",
@@ -1901,10 +1865,8 @@ export default function LandingPage() {
                       width: "260px",
                       padding: "13px",
                       borderRadius: "17px",
-                      border:
-                        "1px solid rgba(105,160,220,0.3)",
-                      background:
-                        "linear-gradient(145deg,#17283e,#101c2d)",
+                      border: "1px solid rgba(201,164,95,0.34)",
+                      background: "linear-gradient(145deg,#21170e,#100b06 70%,#090705)",
                       boxShadow:
                         "0 20px 55px rgba(0,0,0,0.45)",
                       zIndex: 10,
@@ -1913,15 +1875,14 @@ export default function LandingPage() {
                     <div
                       style={{
                         padding: "12px 13px 15px",
-                        borderBottom:
-                          "1px solid rgba(150,180,220,0.14)",
+                        borderBottom: "1px solid rgba(201,164,95,0.18)",
                         marginBottom: "8px",
                       }}
                     >
                       <div
                         style={{
                           fontSize: "13px",
-                          color: "#e5f0ff",
+                          color: "#f1e4c7",
                           fontWeight: 600,
                         }}
                       >
@@ -1931,7 +1892,7 @@ export default function LandingPage() {
                       <div
                         style={{
                           fontSize: "10px",
-                          color: "#8faaca",
+                          color: "#a99572",
                           marginTop: "5px",
                           overflowWrap: "anywhere",
                         }}
