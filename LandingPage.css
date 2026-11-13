@@ -1363,3 +1363,233 @@ select {
     font-size: min(100vw,390px) !important;
   }
 }
+
+
+/* NELA — ATELIER SIGNATURE DESIGN SYSTEM */
+:root {
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.nela-page {
+  --gold: #b99a62;
+  --gold-light: #e6d2a7;
+  --gold-deep: #80633b;
+  --text: #eee8dc;
+  --muted: #a79b86;
+  --border: rgba(190,160,105,.22);
+  background-color: #090806;
+  background-image:
+    radial-gradient(ellipse at 50% 28%, rgba(116,83,42,.18), transparent 38%),
+    radial-gradient(ellipse at 12% 82%, rgba(73,54,31,.12), transparent 34%),
+    linear-gradient(120deg,rgba(7,6,5,.97),rgba(15,12,8,.93) 50%,rgba(7,6,5,.98));
+  font-family: "DM Sans", sans-serif;
+}
+.nela-page::before {
+  background:
+    linear-gradient(90deg,transparent 0,rgba(202,174,125,.035) 50%,transparent 100%),
+    radial-gradient(ellipse at center,transparent 35%,rgba(0,0,0,.28) 100%);
+}
+.nela-header {
+  height: 92px;
+  padding: 0 clamp(22px,7vw,112px);
+  border-bottom: 1px solid rgba(211,185,139,.12);
+  background: linear-gradient(180deg,rgba(9,8,6,.72),rgba(9,8,6,.12));
+  backdrop-filter: blur(18px);
+}
+.nela-brand { padding: 0; }
+.nela-monogram {
+  font-family: "Bodoni Moda", Georgia, serif !important;
+  font-size: 51px !important;
+  font-weight: 500 !important;
+  letter-spacing: -7px !important;
+  padding: 0 7px 3px 0 !important;
+  color: #d8bd88 !important;
+  text-shadow: 0 2px 30px rgba(203,167,105,.22) !important;
+}
+.nela-navigation { gap: clamp(10px,1.8vw,25px); }
+.nela-navigation button,
+.nela-business-button {
+  transition: color .25s ease,border-color .25s ease,background .25s ease,transform .25s ease;
+}
+.nela-business-button {
+  border-radius: 2px;
+  padding: 13px 22px;
+  border-color: rgba(205,177,126,.48);
+  background: rgba(205,177,126,.035);
+  color: #e4d2ad;
+  letter-spacing: 2px;
+  font-size: 9px;
+}
+.nela-business-button:hover { transform: translateY(-1px); background:#d2b77f; color:#171108; }
+.nela-theme-button { border-radius: 2px; border-color: rgba(205,177,126,.3); }
+.nela-main { padding: clamp(50px,8vh,100px) 22px; }
+.nela-hero {
+  position: relative;
+  max-width: 880px;
+  padding: clamp(42px,7vh,78px) 28px clamp(35px,6vh,65px);
+  text-align: center;
+}
+.nela-hero::before {
+  content: "THE ART OF EVERYDAY APPOINTMENTS";
+  display: block;
+  margin: 0 auto 27px;
+  color: #bda579;
+  font: 600 9px/1 "DM Sans",sans-serif;
+  letter-spacing: .34em;
+}
+.nela-hero::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: min(360px,62%);
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg,transparent,rgba(199,170,118,.55),transparent);
+}
+.nela-emblem { display:none; }
+.nela-hero h1 {
+  font-family: "Bodoni Moda","Cormorant Garamond",serif;
+  font-size: clamp(88px,13vw,156px);
+  font-weight: 500;
+  letter-spacing: .19em;
+  line-height: .92;
+  padding-left: .19em;
+  color: #ddc18b;
+  text-shadow: 0 8px 50px rgba(0,0,0,.42),0 0 55px rgba(184,145,83,.12);
+}
+.nela-tagline {
+  margin-top: 25px;
+  font-family: "Bodoni Moda","Cormorant Garamond",serif;
+  font-size: clamp(25px,3vw,34px);
+  font-weight: 500;
+  letter-spacing: .015em;
+  color: #eee2c8;
+}
+.nela-description {
+  margin: 24px auto 35px;
+  max-width: 510px;
+  color: #bcb3a3;
+  font-size: 13px;
+  line-height: 2.05;
+  letter-spacing: .025em;
+}
+.nela-hero-actions { gap: 14px; }
+.nela-primary-button,.nela-secondary-button {
+  min-width: 185px;
+  min-height: 52px;
+  border-radius: 2px;
+  padding: 15px 26px;
+  font-size: 9px;
+  letter-spacing: .19em;
+  text-transform: uppercase;
+}
+.nela-primary-button {
+  border: 1px solid #d7bd8b;
+  background: linear-gradient(135deg,#e5d1a7,#b89961);
+  color: #21190d;
+  box-shadow: 0 12px 34px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.42);
+}
+.nela-primary-button:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,0,0,.3),0 0 28px rgba(190,154,91,.12); }
+.nela-secondary-button {
+  border: 1px solid rgba(210,184,137,.42);
+  background: rgba(255,255,255,.018);
+  color: #e7dcc8;
+}
+.nela-secondary-button:hover { background:rgba(205,177,126,.09); border-color:#c6a66f; transform:translateY(-2px); }
+.nela-trust {
+  margin-top: 37px;
+  color: #9f927a;
+  font-size: 8px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+}
+.nela-trust span { color:#d0b27a; }
+.nela-card {
+  border-radius: 3px;
+  border-color: rgba(197,165,111,.25);
+  background: linear-gradient(145deg,rgba(28,23,16,.96),rgba(12,10,8,.97));
+  box-shadow: 0 35px 100px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.035);
+}
+.nela-card-heading h2,.nela-card h2,.nela-card h3 {
+  font-family: "Bodoni Moda","Cormorant Garamond",serif;
+  font-weight: 500;
+  letter-spacing: .01em;
+}
+.nela-card-heading h2 { font-size: 36px; }
+.nela-field input,.nela-field select { border-radius: 2px; height: 51px; }
+.nela-field > span { letter-spacing: .12em; text-transform: uppercase; font-size: 9px; }
+.nela-back { letter-spacing: .08em; }
+.nela-footer { border-color:rgba(211,185,139,.12); color:#928671; }
+
+/* Portrait chat: understated, tactile, editorial. */
+.nela-chat-panel {
+  max-width: 460px !important;
+  width: min(100%,460px) !important;
+  border-radius: 8px !important;
+  border-color: rgba(205,174,116,.25) !important;
+  box-shadow: 0 40px 120px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.018),inset 0 1px rgba(255,255,255,.055) !important;
+}
+.nela-chat-panel > div:first-of-type { min-height:82px; }
+.nela-chat-monogram,.nela-chat-welcome-monogram {
+  font-family:"Bodoni Moda",Georgia,serif !important;
+  font-weight:500 !important;
+}
+.nela-chat-panel h2 {
+  font-family:"Bodoni Moda","Cormorant Garamond",serif !important;
+  font-weight:500 !important;
+  letter-spacing:.08em !important;
+}
+.nela-chat-panel .nela-chat-messages > div[style*="flex-start"],
+.nela-chat-panel .nela-chat-messages > div[style*="flex-end"] {
+  border-radius: 3px !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,.14),inset 0 1px rgba(255,255,255,.035) !important;
+}
+.nela-chat-panel .nela-chat-composer input { border-radius:3px !important; }
+.nela-chat-panel .nela-chat-composer button { border-radius:3px !important; }
+.nela-chat-watermark { font-family:"Bodoni Moda",Georgia,serif !important; font-weight:500 !important; }
+.nela-chat-panel button[aria-label="Open account menu"],
+.nela-chat-panel .nela-theme-button { border-radius:3px !important; }
+
+.theme-light.nela-page {
+  --background:#e9e1d2;
+  --surface:rgba(247,242,232,.97);
+  --text:#2b241a;
+  --muted:#82745d;
+  background-image:
+    radial-gradient(ellipse at 50% 24%,rgba(191,160,105,.18),transparent 40%),
+    linear-gradient(135deg,#eee8dc 0%,#e4dac8 55%,#eee8dc 100%);
+}
+.theme-light .nela-header { background:rgba(239,232,219,.76); border-color:rgba(125,96,51,.18); }
+.theme-light .nela-monogram { color:#99723b !important; }
+.theme-light .nela-hero h1 { color:#94703b; text-shadow:0 4px 28px rgba(112,82,37,.12); }
+.theme-light .nela-tagline,.theme-light .nela-card-heading h2 { color:#806033; }
+.theme-light .nela-description,.theme-light .nela-trust { color:#71634c; }
+.theme-light .nela-business-button { color:#73572e; border-color:rgba(126,94,46,.38); }
+.theme-light .nela-secondary-button { color:#57452c; border-color:rgba(126,94,46,.4); background:rgba(255,255,255,.22); }
+.theme-light .nela-card { background:linear-gradient(145deg,rgba(250,247,239,.98),rgba(238,230,215,.98)); }
+.theme-light .nela-field > span { color:#65553d; }
+.theme-light .nela-field input,.theme-light .nela-field select { background:rgba(255,253,248,.85); color:#302719; border-color:rgba(137,104,53,.25); }
+.theme-light .nela-switch,.theme-light .nela-card-heading p { color:#7d705b; }
+
+@media (max-width:680px) {
+  .nela-header { height:74px; padding:0 18px; }
+  .nela-navigation { gap:8px; }
+  .nela-navigation > button { font-size:8px; }
+  .nela-main { padding:45px 15px; }
+  .nela-hero { padding:35px 8px; }
+  .nela-hero::before { font-size:7px; letter-spacing:.22em; margin-bottom:25px; }
+  .nela-hero h1 { font-size:clamp(70px,18vw,112px); letter-spacing:.14em; padding-left:.14em; }
+  .nela-tagline { font-size:25px; }
+  .nela-description { font-size:12px; line-height:1.9; }
+  .nela-hero-actions { flex-direction:column; align-items:stretch; max-width:310px; margin:0 auto; }
+  .nela-primary-button,.nela-secondary-button { width:100%; }
+  .nela-card { padding:28px 22px; border-radius:3px; }
+  .nela-chat-panel { border-radius:0 !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { scroll-behavior:auto !important; animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
