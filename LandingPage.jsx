@@ -1,7 +1,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import "./LandingPage.css";
-import { NELA_LOGO_DATA } from "./NelaLogo";
+import { NELA_LOGO_DATA, NELA_MARK_DATA } from "./NelaLogo";
 
 const CLIENTS_KEY = "nelaClients";
 const USER_KEY = "nelaUser";
@@ -1043,7 +1043,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
           className="nela-brand"
           onClick={() => changeMode("home")}
         >
-          <span className="nela-monogram" aria-label="NELA"><img src={NELA_LOGO_DATA} alt="" /></span>
+          <span className="nela-monogram" aria-label="NELA"><img src={NELA_MARK_DATA} alt="" /></span>
         </button>
 
         <nav className="nela-navigation">
@@ -1773,7 +1773,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
                   gap: "12px",
                 }}
               >
-                <div className="nela-chat-monogram" aria-label="NELA"><img src={NELA_LOGO_DATA} alt="" /></div>
+                <div className="nela-chat-monogram" aria-label="NELA"><img src={NELA_MARK_DATA} alt="" /></div>
 
                 <div>
                   <h2 className="nela-chat-title"
@@ -2015,7 +2015,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
                     maxWidth: "400px",
                   }}
                 >
-                  <div className="nela-chat-welcome-monogram" aria-hidden="true"><img src={NELA_LOGO_DATA} alt="" /></div>
+                  <div className="nela-chat-welcome-monogram" aria-hidden="true"><img src={NELA_MARK_DATA} alt="" /></div>
 
                   <h2
                     style={{
