@@ -1040,3 +1040,43 @@ button { -webkit-tap-highlight-color: transparent; }
 }
 .nela-hero { text-align: center !important; }
 .nela-hero h1 { position: relative; left: 0 !important; transform: none !important; }
+
+
+/* NELA VECTOR IDENTITY — transparent artwork, no raster black tile. */
+.nela-monogram {
+  width: 42px !important;
+  height: 42px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+.nela-monogram::before { display: none !important; }
+.nela-monogram img,
+.nela-chat-monogram img,
+.nela-chat-welcome-monogram img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  background: transparent !important;
+}
+.nela-chat-monogram {
+  padding: 5px !important;
+  border-radius: 50% !important;
+  background: rgba(218,184,115,.045) !important;
+}
+.nela-chat-welcome-monogram {
+  padding: 3px !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.nela-brand-watermark img,
+.nela-chat-watermark img {
+  background: transparent !important;
+}
