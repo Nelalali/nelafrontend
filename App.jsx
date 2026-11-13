@@ -929,10 +929,7 @@ function ChatApp() {
     getBusinessConfig()?.businessName ||
     "NELA";
 
-  const [theme, setTheme] = useState(() => {
-    try { return localStorage.getItem("nelaTheme") || "dark"; }
-    catch { return "dark"; }
-  });
+  const [theme, setTheme] = useState("dark");
   useEffect(() => {
     try { localStorage.setItem("nelaTheme", theme); } catch {}
   }, [theme]);
@@ -2643,15 +2640,7 @@ function ChatApp() {
               ONLINE
             </div>
 
-            <button
-              type="button"
-              style={{ ...styles.logout, marginLeft: "auto", background: lightTheme ? "#fff8e8" : "#211909", borderColor: lightTheme ? "#b88a32" : "#e3bd65", color: lightTheme ? "#795817" : "#f5d98e", minWidth: "40px" }}
-              onClick={() => setTheme(lightTheme ? "dark" : "light")}
-              aria-label="Αλλαγή θέματος"
-              title={lightTheme ? "Σκούρο θέμα" : "Λευκό θέμα"}
-            >
-              {lightTheme ? "☾" : "☼"}
-            </button>
+
 
             {!isAdmin && (
               <button
