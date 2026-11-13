@@ -990,8 +990,14 @@ function ChatApp() {
      ======================================================= */
 
   function saveContextMessage(role, text) {
-    const stored = safeStorageGet(CONTEXT_HISTORY_KEY, []);
-    const next = [...(Array.isArray(stored) ? stored : []), {
+    const existingContext = safeStorageGet(CONTEXT_HISTORY_KEY, null);
+    const legacyHistory = existingContext === null ? safeStorageGet(HISTORY_KEY, []) : existingContext;
+    const stored = (Array.isArray(legacyHistory) ? legacyHistory : []).map((item) => ({
+      role: item.role,
+      content: item.content || item.text || item.message || "",
+      timestamp: item.timestamp || new Date().toISOString(),
+    })).filter((item) => ["user", "assistant"].includes(item.role) && item.content);
+    const next = [...stored, {
       role,
       content: text,
       timestamp: new Date().toISOString(),
@@ -1210,6 +1216,9 @@ function ChatApp() {
       service:
         data.service?.name ||
         "",
+
+      duration:
+        Number(data.service?.duration || 30),
 
       price:
         data.service?.price ??
