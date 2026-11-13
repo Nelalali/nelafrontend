@@ -1,7 +1,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import "./LandingPage.css";
-import { NELA_LOGO_DATA } from "./NelaLogo.js";
 
 const CLIENTS_KEY = "nelaClients";
 const USER_KEY = "nelaUser";
@@ -307,7 +306,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
           {}
       );
 
-      setChatMessages(getHistoryForClient(found.id));
+      setChatMessages([]);
     }
   }, []);
 
@@ -467,13 +466,22 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
     writeStorage(USER_KEY, publicUser);
     writeStorage(ACTIVE_CLIENT_KEY, found.id);
 
+    // Start every login with a clean visible conversation. Keep other clients' data.
+    const savedHistory = readStorage(HISTORY_KEY, []);
+    if (Array.isArray(savedHistory)) {
+      writeStorage(
+        HISTORY_KEY,
+        savedHistory.filter((item) => item && item.clientId && item.clientId !== found.id)
+      );
+    }
+
     // Enter the premium chat immediately without returning to the public homepage.
     setCurrentUser(found);
     setAppointments(getClientAppointments(found));
     setClientMemory(
       readStorage(MEMORY_KEY, {})[found.id] || found.memory || {}
     );
-    setChatMessages(getHistoryForClient(found.id));
+    setChatMessages([]);
     setLogin({ email: "", password: "" });
     setMode("chat");
     setMenuOpen(false);
@@ -1031,8 +1039,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
           className="nela-brand"
           onClick={() => changeMode("home")}
         >
-          <img src={NELA_LOGO_DATA} alt="" aria-hidden="true" className="nela-brand-logo" />
-          <span className="nela-brand-wordmark">NELA</span>
+          <span className="nela-monogram" aria-label="NELA">N</span>
         </button>
 
         <nav className="nela-navigation">
@@ -1740,12 +1747,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
               boxShadow: "0 28px 85px rgba(0,0,0,0.58), inset 0 1px rgba(255,255,255,0.025)",
             }}
           >
-            <img
-              className="nela-chat-watermark"
-              src={NELA_LOGO_DATA}
-              alt=""
-              aria-hidden="true"
-            />
+            <div className="nela-chat-watermark" aria-hidden="true">N</div>
             {/* CHAT HEADER */}
 
             <div
@@ -1767,21 +1769,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
                   gap: "12px",
                 }}
               >
-                <div
-                  style={{
-                    width: "43px",
-                    height: "43px",
-                    borderRadius: "14px",
-                    display: "grid",
-                    placeItems: "center",
-                    overflow: "hidden",
-                    border: "1px solid rgba(201,164,95,.28)",
-                    background: "#100b06",
-                    boxShadow: "0 6px 20px rgba(0,0,0,.3)",
-                  }}
-                >
-                  <img className="nela-chat-logo-image" src={NELA_LOGO_DATA} alt="NELA" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
+                <div className="nela-chat-monogram" aria-label="NELA">N</div>
 
                 <div>
                   <h2
@@ -2025,23 +2013,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
                     maxWidth: "400px",
                   }}
                 >
-                  <div
-                    style={{
-                      width: "65px",
-                      height: "65px",
-                      borderRadius: "22px",
-                      display: "grid",
-                      placeItems: "center",
-                      margin: "0 auto 18px",
-                      fontSize: "30px",
-                      overflow: "hidden",
-                      border: "1px solid rgba(201,164,95,.28)",
-                      background: "linear-gradient(145deg,#302113,#120d08)",
-                      boxShadow: "0 8px 25px rgba(0,0,0,.3)",
-                    }}
-                  >
-                    <img className="nela-chat-welcome-logo" src={NELA_LOGO_DATA} alt="NELA" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
-                  </div>
+                  <div className="nela-chat-welcome-monogram" aria-hidden="true">N</div>
 
                   <h2
                     style={{
