@@ -1020,6 +1020,7 @@ export default function LandingPage() {
         </button>
 
         <nav className="nela-navigation">
+          <button type="button" className="nela-theme-button" onClick={() => setTheme((current) => current === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"} title={theme === "dark" ? "Light theme" : "Dark theme"}>{theme === "dark" ? "☀" : "☾"}</button>
 
 
           {currentUser && mode !== "home" && (
@@ -1707,6 +1708,7 @@ export default function LandingPage() {
 
         {mode === "chat" && currentUser && (
           <div
+            className={"nela-chat-panel" + (theme === "light" ? " theme-light-chat" : "")}
             style={{
               width: "100%",
               maxWidth: "950px",
@@ -1794,6 +1796,8 @@ export default function LandingPage() {
                   gap: "9px",
                 }}
               >
+                <button type="button" className="nela-theme-button" onClick={() => setTheme((current) => current === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"} title={theme === "dark" ? "Light theme" : "Dark theme"}>{theme === "dark" ? "☀" : "☾"}</button>
+
                 {/* HAMBURGER MENU */}
 
                 <button
