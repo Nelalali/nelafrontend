@@ -2252,5 +2252,3 @@ export default function LandingPage() {
     </main>
   );
 }
-
-export default LandingPage;
