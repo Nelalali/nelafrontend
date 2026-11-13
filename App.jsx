@@ -2090,6 +2090,20 @@ function ChatApp() {
       fontWeight: "800",
     },
 
+    logout: {
+      marginLeft: "10px",
+      flexShrink: 0,
+      border: "1px solid rgba(243,223,170,.28)",
+      borderRadius: "999px",
+      padding: "9px 13px",
+      background: "rgba(3,6,10,.45)",
+      color: "#e5d2a0",
+      fontSize: "9px",
+      fontWeight: "700",
+      letterSpacing: ".4px",
+      cursor: "pointer",
+    },
+
     onlineDot: {
       width: "7px",
       height: "7px",
@@ -2622,6 +2636,24 @@ function ChatApp() {
 
               ONLINE
             </div>
+
+            {!isAdmin && (
+              <button
+                type="button"
+                style={styles.logout}
+                onClick={() => {
+                  const confirmed = window.confirm("Θέλετε να αποσυνδεθείτε από τη NELA;");
+                  if (!confirmed) return;
+                  localStorage.removeItem("nelaUser");
+                  localStorage.removeItem("nelaActiveClient");
+                  window.location.replace("/");
+                }}
+                aria-label="Αποσύνδεση"
+                title="Αποσύνδεση"
+              >
+                Αποσύνδεση
+              </button>
+            )}
           </div>
         </header>
 
@@ -2987,7 +3019,7 @@ export default function App() {
   const businessSession = readSession("nelaBusinessUser");
   const customerSession = readSession("nelaUser");
 
-  if (isAdminRoute && businessSession?.loggedIn) return <ChatApp />;
+  if (isAdminRoute && businessSession?.id) return <ChatApp />;
   if (isAdminRoute) return <LandingPage defaultMode="business" />;
   if (customerSession?.id) return <ChatApp />;
   return <LandingPage />;
