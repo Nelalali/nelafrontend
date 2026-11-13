@@ -1740,6 +1740,12 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
               boxShadow: "0 28px 85px rgba(0,0,0,0.58), inset 0 1px rgba(255,255,255,0.025)",
             }}
           >
+            <img
+              className="nela-chat-watermark"
+              src={NELA_LOGO_DATA}
+              alt=""
+              aria-hidden="true"
+            />
             {/* CHAT HEADER */}
 
             <div
@@ -1774,7 +1780,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
                     boxShadow: "0 6px 20px rgba(0,0,0,.3)",
                   }}
                 >
-                  <img src={NELA_LOGO_DATA} alt="NELA" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <img className="nela-chat-logo-image" src={NELA_LOGO_DATA} alt="NELA" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
 
                 <div>
@@ -2001,6 +2007,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
             {/* CHAT MESSAGES */}
 
             <div
+              className="nela-chat-messages"
               style={{
                 flex: 1,
                 overflowY: "auto",
@@ -2033,7 +2040,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
                       boxShadow: "0 8px 25px rgba(0,0,0,.3)",
                     }}
                   >
-                    <img src={NELA_LOGO_DATA} alt="NELA" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                    <img className="nela-chat-welcome-logo" src={NELA_LOGO_DATA} alt="NELA" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                   </div>
 
                   <h2
@@ -2148,6 +2155,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
             {/* CHAT INPUT */}
 
             <form
+              className="nela-chat-composer"
               onSubmit={sendMessage}
               style={{
                 display: "flex",
