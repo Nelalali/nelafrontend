@@ -653,11 +653,25 @@ select {
 }
 .nela-brand-logo {
   display: block;
-  width: 112px;
+  width: 62px;
   height: 54px;
   object-fit: contain;
-  object-position: left center;
-  filter: drop-shadow(0 5px 16px rgba(0,0,0,.28));
+  object-position: center;
+  background: transparent !important;
+  border-radius: 0 !important;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 3px 10px rgba(201,164,95,.16));
+}
+.nela-brand-wordmark {
+  display: inline-block;
+  margin-left: 8px;
+  color: #c9a45f;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 29px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  line-height: 1;
+  text-shadow: 0 2px 12px rgba(201,164,95,.12);
 }
 .nela-card {
   border-color: rgba(201,164,95,.34);
@@ -681,7 +695,8 @@ select {
 }
 @media (max-width: 600px) {
   .nela-header { height: 72px; padding: 0 5%; }
-  .nela-brand-logo { width: 94px; height: 48px; }
+  .nela-brand-logo { width: 54px; height: 46px; }
+  .nela-brand-wordmark { font-size: 25px; letter-spacing: 3px; }
 }
 
 
@@ -710,9 +725,13 @@ select {
 
 /* Logo artwork remains intact in both themes */
 .theme-light .nela-brand-logo {
-  filter: drop-shadow(0 5px 14px rgba(0,0,0,.18)) !important;
-  background: #100b06;
-  border-radius: 8px;
+  background: transparent !important;
+  border-radius: 0 !important;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 3px 10px rgba(151,112,45,.16)) !important;
+}
+.theme-light .nela-brand-wordmark {
+  color: #a77d31;
 }
 .theme-light-chat img[alt="NELA"] {
   filter: none !important;
