@@ -131,14 +131,19 @@ function getHistoryForClient(clientId) {
   if (!Array.isArray(history)) return [];
 
   return history
-    .filter(
-      (item) => item.clientId === clientId || !item.clientId
-    )
-    .sort(
-      (a, b) =>
-        new Date(a.timestamp || 0) -
-        new Date(b.timestamp || 0)
-    );
+    .filter((item) => item && (item.clientId === clientId || !item.clientId))
+    .map((item) => {
+      const content = String(item.content ?? item.text ?? item.message ?? "").trim();
+      const rawRole = String(item.role || item.sender || "").toLowerCase();
+      const role = ["assistant", "ai", "bot", "model", "nela"].includes(rawRole)
+        ? "assistant"
+        : ["user", "customer", "human"].includes(rawRole)
+          ? "user"
+          : rawRole;
+      return { ...item, role, content };
+    })
+    .filter((item) => item.content && ["user", "assistant"].includes(item.role))
+    .sort((a, b) => new Date(a.timestamp || 0) - new Date(b.timestamp || 0));
 }
 
 /* =========================================================
@@ -210,8 +215,8 @@ function Field({
    MAIN LANDING PAGE
 ========================================================= */
 
-export default function LandingPage({ defaultMode = "home" } = {}) {
-  const [mode, setMode] = useState(defaultMode);
+export default function LandingPage() {
+  const [mode, setMode] = useState("home");
 
   const [theme, setTheme] = useState(() => readStorage(THEME_KEY, "dark") === "light" ? "light" : "dark");
 
@@ -746,10 +751,13 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
         )
       : [];
 
-    const userHistory = newHistory.map((item) => ({
-      ...item,
-      clientId: currentUser.id,
-    }));
+    const userHistory = newHistory
+      .map((item) => ({
+        ...item,
+        content: String(item.content ?? item.text ?? item.message ?? "").trim(),
+        clientId: currentUser.id,
+      }))
+      .filter((item) => item.content && ["user", "assistant"].includes(item.role));
 
     writeStorage(HISTORY_KEY, [
       ...otherMessages,
