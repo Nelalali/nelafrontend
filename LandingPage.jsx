@@ -1747,7 +1747,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
               boxShadow: "0 28px 85px rgba(0,0,0,0.58), inset 0 1px rgba(255,255,255,0.025)",
             }}
           >
-            <div className="nela-chat-watermark" aria-hidden="true">N</div>
+            <span className="nela-chat-watermark" aria-hidden="true">N</span>
             {/* CHAT HEADER */}
 
             <div
