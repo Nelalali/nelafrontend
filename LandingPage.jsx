@@ -212,7 +212,7 @@ function Field({
 export default function LandingPage() {
   const [mode, setMode] = useState("home");
 
-  const [theme, setTheme] = useState("dark");;
+  const [theme, setTheme] = useState("dark");
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
