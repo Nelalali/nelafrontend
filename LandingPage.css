@@ -793,3 +793,100 @@ button { -webkit-tap-highlight-color: transparent; }
   .nela-chat-composer { border-radius: 0 0 27px 27px !important; }
   .nela-chat-watermark { width: 75% !important; }
 }
+
+
+/* NELA identity refinement — flowing monogram and editorial wordmark */
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Marcellus&display=swap");
+
+.nela-page,
+.nela-page button,
+.nela-page input,
+.nela-page select,
+.nela-page textarea {
+  font-family: "Manrope", sans-serif !important;
+}
+
+.nela-brand::after {
+  content: "NELA" !important;
+  font-family: "Marcellus", Georgia, serif !important;
+  font-size: 23px !important;
+  font-weight: 400 !important;
+  letter-spacing: .24em !important;
+  padding-left: .24em !important;
+  color: #f0dfbd !important;
+  text-shadow: 0 2px 18px rgba(216,184,115,.12);
+}
+
+.nela-monogram,
+.nela-chat-monogram,
+.nela-chat-welcome-monogram {
+  position: relative !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  text-shadow: none !important;
+}
+
+.nela-monogram { width: 47px !important; height: 47px !important; }
+.nela-chat-monogram { width: 51px !important; height: 51px !important; }
+.nela-chat-welcome-monogram {
+  width: 116px !important;
+  height: 116px !important;
+  margin: 0 auto 23px !important;
+}
+
+.nela-monogram::after,
+.nela-chat-monogram::after,
+.nela-chat-welcome-monogram::after {
+  content: "" !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: center / contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M24 82 C25 62 25 39 26 19 C26 15 30 14 33 19 C46 39 59 61 72 81 C75 85 79 82 78 77 C77 58 77 38 78 18' fill='none' stroke='%23e6c98f' stroke-width='5.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M18 84 C18 60 19 35 20 17' fill='none' stroke='%23b99458' stroke-width='1.1' stroke-linecap='round' opacity='.8'/%3E%3Cpath d='M83 17 C84 38 84 61 83 82' fill='none' stroke='%23b99458' stroke-width='1.1' stroke-linecap='round' opacity='.8'/%3E%3C/svg%3E") !important;
+  filter: drop-shadow(0 0 10px rgba(221,185,112,.2)) !important;
+}
+
+.nela-chat-monogram { background: transparent !important; }
+.nela-chat-watermark {
+  width: min(350px,70%) !important;
+  height: min(390px,66%) !important;
+  font-size: 0 !important;
+  color: transparent !important;
+  opacity: .095 !important;
+}
+.nela-chat-watermark::after {
+  content: "" !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: center / contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M24 82 C25 62 25 39 26 19 C26 15 30 14 33 19 C46 39 59 61 72 81 C75 85 79 82 78 77 C77 58 77 38 78 18' fill='none' stroke='%23d9b66f' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+}
+
+.nela-hero h1,
+.nela-tagline,
+.nela-card-heading h2,
+.nela-card h2,
+.nela-card h3,
+.nela-chat-panel h2,
+.nela-chat-messages h2 {
+  font-family: "Marcellus", Georgia, serif !important;
+  font-weight: 400 !important;
+}
+.nela-hero h1 {
+  letter-spacing: .17em !important;
+  padding-left: .17em !important;
+}
+.nela-tagline { letter-spacing: .025em !important; }
+.nela-chat-panel h2 { letter-spacing: .055em !important; }
+
+.theme-light .nela-brand::after { color: #73552a !important; }
+.theme-light .nela-monogram::after,
+.theme-light .nela-chat-monogram::after,
+.theme-light .nela-chat-welcome-monogram::after {
+  filter: drop-shadow(0 0 7px rgba(142,105,47,.13)) !important;
+}
