@@ -2029,7 +2029,7 @@ export default function LandingPage() {
                     style={{
                       ...mutedText,
                       color:
-                        theme === "dark" ? "#9bb3d0" : "#627d9c",
+                        #b9aa8d,
                       lineHeight: 1.8,
                     }}
                   >
@@ -2058,20 +2058,20 @@ export default function LandingPage() {
                         ? "18px 18px 5px 18px"
                         : "18px 18px 18px 5px",
                       background: isUser
-                        ? "linear-gradient(135deg,#397fc0,#24558b)"
+                        ? "linear-gradient(135deg,#d9bd80,#a77b3c)"
                         : theme === "dark"
-                          ? "linear-gradient(145deg,#1b2c42,#172438)"
-                          : "linear-gradient(145deg,#ffffff,#eaf2fc)",
+                          ? "linear-gradient(145deg,#261b10,#171008)"
+                          : "linear-gradient(145deg,#261b10,#171008)",
                       color: isUser
                         ? "#ffffff"
                         : theme === "dark"
-                          ? "#dceaff"
-                          : "#263f5d",
+                          ? "#eee4d0"
+                          : "#eee4d0",
                       border: isUser
-                        ? "1px solid rgba(130,190,255,0.25)"
-                        : "1px solid rgba(105,155,210,0.2)",
+                        ? "1px solid rgba(201,164,95,0.24)"
+                        : "1px solid rgba(201,164,95,0.2)",
                       boxShadow: isUser
-                        ? "0 5px 18px rgba(35,95,160,0.18)"
+                        ? "0 5px 18px rgba(0,0,0,0.25)"
                         : "0 4px 15px rgba(0,0,0,0.08)",
                       whiteSpace: "pre-wrap",
                       overflowWrap: "anywhere",
@@ -2109,13 +2109,13 @@ export default function LandingPage() {
                     padding: "13px 18px",
                     borderRadius: "18px 18px 18px 5px",
                     border:
-                      "1px solid rgba(105,155,210,0.2)",
+                      "1px solid rgba(201,164,95,0.2)",
                     background:
                       theme === "dark"
                         ? "#1b2c42"
                         : "#edf4fc",
                     color:
-                      theme === "dark" ? "#a9cefa" : "#426d9b",
+                      theme === "dark" ? "#d8c59c" : "#d8c59c",
                     fontSize: "12px",
                   }}
                 >
@@ -2133,7 +2133,7 @@ export default function LandingPage() {
                 gap: "10px",
                 padding: "18px",
                 borderTop:
-                  "1px solid rgba(105,160,220,0.18)",
+                  "1px solid rgba(201,164,95,0.18)",
                 background:
                   theme === "dark"
                     ? "rgba(9,18,30,0.45)"
@@ -2157,13 +2157,13 @@ export default function LandingPage() {
                   padding: "0 19px",
                   outline: "none",
                   border:
-                    "1px solid rgba(105,155,210,0.3)",
+                    "1px solid rgba(201,164,95,0.28)",
                   background:
                     theme === "dark"
                       ? "rgba(255,255,255,0.055)"
                       : "#ffffff",
                   color:
-                    theme === "dark" ? "#e2efff" : "#243e5b",
+                    theme === "dark" ? "#eee4d0" : "#eee4d0",
                   fontSize: "12px",
                 }}
               />
@@ -2178,14 +2178,14 @@ export default function LandingPage() {
                   padding: "0 20px",
                   color: "#ffffff",
                   background:
-                    "linear-gradient(135deg,#397fc0,#24558b)",
+                    "linear-gradient(135deg,#e0c58d,#a77b3c)",
                   cursor: "pointer",
                   fontSize: "12px",
                   fontWeight: 600,
                   opacity:
                     chatLoading || !chatInput.trim() ? 0.5 : 1,
                   boxShadow:
-                    "0 5px 18px rgba(35,95,160,0.2)",
+                    "0 5px 18px rgba(154,109,48,0.18)",
                 }}
               >
                 Send
