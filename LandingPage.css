@@ -869,6 +869,16 @@ select {
   line-height: 1.65 !important;
   backdrop-filter: blur(13px);
 }
+.nela-chat-panel > .nela-chat-messages > div[style*="flex-end"],
+.nela-chat-panel > .nela-chat-messages > div[style*="flex-start"] {
+  max-width: min(82%, 510px) !important;
+  padding: 12px 16px !important;
+  border-radius: 19px !important;
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px !important;
+  line-height: 1.65 !important;
+  backdrop-filter: blur(13px);
+}
 .nela-chat-panel > .nela-chat-messages > div[style*="flex-end"] {
   border-bottom-right-radius: 6px !important;
   background: linear-gradient(135deg,#d8bd85,#b28a4c) !important;
