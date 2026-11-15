@@ -27,6 +27,10 @@ export default function Admin() {
   const [editingService, setEditingService] = useState(null);
   const [serviceForm, setServiceForm] = useState({ name: "", price: "", duration: "30" });
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
+  const [supportOpen, setSupportOpen] = useState(false);
+  const [supportInput, setSupportInput] = useState("");
+  const [supportSending, setSupportSending] = useState(false);
+  const [supportMessages, setSupportMessages] = useState([{ role: "assistant", text: "Γεια σου! Είμαι η NELA Support AI. Μπορώ να σε βοηθήσω με το dashboard, τις κρατήσεις, τις υπηρεσίες και τις ρυθμίσεις σου. Τι θα ήθελες να μάθεις;" }]);
 
   useEffect(() => { write(KEYS.bookings, bookings); }, [bookings]);
   useEffect(() => { write(KEYS.clients, clients); }, [clients]);
@@ -52,14 +56,14 @@ export default function Admin() {
 
   return <div className="admin-app">
     <aside className="admin-sidebar">
-      <div className="admin-brand"><div className="brand-symbol">N</div><div><strong>NELA</strong><small>BUSINESS STUDIO</small></div></div>
+      <div className="admin-brand"><div className="brand-symbol"><img src={NELA_MARK_DATA} alt="NELA" /></div><div><strong>NELA</strong><small>BUSINESS STUDIO</small></div></div>
       <div className="workspace-label">WORKSPACE</div>
       <button className="workspace-switch" type="button"><span className="workspace-avatar">{(settings.businessName || "N").slice(0, 1).toUpperCase()}</span><span className="workspace-text"><b>{settings.businessName || "NELA"}</b><small>Business workspace</small></span><span className="switch-caret">⌄</span></button>
       <nav className="admin-nav" aria-label="Κεντρική πλοήγηση">{navItems.map((item) => <button key={item.id} className={`nav-item ${page === item.id ? "active" : ""}`} type="button" onClick={() => setPage(item.id)}><span className="nav-icon">{item.icon}</span><span>{item.label}</span>{item.id === "appointments" && activeBookings.length > 0 && <small className="nav-count">{activeBookings.length}</small>}</button>)}</nav>
       <div className="sidebar-bottom"><div className="plan-card"><div className="plan-spark">✦</div><b>Η NELA δουλεύει για σένα</b><p>Οργάνωσε τις κρατήσεις σου από ένα σημείο.</p><span className="plan-status"><i /> WORKSPACE ACTIVE</span></div><button className="nav-item logout-button" type="button" onClick={logout}><span className="nav-icon">↪</span><span>Αποσύνδεση</span></button><div className="sidebar-version">NELA STUDIO · LOCAL WORKSPACE</div></div>
     </aside>
     <main className="admin-main">
-      <header className="admin-topbar"><div className="breadcrumbs"><span>Workspace</span><span>/</span><b>{navItems.find((n) => n.id === page)?.label || "Επισκόπηση"}</b></div><div className="topbar-right"><span className="system-status"><i /> Όλα έτοιμα</span><button className="icon-button" title="Ανανέωση δεδομένων" onClick={() => { setBookings(read(KEYS.bookings, [])); setClients(read(KEYS.clients, [])); setSettings({ ...initialSettings, ...read(KEYS.settings, {}) }); setToast("Τα δεδομένα ανανεώθηκαν."); }}>↻</button><div className="profile-chip"><span className="profile-avatar">N</span><span><b>Business Admin</b><small>Owner access</small></span></div></div></header>
+      <header className="admin-topbar"><div className="breadcrumbs"><span>Workspace</span><span>/</span><b>{navItems.find((n) => n.id === page)?.label || "Επισκόπηση"}</b></div><div className="topbar-right"><span className="system-status"><i /> Όλα έτοιμα</span><button className="icon-button" title="Ανανέωση δεδομένων" onClick={() => { setBookings(read(KEYS.bookings, [])); setClients(read(KEYS.clients, [])); setSettings({ ...initialSettings, ...read(KEYS.settings, {}) }); setToast("Τα δεδομένα ανανεώθηκαν."); }}>↻</button><div className="profile-chip"><span className="profile-avatar"><img src={NELA_MARK_DATA} alt="NELA" /></span><span><b>Business Admin</b><small>Owner access</small></span></div></div></header>
       <div className="admin-content">
         {toast && <div className="admin-toast" role="status">✦ {toast}</div>}
         {page === "overview" && <>
@@ -76,6 +80,18 @@ export default function Admin() {
         {page === "services" && <PageTitle kicker="SERVICE CATALOG" title="Υπηρεσίες" description="Οργάνωσε το μενού υπηρεσιών, τις τιμές και τις διάρκειες."><section className="panel"><div className="panel-heading"><div><h2>Κατάλογος υπηρεσιών</h2><p>{(settings.services || []).length} υπηρεσίες</p></div><button className="admin-btn primary" onClick={() => { setEditingService(null); setServiceForm({ name: "", price: "", duration: "30" }); setShowServiceForm((v) => !v); }}>{showServiceForm ? "Κλείσιμο" : "+ Νέα υπηρεσία"}</button></div>{showServiceForm && <form className="service-form" onSubmit={saveService}><label>Όνομα υπηρεσίας<input required value={serviceForm.name} onChange={(e) => setServiceForm((f) => ({ ...f, name: e.target.value }))} placeholder="π.χ. Κούρεμα" /></label><label>Τιμή (€)<input required type="number" min="0" step="0.5" value={serviceForm.price} onChange={(e) => setServiceForm((f) => ({ ...f, price: e.target.value }))} placeholder="20" /></label><label>Διάρκεια (λεπτά)<input required type="number" min="5" step="5" value={serviceForm.duration} onChange={(e) => setServiceForm((f) => ({ ...f, duration: e.target.value }))} /></label><button className="admin-btn primary" type="submit">Αποθήκευση</button></form>}{(settings.services || []).length ? <div className="service-grid">{settings.services.map((s) => <article className="service-card" key={s.id}><div className="service-card-icon">✦</div><div className="service-card-title"><h3>{s.name}</h3><span>{s.duration} λεπτά</span></div><div className="service-card-price">{money(s.price)}</div><div className="service-card-actions"><button className="tiny-action" onClick={() => editService(s)}>Επεξεργασία</button><button className="tiny-action danger" onClick={() => deleteService(s.id)}>Διαγραφή</button></div></article>)}</div> : <Empty title="Δεν έχουν προστεθεί υπηρεσίες" text="Πρόσθεσε την πρώτη υπηρεσία σου." />}</section></PageTitle>}
         {page === "settings" && <PageTitle kicker="WORKSPACE CONFIGURATION" title="Ρυθμίσεις επιχείρησης" description="Οι αλλαγές αποθηκεύονται σε αυτό το πρόγραμμα περιήγησης."><form className="panel settings-form" onSubmit={(e) => { e.preventDefault(); write(KEYS.settings, settings); setToast("Οι ρυθμίσεις αποθηκεύτηκαν."); }}><div className="panel-heading"><div><h2>Βασικά στοιχεία</h2><p>Πληροφορίες που περιγράφουν την επιχείρησή σου.</p></div><span className="saved-label">● Αυτόματη αποθήκευση</span></div><label>Όνομα επιχείρησης<input value={settings.businessName || ""} onChange={(e) => setSettings((s) => ({ ...s, businessName: e.target.value }))} /></label><label>Κατηγορία επιχείρησης<input value={settings.businessType || ""} onChange={(e) => setSettings((s) => ({ ...s, businessType: e.target.value }))} /></label><label>Σύντομη περιγραφή<textarea rows="3" value={settings.description || ""} onChange={(e) => setSettings((s) => ({ ...s, description: e.target.value }))} /></label><div className="settings-divider" /><div className="panel-heading"><div><h2>Ωράριο λειτουργίας</h2><p>Χρησιμοποίησε μορφή 09:00-18:00 ή «Κλειστά».</p></div></div><div className="hours-grid">{[["monday","Δευτέρα"],["tuesday","Τρίτη"],["wednesday","Τετάρτη"],["thursday","Πέμπτη"],["friday","Παρασκευή"],["saturday","Σάββατο"],["sunday","Κυριακή"]].map(([key,label]) => <label key={key}>{label}<input value={settings.openingHours?.[key] || ""} onChange={(e) => setSettings((s) => ({ ...s, openingHours: { ...(s.openingHours || {}), [key]: e.target.value } }))} /></label>)}</div><div className="settings-footer"><span>Οι ρυθμίσεις αποθηκεύονται τοπικά και δεν συγχρονίζονται μεταξύ συσκευών.</span><button className="admin-btn primary" type="submit">Αποθήκευση ρυθμίσεων</button></div></form><div className="notice-card"><b>Σημαντικό για τη λειτουργία της NELA</b><p>Αυτή η έκδοση dashboard χρησιμοποιεί localStorage. Για χρήση από πολλές συσκευές/επιχειρήσεις, τα δεδομένα πρέπει να αποθηκεύονται και να ελέγχονται από το backend.</p></div></PageTitle>}
       </div>
+      <div className="support-widget">
+        {supportOpen && <section className="support-panel" aria-label="NELA AI Support">
+          <div className="support-header"><div className="support-agent"><span className="support-agent-avatar">✦</span><span><b>NELA Support</b><small><i /> AI assistant · Online</small></span></div><button className="support-close" onClick={() => setSupportOpen(false)} aria-label="Κλείσιμο">×</button></div>
+          <div className="support-intro">Πες μου τι χρειάζεσαι και θα προσπαθήσω να σε καθοδηγήσω.</div>
+          <div className="support-messages">{supportMessages.map((m,i)=><div key={i} className={`support-message ${m.role}`}>{m.text}</div>)}{supportSending && <div className="support-message assistant support-typing">Η NELA γράφει…</div>}</div>
+          <form className="support-form" onSubmit={async (e)=>{e.preventDefault();const message=supportInput.trim();if(!message||supportSending)return;const history=[...supportMessages,{role:"user",text:message}];setSupportMessages(history);setSupportInput("");setSupportSending(true);try{const response=await fetch(SUPPORT_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message,history:history.slice(-12).map(x=>({role:x.role,content:x.text}))})});const data=await response.json();if(!response.ok)throw new Error(data.answer||"Η υπηρεσία υποστήριξης δεν είναι διαθέσιμη.");setSupportMessages(old=>[...old,{role:"assistant",text:data.answer||"Πώς αλλιώς μπορώ να βοηθήσω;"}]);}catch(err){setSupportMessages(old=>[...old,{role:"assistant",text:err.message||"Δεν ήταν δυνατή η σύνδεση. Δοκίμασε ξανά σε λίγο."}]);}finally{setSupportSending(false);}}}>
+            <input value={supportInput} onChange={e=>setSupportInput(e.target.value)} placeholder="Γράψε το μήνυμά σου…" aria-label="Μήνυμα προς NELA Support" disabled={supportSending}/><button type="submit" disabled={!supportInput.trim()||supportSending} aria-label="Αποστολή">↑</button>
+          </form>
+          <div className="support-disclaimer">NELA AI Support · Μην κοινοποιείς κωδικούς ή στοιχεία πληρωμής.</div>
+        </section>}
+        <button className={`support-launcher ${supportOpen?"is-open":""}`} onClick={()=>setSupportOpen(v=>!v)} aria-label={supportOpen?"Κλείσιμο υποστήριξης":"Άνοιγμα AI υποστήριξης"}><span className="support-person">♙</span><span className="support-launcher-label">{supportOpen?"Κλείσιμο":"AI Support"}</span></button>
+      </div>
       <footer className="admin-footer"><span>© {new Date().getFullYear()} NELA BUSINESS STUDIO</span><span>BUILT FOR BETTER SERVICE <i>✦</i></span></footer>
     </main>
   </div>;
@@ -85,3 +101,42 @@ function Metric({ label, value, icon, detail }) { return <article className="met
 function Status({ status }) { const s = String(status || "confirmed").toLowerCase(); return <span className={`status-pill status-${s.replace(/[^a-z_]/g, "")}`}><i />{statusText(s)}</span>; }
 function Empty({ icon = "✦", title, text, action, onClick }) { return <div className="empty-state"><div className="empty-icon">{icon}</div><b>{title}</b><p>{text}</p>{action && <button className="text-action" onClick={onClick}>{action} →</button>}</div>; }
 function PageTitle({ kicker, title, description, action, children }) { return <><div className="page-heading"><div><div className="admin-eyebrow">{kicker}</div><h1>{title}</h1><p>{description}</p></div>{action && <div className="heading-actions">{action}</div>}</div>{children}</>; }
+
+
+function RevenueChart({ bookings }) {
+  const [range, setRange] = useState("month");
+  const now = new Date();
+  const start = new Date(now);
+  if (range === "day") start.setHours(0,0,0,0);
+  else if (range === "week") start.setDate(now.getDate()-6);
+  else if (range === "month") start.setDate(1);
+  else { start.setMonth(0,1); }
+  const end = new Date(now); end.setHours(23,59,59,999);
+  const key = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  const parseDate = (value) => {
+    if (!value) return null;
+    const raw=String(value).slice(0,10);
+    if (/^\\d{4}-\\d{2}-\\d{2}$/.test(raw)) { const [y,m,d]=raw.split("-").map(Number); return new Date(y,m-1,d); }
+    const parsed=new Date(value); return Number.isNaN(parsed.getTime())?null:new Date(parsed.getFullYear(),parsed.getMonth(),parsed.getDate());
+  };
+  const points=[];
+  if(range==="year"){
+    for(let m=0;m<=now.getMonth();m++){const d=new Date(now.getFullYear(),m,1);points.push({key:`${d.getFullYear()}-${String(m+1).padStart(2,"0")}`,label:new Intl.DateTimeFormat("el-GR",{month:"short"}).format(d),amount:0,count:0});}
+  } else {
+    const days=range==="day"?1:range==="week"?7:now.getDate();
+    for(let i=days-1;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);points.push({key:key(d),label:range==="day"?"Σήμερα":new Intl.DateTimeFormat("el-GR",{day:"numeric",month:"short"}).format(d),amount:0,count:0});}
+  }
+  const index=new Map(points.map((p,i)=>[p.key,i]));
+  bookings.forEach(b=>{const d=parseDate(b.date||b.datetime||b.start||b.appointmentDate);if(!d||d>now)return;const k=range==="year"?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`:key(d);const i=index.get(k);if(i===undefined)return;const price=Number(b.price??b.servicePrice??0);points[i].amount+=Number.isFinite(price)?price:0;points[i].count++;});
+  const max=Math.max(1,...points.map(p=>p.amount));const width=760,height=210,pad=24,base=height-34,top=16,step=(width-pad*2)/Math.max(1,points.length-1);
+  const coords=points.map((p,i)=>({x:pad+i*step,y:base-(p.amount/max)*(base-top)}));
+  const line=coords.map((p,i)=>`${i?"L":"M"} ${p.x} ${p.y}`).join(" ");
+  const area=`${line} L ${coords[coords.length-1]?.x||pad} ${base} L ${coords[0]?.x||pad} ${base} Z`;
+  const total=points.reduce((s,p)=>s+p.amount,0),count=points.reduce((s,p)=>s+p.count,0);
+  return <section className="panel revenue-chart-panel"><div className="panel-heading chart-heading"><div><div className="admin-eyebrow">BUSINESS PERFORMANCE</div><h2>Πορεία επιχείρησης</h2><p>Έσοδα και κρατήσεις με βάση τα καταχωρημένα ραντεβού.</p></div><div className="chart-range">{[["day","Ημέρα"],["week","7 ημέρες"],["month","Μήνας"],["year","Έτος"]].map(([id,label])=><button key={id} className={range===id?"selected":""} onClick={()=>setRange(id)}>{label}</button>)}</div></div>
+    <div className="chart-summary"><div><small>ΕΣΟΔΑ ΠΕΡΙΟΔΟΥ</small><strong>{money(total)}</strong></div><div><small>ΚΡΑΤΗΣΕΙΣ ΠΕΡΙΟΔΟΥ</small><strong>{count}</strong></div><span className="chart-period">{range==="day"?"Σήμερα":range==="week"?"Τελευταίες 7 ημέρες":range==="month"?"Από την αρχή του μήνα":"Από την αρχή του έτους"}</span></div>
+    <div className="chart-canvas"><svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Γράφημα εσόδων ανά ημέρα"><defs><linearGradient id="nelaChartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#d7b875" stopOpacity=".3"/><stop offset="100%" stopColor="#d7b875" stopOpacity="0"/></linearGradient></defs>{[0,1,2,3].map(i=><line key={i} x1={pad} x2={width-pad} y1={top+i*(base-top)/3} y2={top+i*(base-top)/3} stroke="rgba(218,187,123,.12)" strokeDasharray="4 6"/>)}<path d={area} fill="url(#nelaChartFill)"/><path d={line} fill="none" stroke="#d7b875" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>{coords.map((p,i)=><circle key={i} cx={p.x} cy={p.y} r={points.length>18?2.5:4} fill="#e8d19f" stroke="#17140e" strokeWidth="2"><title>{points[i].label}: {money(points[i].amount)} · {points[i].count} κρατήσεις</title></circle>)}</svg></div>
+    <div className="chart-labels">{points.filter((p,i)=>range==="year"||i===0||i===points.length-1||i%Math.max(1,Math.ceil(points.length/6))===0).map(p=><span key={p.key}>{p.label}</span>)}</div>
+    {!count&&<div className="chart-empty">Μόλις καταχωρηθούν ραντεβού, η πορεία της επιχείρησής σου θα εμφανιστεί εδώ.</div>}
+  </section>;
+}
