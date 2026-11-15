@@ -1086,7 +1086,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
           {!currentUser && (
             <button
               className="nela-business-button"
-              onClick={() => changeMode("business-login")}
+              onClick={() => changeMode("business-home")}
             >
               FOR BUSINESS
             </button>
@@ -1112,7 +1112,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
               </p>
               <div className="nela-hero-actions">
                 <button className="nela-primary-button" onClick={() => changeMode("register")}>Get started <span>↗</span></button>
-                <button className="nela-secondary-button" onClick={() => changeMode("business-login")}>For businesses <span>→</span></button>
+                <button className="nela-secondary-button" onClick={() => changeMode("business-home")}>For businesses <span>→</span></button>
               </div>
               <p className="nela-login-prompt">Already have an account; <button onClick={() => changeMode("login")}>Σύνδεση</button></p>
               <div className="nela-trust"><span>✦</span> LESS SEARCHING&nbsp; · &nbsp;MORE LIVING&nbsp; · &nbsp;SMARTER BOOKINGS</div>
@@ -1182,8 +1182,8 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
             </section>
 
             <section className="nela-pricing-section" id="nela-pricing">
-              <div className="nela-pricing-copy"><span className="nela-section-kicker">FOR BUSINESS ΜΕ ΦΙΛΟΔΟΞΙΑ</span><h2>Your business,<br /><em>always in reach.</em></h2><p>Give customers a simpler way to discover your services, ask questions and request appointments — while you stay focused on your work.</p><button className="nela-secondary-button" onClick={() => changeMode("business-login")}>Explore the business workspace <span>→</span></button></div>
-              <div className="nela-price-card"><span className="nela-price-label">NELA FOR BUSINESS</span><div className="nela-price">€24<span>.99</span><small> / month</small></div><p>Everything you need to start delivering a smarter booking experience.</p><ul><li>AI-assisted customer conversations</li><li>Appointment and calendar management</li><li>Customer directory and booking history</li><li>Service and business profile settings</li><li>Business overview and insights</li></ul><button className="nela-primary-button" onClick={() => changeMode("business-login")}>Get started <span>↗</span></button><small className="nela-price-note">Simple pricing. No complicated setup.</small></div>
+              <div className="nela-pricing-copy"><span className="nela-section-kicker">FOR BUSINESS ΜΕ ΦΙΛΟΔΟΞΙΑ</span><h2>Your business,<br /><em>always in reach.</em></h2><p>Give customers a simpler way to discover your services, ask questions and request appointments — while you stay focused on your work.</p><button className="nela-secondary-button" onClick={() => changeMode("business-home")}>Explore the business workspace <span>→</span></button></div>
+              <div className="nela-price-card"><span className="nela-price-label">NELA FOR BUSINESS</span><div className="nela-price">€24<span>.99</span><small> / month</small></div><p>Everything you need to start delivering a smarter booking experience.</p><ul><li>AI-assisted customer conversations</li><li>Appointment and calendar management</li><li>Customer directory and booking history</li><li>Service and business profile settings</li><li>Business overview and insights</li></ul><button className="nela-primary-button" onClick={() => changeMode("business-home")}>Get started <span>↗</span></button><small className="nela-price-note">Simple pricing. No complicated setup.</small></div>
             </section>
 
             <section className="nela-final-cta">
@@ -1317,6 +1317,48 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
           </div>
         )}
 
+        {/* BUSINESS WORKSPACE OVERVIEW */}
+        {mode === "business-home" && (
+          <div className="nela-business-page">
+            <section className="nela-business-hero">
+              <button className="nela-back" onClick={() => changeMode("home")}>← Back to NELA</button>
+              <span className="nela-section-kicker">NELA FOR BUSINESS · BUSINESS MANAGEMENT, REIMAGINED</span>
+              <h1>Run your business.<br /><em>Not your admin.</em></h1>
+              <p className="nela-business-lead">A smarter front desk for modern service businesses. Let NELA support customer conversations, organise appointment requests and give you a clearer view of daily operations — all in one professional workspace.</p>
+              <div className="nela-business-actions">
+                <button className="nela-primary-button" onClick={() => changeMode("business-register")}>Create your business account <span>↗</span></button>
+                <button className="nela-secondary-button" onClick={() => changeMode("business-login")}>Sign in to your workspace <span>→</span></button>
+              </div>
+              <div className="nela-business-proof"><span>✦</span> ONE WORKSPACE <i /> SMARTER BOOKINGS <i /> MORE CONTROL</div>
+            </section>
+            <section className="nela-business-intro">
+              <div><span className="nela-section-kicker">BUILT AROUND YOUR WORKDAY</span><h2>More clarity.<br /><em>Less busywork.</em></h2></div>
+              <p>Running a service business means balancing customers, appointments, schedules and constant questions. NELA brings these everyday tasks into a single, structured workspace, helping you stay organised while giving customers a more consistent experience.</p>
+            </section>
+            <section className="nela-business-feature-grid">
+              <article><span>01 · CUSTOMER EXPERIENCE</span><b>AI-assisted conversations</b><p>Help customers ask questions, understand your services and move towards an appointment through a natural chat experience.</p><small>Clear communication · Consistent information · Less repetitive admin</small></article>
+              <article><span>02 · DAILY OPERATIONS</span><b>Appointment control</b><p>Keep upcoming bookings, appointment details and schedule information organised, so you can see what needs attention.</p><small>Booking overview · Calendar visibility · Status tracking</small></article>
+              <article><span>03 · CUSTOMER RELATIONSHIPS</span><b>Customer directory</b><p>Keep customer details and available booking history together, making it easier to understand previous interactions.</p><small>Customer records · Contact details · Booking history</small></article>
+              <article><span>04 · SERVICE MANAGEMENT</span><b>Your services, your rules</b><p>Present your business clearly by managing service names, descriptions, prices, durations and business information.</p><small>Service catalogue · Pricing details · Business profile</small></article>
+              <article><span>05 · BUSINESS PERFORMANCE</span><b>Useful operational insights</b><p>Review the information recorded in your workspace, including booking activity, customer volume and estimated revenue.</p><small>Booking summaries · Activity indicators · Performance overview</small></article>
+              <article><span>06 · WORKSPACE SETTINGS</span><b>Configured around your business</b><p>Maintain key business details and opening hours so your workspace reflects how your team actually operates.</p><small>Business details · Opening hours · Workspace preferences</small></article>
+            </section>
+            <section className="nela-business-process">
+              <div className="nela-business-process-heading"><span className="nela-section-kicker">A CLEARER WAY TO WORK</span><h2>From first message<br /><em>to organised day.</em></h2></div>
+              <div className="nela-business-steps">
+                <article><span>01</span><div><b>Set up your business</b><p>Add your business details, services, prices and opening hours.</p></div></article>
+                <article><span>02</span><div><b>Let customers connect</b><p>Give customers a simple way to ask about your services and request appointments.</p></div></article>
+                <article><span>03</span><div><b>Manage everything centrally</b><p>Review bookings, customer information and business activity from your workspace.</p></div></article>
+              </div>
+            </section>
+            <section className="nela-business-price">
+              <div><span className="nela-section-kicker">STRAIGHTFORWARD MONTHLY PRICING</span><h2>Professional tools.<br /><em>One simple plan.</em></h2><p>Start with the essential workspace for managing customer conversations, appointments and business information.</p></div>
+              <div className="nela-business-price-card"><span>NELA FOR BUSINESS</span><strong>€24.99 <small>/ month</small></strong><p>One clear monthly price.</p><ul><li>AI-assisted customer conversations</li><li>Appointment and calendar management</li><li>Customer directory and booking history</li><li>Service and business profile settings</li><li>Business overview and insights</li></ul><button className="nela-primary-button" onClick={() => changeMode("business-register")}>Get started <span>↗</span></button><button className="nela-business-login-link" onClick={() => changeMode("business-login")}>Already registered? Sign in</button></div>
+            </section>
+            <section className="nela-business-bottom"><span className="nela-section-kicker">YOUR BUSINESS DESERVES A BETTER WORKFLOW</span><h2>Make every day<br /><em>easier to manage.</em></h2><button className="nela-primary-button" onClick={() => changeMode("business-register")}>Create your business account <span>↗</span></button></section>
+          </div>
+        )}
+
         {/* BUSINESS LOGIN */}
 
         {mode === "business-login" && (
@@ -1373,7 +1415,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
           <div className="nela-card nela-business-card">
             <button
               className="nela-back"
-              onClick={() => changeMode("business-login")}
+              onClick={() => changeMode("business-home")}
             >
               ← Back to Business Login
             </button>
