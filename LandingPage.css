@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Marcellus&family=Outfit:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
 
 :root { color-scheme: dark; }
 * { box-sizing: border-box; }
@@ -1254,3 +1254,55 @@ button { -webkit-tap-highlight-color: transparent; }
 .theme-light .nela-navigation .nela-nav-login { color:#72552d!important;border-color:rgba(133,101,53,.32)!important; }
 .theme-light .nela-login-prompt { color:#766b58; }
 @media(max-width:700px){.nela-navigation .nela-nav-login{padding:9px 12px!important;font-size:8px!important}.nela-login-prompt{margin-top:16px}}
+
+
+/* NELA — refined editorial typography and signature identity */
+.nela-page, .nela-page button, .nela-page input, .nela-page select, .nela-page textarea {
+  font-family: "Manrope", sans-serif !important;
+}
+.nela-brand::after {
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+  font-size: 27px !important;
+  font-weight: 600 !important;
+  letter-spacing: .25em !important;
+  padding-left: .25em !important;
+  line-height: 1 !important;
+}
+.nela-monogram {
+  width: 47px !important;
+  height: 47px !important;
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+}
+.nela-hero h1 {
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+  font-size: clamp(100px, 14vw, 166px) !important;
+  font-weight: 500 !important;
+  letter-spacing: .17em !important;
+  line-height: .82 !important;
+}
+.nela-tagline, .nela-card-heading h2, .nela-card h2, .nela-card h3 {
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+  font-weight: 600 !important;
+  letter-spacing: .005em !important;
+}
+.nela-tagline { font-size: clamp(28px, 3.5vw, 39px) !important; }
+.nela-chat-panel h2, .nela-chat-messages h2 {
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+  font-weight: 600 !important;
+}
+.nela-chat-panel .nela-chat-title {
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+  font-size: 25px !important;
+  font-weight: 600 !important;
+  letter-spacing: .16em !important;
+}
+.nela-primary-button, .nela-secondary-button, .nela-business-button, .nela-submit, .nela-back {
+  font-family: "Manrope", sans-serif !important;
+  letter-spacing: .12em !important;
+}
+.nela-brand-watermark img, .nela-chat-watermark img { opacity: .82; }
+@media (max-width: 760px) {
+  .nela-brand::after { font-size: 23px !important; letter-spacing: .2em !important; }
+  .nela-hero h1 { font-size: clamp(76px, 17vw, 112px) !important; letter-spacing: .13em !important; }
+  .nela-tagline { font-size: 29px !important; }
+}
