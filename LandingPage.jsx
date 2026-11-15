@@ -1088,7 +1088,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
               className="nela-business-button"
               onClick={() => changeMode("business-login")}
             >
-              FOR BUSINESS
+              ΓΙΑ ΕΠΙΧΕΙΡΗΣΕΙΣ
             </button>
           )}
         </nav>
