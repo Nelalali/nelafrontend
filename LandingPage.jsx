@@ -1047,6 +1047,11 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
         </button>
 
         <nav className="nela-navigation">
+          {mode === "home" && <>
+            <button type="button" className="nela-nav-link" onClick={() => document.getElementById("nela-features")?.scrollIntoView({ behavior: "smooth" })}>PLATFORM</button>
+            <button type="button" className="nela-nav-link" onClick={() => document.getElementById("nela-how")?.scrollIntoView({ behavior: "smooth" })}>HOW IT WORKS</button>
+            <button type="button" className="nela-nav-link" onClick={() => document.getElementById("nela-pricing")?.scrollIntoView({ behavior: "smooth" })}>PRICING</button>
+          </>}
           <button type="button" className="nela-theme-button" onClick={() => setTheme((current) => current === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"} title={theme === "dark" ? "Light theme" : "Dark theme"}>{theme === "dark" ? "☀" : "☾"}</button>
 
 
@@ -1094,40 +1099,96 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
         {/* HOME */}
 
         {mode === "home" && (
-          <div className="nela-hero">
-            <div className="nela-emblem">✧</div>
-
-            <h1>NELA</h1>
-
-            <p className="nela-tagline">
-              Booking, made simple.
-            </p>
-
-            <p className="nela-description">
-              Your personal assistant for everyday appointments.
-              <br />
-              Find, book and manage your appointments effortlessly.
-            </p>
-
-            <div className="nela-hero-actions">
-              <button
-                className="nela-primary-button"
-                onClick={() => changeMode("register")}
-              >
-                Create Account
-              </button>
-
-              <button
-                className="nela-secondary-button"
-                onClick={() => changeMode("login")}
-              >
-                Log In
-              </button>
+          <div className="nela-home-content">
+            <div className="nela-hero">
+              <div className="nela-hero-kicker"><span /> YOUR EVERYDAY, REIMAGINED</div>
+              <div className="nela-emblem"><img src={NELA_MARK_DATA} alt="NELA monogram" /></div>
+              <h1>NELA</h1>
+              <p className="nela-tagline">Your time. Your plans. <em>One intelligent place.</em></p>
+              <p className="nela-description">
+                Meet the smarter way to find trusted professionals and book the services you need.
+                <br className="desktop-break" /> One simple conversation takes care of the details.
+              </p>
+              <div className="nela-hero-actions">
+                <button className="nela-primary-button" onClick={() => changeMode("register")}>Get started <span>↗</span></button>
+                <button className="nela-secondary-button" onClick={() => changeMode("business-login")}>For businesses <span>→</span></button>
+              </div>
+              <div className="nela-trust"><span>✦</span> LESS SEARCHING&nbsp; · &nbsp;MORE LIVING&nbsp; · &nbsp;SMARTER BOOKINGS</div>
+              <button className="nela-scroll-cue" onClick={() => document.getElementById("nela-features")?.scrollIntoView({ behavior: "smooth" })}>DISCOVER NELA <span>↓</span></button>
             </div>
 
-            <div className="nela-trust">
-              <span>✦</span> Simple · Smart · Personal
-            </div>
+            <section className="nela-section nela-feature-section" id="nela-features">
+              <div className="nela-section-heading">
+                <span className="nela-section-kicker">A BETTER WAY TO GET THINGS DONE</span>
+                <h2>Everything you need.<br /><em>Nothing you don't.</em></h2>
+                <p>From the first question to the confirmed appointment, NELA keeps the experience clear, personal and effortless.</p>
+              </div>
+              <div className="nela-feature-grid">
+                <article className="nela-feature-card"><span className="nela-feature-number">01</span><div className="nela-feature-icon">⌕</div><h3>Find your people</h3><p>Discover nearby professionals and services that match what you are looking for.</p><small>DISCOVER WITH CONFIDENCE</small></article>
+                <article className="nela-feature-card featured"><span className="nela-feature-number">02</span><div className="nela-feature-icon">✧</div><h3>Talk naturally</h3><p>Tell NELA what you need in your own words. No complicated forms or endless searching.</p><small>AI-POWERED ASSISTANCE</small></article>
+                <article className="nela-feature-card"><span className="nela-feature-number">03</span><div className="nela-feature-icon">◷</div><h3>Book in moments</h3><p>Choose a service, find a suitable time and keep your appointments organised.</p><small>YOUR TIME, RESPECTED</small></article>
+              </div>
+            </section>
+
+            <section className="nela-showcase-section">
+              <div className="nela-showcase-copy">
+                <span className="nela-section-kicker">MEET YOUR NEW ASSISTANT</span>
+                <h2>Just say what<br />you <em>need.</em></h2>
+                <p>No more switching between tabs, calling around or repeating the same details. Start with a simple message and let NELA guide the next step.</p>
+                <button className="nela-text-link" onClick={() => changeMode(currentUser ? "chat" : "register")}>Experience NELA <span>↗</span></button>
+              </div>
+              <div className="nela-chat-preview" aria-label="Illustrative NELA conversation preview">
+                <div className="nela-preview-top"><span className="nela-preview-avatar"><img src={NELA_MARK_DATA} alt="" /></span><div><b>NELA assistant</b><small><i /> READY TO HELP</small></div><span className="nela-preview-dots">•••</span></div>
+                <div className="nela-preview-body">
+                  <div className="nela-preview-date">TODAY · 10:42</div>
+                  <div className="nela-preview-message assistant">Hi! What can I help you arrange today?</div>
+                  <div className="nela-preview-message customer">I need a haircut this week, somewhere nearby.</div>
+                  <div className="nela-preview-message assistant">Of course. I can help you find a barbershop and check suitable appointment times.</div>
+                  <div className="nela-preview-result"><span>✦</span><div><b>Your next step, made simple.</b><small>Find · Compare · Book</small></div><span className="nela-preview-arrow">↗</span></div>
+                </div>
+                <div className="nela-preview-input">Write a message… <span>↑</span></div>
+                <div className="nela-preview-caption">A PREVIEW OF THE NELA EXPERIENCE</div>
+              </div>
+            </section>
+
+            <section className="nela-section nela-categories-section">
+              <div className="nela-section-heading">
+                <span className="nela-section-kicker">ONE PLACE. MANY POSSIBILITIES.</span>
+                <h2>Whatever life <em>calls for.</em></h2>
+                <p>From everyday appointments to the professionals you rely on, NELA is designed to make access simpler.</p>
+              </div>
+              <div className="nela-category-grid">
+                {[
+                  ["✂","Beauty & hair","Salons, barbershops and nail studios"],
+                  ["＋","Health & care","Doctors, dentists and clinics"],
+                  ["⌂","Professional services","Accountants and consultants"],
+                  ["◉","Wellness & fitness","Personal care and training"]
+                ].map(([icon,title,description]) => <article className="nela-category-card" key={title}><span>{icon}</span><div><b>{title}</b><small>{description}</small></div><i>↗</i></article>)}
+              </div>
+            </section>
+
+            <section className="nela-section nela-how-section" id="nela-how">
+              <div className="nela-section-heading">
+                <span className="nela-section-kicker">THREE STEPS. ONE SMOOTH EXPERIENCE.</span>
+                <h2>Simple by <em>design.</em></h2>
+              </div>
+              <div className="nela-steps">
+                <article><span>01</span><div><h3>Tell us what you need</h3><p>Describe the service, professional or appointment you have in mind.</p></div></article>
+                <article><span>02</span><div><h3>Explore the right options</h3><p>NELA helps you move from your request to a suitable service and time.</p></div></article>
+                <article><span>03</span><div><h3>You're all set</h3><p>Confirm your details and keep your bookings together in your account.</p></div></article>
+              </div>
+            </section>
+
+            <section className="nela-pricing-section" id="nela-pricing">
+              <div className="nela-pricing-copy"><span className="nela-section-kicker">FOR AMBITIOUS LOCAL BUSINESSES</span><h2>Your business,<br /><em>always in reach.</em></h2><p>Give customers a simpler way to discover your services, ask questions and request appointments — while you stay focused on your work.</p><button className="nela-secondary-button" onClick={() => changeMode("business-login")}>Explore the business workspace <span>→</span></button></div>
+              <div className="nela-price-card"><span className="nela-price-label">NELA BUSINESS</span><div className="nela-price">€49<span>.99</span><small> / month</small></div><p>Everything you need to start delivering a smarter booking experience.</p><ul><li>AI-assisted customer conversations</li><li>Appointment and calendar management</li><li>Customer directory and booking history</li><li>Service and business profile settings</li><li>Business overview and insights</li></ul><button className="nela-primary-button" onClick={() => changeMode("business-login")}>Get started <span>↗</span></button><small className="nela-price-note">Simple pricing. No complicated setup.</small></div>
+            </section>
+
+            <section className="nela-final-cta">
+              <span className="nela-section-kicker">MAKE ROOM FOR WHAT MATTERS</span>
+              <h2>Life moves fast.<br /><em>Booking should too.</em></h2>
+              <button className="nela-primary-button" onClick={() => changeMode("register")}>Start with NELA <span>↗</span></button>
+            </section>
           </div>
         )}
 
