@@ -355,3 +355,76 @@
  .chart-summary { gap:18px; }
  .chart-summary strong { font-size:18px; }
 }
+
+
+/* Business workspace: compact phone layout */
+@media (max-width: 600px) {
+  .admin-app { display:block !important; width:100% !important; min-width:0 !important; min-height:100svh !important; overflow-x:clip !important; }
+  .admin-sidebar { width:100% !important; min-width:0 !important; max-width:100% !important; padding:12px 12px 8px !important; }
+  .admin-brand { gap:9px !important; padding:0 2px 10px !important; }
+  .brand-symbol { width:32px !important; height:32px !important; flex-basis:32px !important; }
+  .admin-brand strong { font-size:12px !important; letter-spacing:.2em !important; }
+  .admin-brand small { font-size:7px !important; }
+  .admin-nav { width:100% !important; max-width:100% !important; margin:0 !important; padding:4px 0 7px !important; gap:4px !important; overflow-x:auto !important; overflow-y:hidden !important; overscroll-behavior-x:contain; -webkit-overflow-scrolling:touch; scrollbar-width:thin; }
+  .admin-nav .nav-item { flex:0 0 auto !important; min-width:max-content !important; min-height:35px !important; padding:0 9px !important; font-size:9px !important; }
+  .admin-main { width:100% !important; min-width:0 !important; max-width:100% !important; }
+  .admin-topbar { width:100% !important; min-height:52px !important; padding:0 12px !important; gap:8px !important; }
+  .breadcrumbs { min-width:0 !important; gap:5px !important; font-size:9px !important; }
+  .breadcrumbs span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .topbar-right { min-width:0 !important; gap:7px !important; }
+  .profile-chip { gap:6px !important; padding-left:7px !important; }
+  .profile-avatar { width:28px !important; height:28px !important; flex-basis:28px !important; }
+  .profile-chip b { max-width:76px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:8px !important; }
+  .profile-chip small { font-size:7px !important; }
+  .admin-content { width:100% !important; max-width:100% !important; min-width:0 !important; padding:22px 12px 30px !important; }
+  .page-heading { gap:12px !important; margin-bottom:18px !important; }
+  .page-heading h1 { font-size:29px !important; overflow-wrap:anywhere; }
+  .page-heading p { font-size:11px !important; line-height:1.65 !important; }
+  .heading-actions { width:100% !important; }
+  .heading-actions .admin-btn { min-width:0 !important; padding:0 10px !important; font-size:9px !important; }
+  .metric-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:8px !important; }
+  .metric-card { min-width:0 !important; padding:12px 10px !important; }
+  .metric-top { align-items:flex-start !important; font-size:7px !important; letter-spacing:.05em !important; }
+  .metric-top i { width:23px !important; height:23px !important; flex:0 0 23px !important; }
+  .metric-card > strong { font-size:clamp(19px,6vw,25px) !important; overflow-wrap:anywhere; }
+  .metric-detail { align-items:flex-start !important; font-size:8px !important; line-height:1.5 !important; }
+  .dashboard-grid { grid-template-columns:minmax(0,1fr) !important; gap:11px !important; }
+  .panel { min-width:0 !important; max-width:100% !important; padding:14px 11px !important; }
+  .panel-heading { gap:9px !important; }
+  .panel-heading h2 { font-size:13px !important; }
+  .table-wrap { max-width:100% !important; overflow-x:auto !important; -webkit-overflow-scrolling:touch; }
+  .admin-app table { min-width:580px; }
+  .admin-app input:not([type="checkbox"]),.admin-app select,.admin-app textarea { max-width:100%; font-size:16px !important; }
+  .search-input { width:100% !important; }
+  .revenue-chart-panel { margin-bottom:11px !important; padding:14px 11px !important; }
+  .chart-heading { align-items:stretch !important; }
+  .chart-range { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; width:100% !important; }
+  .chart-range button { min-width:0 !important; padding:8px 3px !important; font-size:8px !important; }
+  .chart-summary { align-items:flex-start !important; flex-wrap:wrap !important; gap:13px 20px !important; }
+  .chart-summary > div { min-width:calc(50% - 12px); }
+  .chart-summary strong { font-size:19px !important; }
+  .chart-period { width:100%; margin:0 !important; }
+  .chart-canvas { overflow-x:auto !important; -webkit-overflow-scrolling:touch; }
+  .chart-canvas svg { min-width:440px !important; }
+  .chart-labels { min-width:440px; }
+  .service-grid { grid-template-columns:minmax(0,1fr) !important; }
+  .service-form { grid-template-columns:minmax(0,1fr) !important; }
+  .service-form label:first-child,.service-form .admin-btn { grid-column:auto !important; }
+  .hours-grid { grid-template-columns:minmax(0,1fr) !important; }
+  .calendar-toolbar { align-items:stretch !important; }
+  .calendar-toolbar label { flex-wrap:wrap; }
+  .settings-form > label { width:100% !important; max-width:100% !important; }
+  .settings-footer { align-items:stretch !important; flex-direction:column !important; }
+  .settings-footer .admin-btn { width:100% !important; }
+  .support-widget { right:12px !important; bottom:12px !important; }
+  .support-launcher { min-height:48px !important; padding:0 13px !important; }
+  .support-panel { width:min(360px,calc(100vw - 24px)) !important; height:min(520px,calc(100svh - 86px)) !important; }
+  .admin-footer { padding:13px 12px !important; font-size:7px !important; }
+}
+@media (max-width: 360px) {
+  .admin-content { padding-inline:9px !important; }
+  .admin-topbar { padding-inline:9px !important; }
+  .profile-chip small { display:none !important; }
+  .metric-card { padding:10px 8px !important; }
+  .chart-range button { font-size:7px !important; }
+}
