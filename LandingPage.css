@@ -1405,3 +1405,45 @@ button { -webkit-tap-highlight-color: transparent; }
   .nela-emblem { width: 92px !important; height: 92px !important; }
 }
 .theme-light .nela-header .nela-brand { color: #72552d !important; }
+
+
+/* NELA FOR BUSINESS — dedicated professional overview */
+.nela-business-page{width:min(1160px,100%);margin:0 auto;padding:38px 28px 100px;color:var(--nela-text,#eee8dc)}
+.nela-business-hero{min-height:520px;padding:52px 7% 72px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;border:1px solid rgba(207,174,111,.16);background:radial-gradient(ellipse at 78% 28%,rgba(190,151,83,.12),transparent 42%),linear-gradient(135deg,rgba(255,255,255,.025),rgba(0,0,0,.08));}
+.nela-business-hero>.nela-back{margin-bottom:54px}
+.nela-business-hero .nela-section-kicker,.nela-business-intro .nela-section-kicker,.nela-business-process .nela-section-kicker,.nela-business-price .nela-section-kicker,.nela-business-bottom .nela-section-kicker{color:#c9a66c;font-size:10px;letter-spacing:.2em}
+.nela-business-hero h1{font-family:"Cinzel",serif;font-size:clamp(48px,7vw,82px);line-height:1.08;font-weight:500;letter-spacing:-.04em;margin:24px 0;color:#f1e8d8}
+.nela-business-hero h1 em,.nela-business-intro h2 em,.nela-business-process h2 em,.nela-business-price h2 em,.nela-business-bottom h2 em{color:#c9a66c;font-style:normal}
+.nela-business-lead{max-width:690px;color:#aaa397;font-size:15px;line-height:1.95}
+.nela-business-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px}
+.nela-business-proof{margin-top:45px;color:#9f927d;font-size:9px;letter-spacing:.16em;display:flex;align-items:center;gap:13px;flex-wrap:wrap}
+.nela-business-proof span{color:#d5b77f}.nela-business-proof i{height:3px;width:3px;border-radius:50%;background:#b18c50}
+.nela-business-intro{display:grid;grid-template-columns:1fr 1fr;gap:55px;align-items:end;padding:100px 5% 52px}
+.nela-business-intro h2,.nela-business-process h2,.nela-business-price h2,.nela-business-bottom h2{font-family:"Cinzel",serif;font-weight:500;font-size:clamp(36px,4.5vw,54px);line-height:1.2;margin:18px 0;color:#eee5d7}
+.nela-business-intro>p,.nela-business-price>div>p{color:#a9a196;font-size:14px;line-height:2;margin:0 0 8px}
+.nela-business-feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:18px 0 90px}
+.nela-business-feature-grid article{min-height:245px;padding:27px 24px;border:1px solid rgba(201,166,108,.17);background:rgba(255,255,255,.018);display:flex;flex-direction:column}
+.nela-business-feature-grid article>span{font-size:9px;letter-spacing:.15em;color:#c5a36b}
+.nela-business-feature-grid article>b{font-family:"Cinzel",serif;font-size:19px;font-weight:500;color:#eee5d7;margin:27px 0 12px}
+.nela-business-feature-grid article>p{font-size:12px;line-height:1.85;color:#aaa397;margin:0 0 18px}
+.nela-business-feature-grid article>small{margin-top:auto;color:#8d806d;font-size:9px;line-height:1.7;letter-spacing:.04em}
+.nela-business-process{display:grid;grid-template-columns:.8fr 1.2fr;gap:70px;padding:75px 5%;border-top:1px solid rgba(201,166,108,.16);border-bottom:1px solid rgba(201,166,108,.16)}
+.nela-business-steps article{display:flex;gap:24px;padding:0 0 28px;margin-bottom:26px;border-bottom:1px solid rgba(255,255,255,.07)}
+.nela-business-steps article:last-child{margin:0;border:0;padding:0}
+.nela-business-steps article>span{font-family:"Cinzel",serif;color:#c9a66c;font-size:24px}
+.nela-business-steps b{font-size:14px;color:#eee5d7}.nela-business-steps p{font-size:12px;line-height:1.8;color:#a9a196;margin:8px 0 0}
+.nela-business-price{display:grid;grid-template-columns:1fr 390px;gap:60px;align-items:center;padding:100px 5%}
+.nela-business-price-card{border:1px solid rgba(201,166,108,.38);padding:34px;background:linear-gradient(145deg,rgba(201,166,108,.09),rgba(255,255,255,.02))}
+.nela-business-price-card>span{font-size:9px;letter-spacing:.18em;color:#c9a66c}
+.nela-business-price-card>strong{display:block;font-size:38px;color:#f0e6d5;margin:20px 0 6px;font-weight:500}
+.nela-business-price-card>strong small{font-size:12px;color:#a99c88}
+.nela-business-price-card>p{color:#a9a196;font-size:12px}
+.nela-business-price-card ul{list-style:none;padding:15px 0;margin:12px 0 24px;border-top:1px solid rgba(255,255,255,.09)}
+.nela-business-price-card li{font-size:11px;color:#d0c5b4;padding:9px 0}
+.nela-business-price-card li:before{content:"✦";color:#c9a66c;margin-right:10px}
+.nela-business-price-card>.nela-primary-button{width:100%}
+.nela-business-login-link{display:block;margin:18px auto 0;background:none;border:0;color:#c9a66c;font-size:11px;cursor:pointer}
+.nela-business-bottom{text-align:center;padding:70px 20px 20px}
+.nela-business-bottom h2{margin:20px 0 30px}
+@media(max-width:800px){.nela-business-intro,.nela-business-process,.nela-business-price{grid-template-columns:1fr;gap:28px}.nela-business-feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nela-business-price{padding:70px 2%}.nela-business-price-card{max-width:480px;width:100%;margin:auto}}
+@media(max-width:540px){.nela-business-page{padding:20px 14px 70px}.nela-business-hero{padding:30px 22px 42px;min-height:0}.nela-business-hero>.nela-back{margin-bottom:40px}.nela-business-hero h1{font-size:46px}.nela-business-actions{width:100%}.nela-business-actions button{width:100%}.nela-business-feature-grid{grid-template-columns:1fr}.nela-business-feature-grid article{min-height:0}.nela-business-intro{padding:70px 8px 35px}.nela-business-process{padding:60px 8px}.nela-business-proof{font-size:8px}}
