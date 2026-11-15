@@ -295,3 +295,63 @@
   .event-info { flex-basis:calc(100% - 95px); }
   .admin-footer { flex-direction:column; gap:6px; }
 }
+
+
+/* NELA mark and business performance additions */
+.brand-symbol { overflow:hidden; padding:5px; }
+.brand-symbol img { display:block; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 0 8px rgba(215,184,117,.22)); }
+.profile-avatar { overflow:hidden; padding:5px; }
+.profile-avatar img { display:block; width:100%; height:100%; object-fit:contain; }
+.revenue-chart-panel { margin:0 0 17px; padding:22px 24px 17px; }
+.chart-heading { align-items:flex-start; }
+.chart-heading h2 { margin:0; color:#eee5d3; font-family:'Manrope',sans-serif; font-size:16px; font-weight:700; }
+.chart-heading .admin-eyebrow { margin-bottom:6px; }
+.chart-range { display:flex; flex-wrap:wrap; gap:5px; padding:4px; border:1px solid var(--ad-line); border-radius:7px; background:rgba(0,0,0,.2); }
+.chart-range button { padding:7px 11px; border:0; border-radius:5px; color:#918d81; background:transparent; font-size:9px; transition:.2s ease; }
+.chart-range button:hover { color:#ead7b0; }
+.chart-range button.selected { color:#21190d; background:linear-gradient(120deg,#ead6a6,#bd985c); font-weight:800; }
+.chart-summary { display:flex; align-items:flex-end; gap:38px; padding:8px 0 9px; }
+.chart-summary > div { display:grid; gap:4px; }
+.chart-summary small { color:#858277; font-size:8px; font-weight:700; letter-spacing:.13em; }
+.chart-summary strong { color:#f0e3c9; font-family:'Manrope',sans-serif; font-size:22px; font-weight:700; letter-spacing:-.04em; }
+.chart-period { margin-left:auto; padding-bottom:4px; color:#88867b; font-size:9px; }
+.chart-canvas { width:100%; overflow:hidden; margin-top:4px; }
+.chart-canvas svg { display:block; width:100%; min-width:400px; height:auto; overflow:visible; }
+.chart-labels { display:flex; justify-content:space-between; gap:8px; margin:0 2px; color:#77776e; font-size:8px; text-transform:capitalize; }
+.chart-empty { margin-top:12px; padding:10px 12px; border:1px solid rgba(215,184,117,.12); border-radius:6px; color:#9a9588; background:rgba(215,184,117,.035); font-size:9px; }
+.support-widget { position:fixed; right:27px; bottom:24px; z-index:1000; display:flex; align-items:flex-end; flex-direction:column; gap:12px; }
+.support-launcher { min-height:58px; display:flex; align-items:center; gap:10px; padding:0 19px; border:1px solid rgba(255,235,190,.52); border-radius:40px; color:#20180c; background:linear-gradient(125deg,#f0dba9,#c19a5c); box-shadow:0 10px 35px rgba(0,0,0,.4),0 0 25px rgba(215,184,117,.15); transition:transform .2s ease,box-shadow .2s ease; }
+.support-launcher:hover { transform:translateY(-3px); box-shadow:0 14px 40px rgba(0,0,0,.48),0 0 30px rgba(215,184,117,.24); }
+.support-launcher.is-open { min-height:46px; }
+.support-person { width:29px; height:29px; display:grid; place-items:center; border:1px solid rgba(42,29,11,.28); border-radius:50%; background:rgba(255,255,255,.22); font-size:20px; }
+.support-launcher-label { font-size:11px; font-weight:800; letter-spacing:.02em; }
+.support-panel { width:min(370px,calc(100vw - 34px)); height:min(560px,calc(100vh - 112px)); display:flex; flex-direction:column; overflow:hidden; border:1px solid rgba(215,184,117,.3); border-radius:13px; background:#0d0f0c; box-shadow:0 24px 80px rgba(0,0,0,.62),0 0 35px rgba(215,184,117,.07); animation:supportSlideIn .22s ease-out; }
+@keyframes supportSlideIn { from { opacity:0; transform:translate(15px,12px) scale(.98); } to { opacity:1; transform:translate(0) scale(1); } }
+.support-header { min-height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 17px; border-bottom:1px solid var(--ad-line); background:linear-gradient(110deg,#19160f,#10110d); }
+.support-agent { display:flex; align-items:center; gap:11px; }
+.support-agent-avatar { width:38px; height:38px; display:grid; place-items:center; border:1px solid rgba(215,184,117,.42); border-radius:50%; color:#e5cb93; background:rgba(215,184,117,.09); font-size:17px; }
+.support-agent b,.support-agent small { display:block; }
+.support-agent b { color:#eee5d5; font-size:12px; }
+.support-agent small { margin-top:4px; color:#9b998d; font-size:9px; }
+.support-agent small i { width:6px; height:6px; display:inline-block; margin-right:5px; border-radius:50%; background:#9fc58a; }
+.support-close { width:30px; height:30px; border:1px solid var(--ad-line); border-radius:50%; color:#cbb88f; background:transparent; font-size:20px; line-height:1; }
+.support-intro { padding:12px 16px; border-bottom:1px solid rgba(215,184,117,.08); color:#969286; font-size:9px; line-height:1.6; }
+.support-messages { flex:1; display:flex; flex-direction:column; gap:10px; overflow-y:auto; padding:16px 13px; }
+.support-message { max-width:88%; padding:10px 12px; border:1px solid rgba(215,184,117,.12); border-radius:10px 10px 10px 3px; color:#d8d1c4; background:#171913; font-size:10px; line-height:1.7; white-space:pre-wrap; overflow-wrap:anywhere; }
+.support-message.user { align-self:flex-end; border-color:rgba(215,184,117,.24); border-radius:10px 10px 3px 10px; color:#241b0d; background:linear-gradient(125deg,#e8d3a1,#c39c60); }
+.support-typing { color:#b6a37d; font-style:italic; }
+.support-form { display:flex; gap:8px; padding:12px; border-top:1px solid var(--ad-line); background:#10120e; }
+.support-form input { min-width:0; flex:1; padding:11px 12px; border:1px solid rgba(215,184,117,.2); border-radius:7px; color:#eee5d5; background:#090b08; font-size:10px; }
+.support-form input:focus { outline:0; border-color:rgba(215,184,117,.6); }
+.support-form button { width:38px; border:0; border-radius:7px; color:#21180b; background:linear-gradient(135deg,#ead6a6,#c19a5c); font-size:19px; font-weight:800; }
+.support-form button:disabled { opacity:.45; cursor:not-allowed; }
+.support-disclaimer { padding:0 13px 11px; color:#66675f; background:#10120e; font-size:8px; text-align:center; }
+@media(max-width:780px) {
+ .support-widget { right:15px; bottom:15px; }
+ .support-panel { height:min(520px,calc(100vh - 100px)); }
+ .chart-heading { flex-direction:column; }
+ .chart-range { width:100%; }
+ .chart-range button { flex:1; padding:7px 5px; }
+ .chart-summary { gap:18px; }
+ .chart-summary strong { font-size:18px; }
+}
