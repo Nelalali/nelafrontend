@@ -1051,6 +1051,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
             <button type="button" className="nela-nav-link" onClick={() => document.getElementById("nela-features")?.scrollIntoView({ behavior: "smooth" })}>PLATFORM</button>
             <button type="button" className="nela-nav-link" onClick={() => document.getElementById("nela-how")?.scrollIntoView({ behavior: "smooth" })}>HOW IT WORKS</button>
             <button type="button" className="nela-nav-link" onClick={() => document.getElementById("nela-pricing")?.scrollIntoView({ behavior: "smooth" })}>PRICING</button>
+            <button type="button" className="nela-nav-login" onClick={() => changeMode("login")}>LOG IN</button>
           </>}
           <button type="button" className="nela-theme-button" onClick={() => setTheme((current) => current === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"} title={theme === "dark" ? "Light theme" : "Dark theme"}>{theme === "dark" ? "☀" : "☾"}</button>
 
@@ -1113,6 +1114,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
                 <button className="nela-primary-button" onClick={() => changeMode("register")}>Get started <span>↗</span></button>
                 <button className="nela-secondary-button" onClick={() => changeMode("business-login")}>For businesses <span>→</span></button>
               </div>
+              <p className="nela-login-prompt">Already have an account? <button onClick={() => changeMode("login")}>Log in</button></p>
               <div className="nela-trust"><span>✦</span> LESS SEARCHING&nbsp; · &nbsp;MORE LIVING&nbsp; · &nbsp;SMARTER BOOKINGS</div>
               <button className="nela-scroll-cue" onClick={() => document.getElementById("nela-features")?.scrollIntoView({ behavior: "smooth" })}>DISCOVER NELA <span>↓</span></button>
             </div>
