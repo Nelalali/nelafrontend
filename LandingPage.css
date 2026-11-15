@@ -1306,3 +1306,102 @@ button { -webkit-tap-highlight-color: transparent; }
   .nela-hero h1 { font-size: clamp(76px, 17vw, 112px) !important; letter-spacing: .13em !important; }
   .nela-tagline { font-size: 29px !important; }
 }
+
+
+/* NELA signature update — centred composition and custom woven monogram */
+.nela-header {
+  position: relative !important;
+  justify-content: flex-end !important;
+}
+.nela-header .nela-brand {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 3 !important;
+}
+.nela-header .nela-navigation { margin-left: auto !important; }
+.nela-monogram {
+  width: 48px !important;
+  height: 48px !important;
+  text-shadow: none !important;
+}
+.nela-monogram::before { display: none !important; }
+.nela-monogram img {
+  filter: drop-shadow(0 0 12px rgba(216,184,115,.22)) !important;
+}
+.nela-main:has(.nela-home-content) {
+  display: block !important;
+  width: 100% !important;
+  padding: 0 !important;
+}
+.nela-home-content {
+  width: 100% !important;
+  margin-inline: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+.nela-home-content > .nela-hero,
+.nela-home-content > .nela-section,
+.nela-home-content > .nela-showcase-section,
+.nela-home-content > .nela-pricing-section,
+.nela-home-content > .nela-final-cta {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.nela-home-content > .nela-section {
+  width: min(1160px, calc(100% - 48px)) !important;
+}
+.nela-showcase-section {
+  grid-template-columns: minmax(0, 820px) !important;
+  justify-content: center !important;
+  justify-items: center !important;
+  text-align: center !important;
+}
+.nela-showcase-copy {
+  width: 100% !important;
+  max-width: 720px !important;
+  text-align: center !important;
+}
+.nela-showcase-copy p { margin-inline: auto !important; max-width: 620px !important; }
+.nela-chat-preview { width: min(100%, 700px) !important; }
+.nela-pricing-section {
+  grid-template-columns: minmax(0, 760px) !important;
+  justify-content: center !important;
+  justify-items: center !important;
+  text-align: center !important;
+}
+.nela-pricing-copy {
+  width: 100% !important;
+  text-align: center !important;
+}
+.nela-pricing-copy p { margin-inline: auto !important; }
+.nela-price-card { width: min(100%, 480px) !important; text-align: left !important; }
+.nela-final-cta { width: min(1160px, calc(100% - 48px)) !important; }
+.nela-feature-card { text-align: center !important; }
+.nela-feature-number { left: 50% !important; transform: translateX(-50%) !important; }
+.nela-feature-icon { margin-inline: auto !important; }
+.nela-category-card { justify-content: center !important; text-align: left !important; }
+.nela-steps article { text-align: left !important; }
+.nela-emblem { width: 112px !important; height: 112px !important; margin-bottom: 23px !important; }
+.nela-emblem img { filter: drop-shadow(0 0 28px rgba(201,164,94,.25)) !important; }
+.nela-hero h1 {
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+  font-size: clamp(96px, 13vw, 158px) !important;
+  font-weight: 500 !important;
+  letter-spacing: .2em !important;
+  padding-left: .2em !important;
+}
+@media (max-width: 700px) {
+  .nela-header { min-height: 72px !important; }
+  .nela-header .nela-brand { left: 16px !important; transform: translateY(-50%) !important; }
+  .nela-monogram { width: 42px !important; height: 42px !important; }
+  .nela-navigation { gap: 3px !important; }
+  .nela-home-content > .nela-section,
+  .nela-final-cta { width: calc(100% - 36px) !important; }
+  .nela-showcase-section,.nela-pricing-section { width: calc(100% - 36px) !important; }
+  .nela-hero h1 { font-size: clamp(76px, 18vw, 112px) !important; }
+  .nela-emblem { width: 92px !important; height: 92px !important; }
+}
+.theme-light .nela-header .nela-brand { color: #72552d !important; }
