@@ -919,7 +919,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
         id: createId(),
         role: "assistant",
         content:
-          "I'm having trouble connecting right now. Please try again in a moment.",
+          "Δεν μπορώ να συνδεθώ αυτή τη στιγμή. Παρακαλώ δοκίμασε ξανά σε λίγο.",
         timestamp: new Date().toISOString(),
         clientId: currentUser.id,
       };
