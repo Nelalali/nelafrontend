@@ -1395,7 +1395,7 @@ button { -webkit-tap-highlight-color: transparent; }
 }
 @media (max-width: 700px) {
   .nela-header { min-height: 72px !important; }
-  .nela-header .nela-brand { left: 16px !important; transform: translateY(-50%) !important; }
+  .nela-header .nela-brand { left: 50% !important; transform: translate(-50%, -50%) !important; }
   .nela-monogram { width: 42px !important; height: 42px !important; }
   .nela-navigation { gap: 3px !important; }
   .nela-home-content > .nela-section,
