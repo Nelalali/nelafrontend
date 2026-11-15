@@ -9,9 +9,9 @@ const mark = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
 </defs>
 <path d="M112 365C77 267 105 151 194 94C268 47 367 68 414 139" fill="none" stroke="url(#gold)" stroke-width="2" opacity=".34"/>
 <path d="M400 374C324 449 210 448 132 378" fill="none" stroke="url(#gold)" stroke-width="2" opacity=".25"/>
-<path d="M157 367C143 299 139 205 175 151C198 116 230 124 261 160L355 274C376 300 393 326 381 359" fill="none" stroke="url(#gold)" stroke-width="29" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M365 143C385 210 383 296 350 349C330 381 300 373 271 340L177 229C157 205 143 179 151 149" fill="none" stroke="url(#edge)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M260 160L355 274" fill="none" stroke="#fff3d9" stroke-width="2.5" stroke-linecap="round" opacity=".82"/>
+<path d="M151 365C139 296 143 204 181 151C205 118 235 126 265 162L354 270C378 299 393 326 379 359" fill="none" stroke="url(#gold)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M369 145C389 211 378 292 345 347C326 379 296 371 267 337L181 232C158 205 143 179 151 149" fill="none" stroke="url(#edge)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M260 160L355 274" fill="none" stroke="#fff3d9" stroke-width="1.8" stroke-linecap="round" opacity=".82"/>
 <path d="M256 87L262 103L278 109L262 115L256 131L250 115L234 109L250 103Z" fill="#ead4a5" opacity=".82"/>
 </svg>`;
 export const NELA_MARK_DATA = toSvgData(mark);
