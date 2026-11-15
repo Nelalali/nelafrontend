@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import { NELA_MARK_DATA } from "./NelaLogo.js";
 import "./Admin.css";
+
+const SUPPORT_ENDPOINT = (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || "").replace(/\\/+$/, "").replace(/\\/chat$/i, "") + "/support";
 
 const KEYS = { bookings: "nelaBookings", clients: "nelaClients", settings: "nelaBusinessSettings" };
 const initialSettings = { businessName: "NELA", businessType: "Beauty & wellness", timezone: "Europe/Athens", description: "Premium AI receptionist", services: [{ id: 1, name: "Κούρεμα", price: 20, duration: 30 }, { id: 2, name: "Balayage", price: 80, duration: 120 }, { id: 3, name: "Χτένισμα", price: 25, duration: 45 }], openingHours: { monday: "09:00-18:00", tuesday: "09:00-18:00", wednesday: "09:00-18:00", thursday: "09:00-20:00", friday: "09:00-20:00", saturday: "09:00-15:00", sunday: "Κλειστά" } };
