@@ -325,7 +325,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
     setMode(newMode);
     if (newMode === "home") {
       // Returning to the homepage should always reveal the hero, especially on mobile.
-      window.requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "instant" }));
+      window.requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
     }
   };
 
