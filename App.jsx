@@ -3065,6 +3065,6 @@ export default function App() {
   const customerSession = readSession("nelaUser");
 
   if (isAdminRoute && businessSession?.id) return <ChatApp />;
-  if (isAdminRoute) return <LandingPage defaultMode="business" />;
+  if (isAdminRoute) return <LandingPage defaultMode="home" />;
   return <LandingPage />;
 }
