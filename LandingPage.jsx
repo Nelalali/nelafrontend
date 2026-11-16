@@ -831,10 +831,10 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
      SEND CHAT MESSAGE
   ======================================================= */
 
-  const sendMessage = async (event) => {
+  const sendMessage = async (event, presetText = "") => {
     if (event) event.preventDefault();
 
-    const text = chatInput.trim();
+    const text = String(presetText || chatInput).trim();
 
     if (!text || chatLoading || !currentUser) return;
 
@@ -2142,11 +2142,30 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
                       ...mutedText,
                       color: "#b9aa8d",
                       lineHeight: 1.8,
+                      marginBottom: "24px",
                     }}
                   >
-                    Είμαι η NELA, η προσωπική σου βοηθός για ραντεβού.
-                    Πώς μπορώ να σε βοηθήσω σήμερα;
+                    Είμαι η NELA, η προσωπική σου βοηθός. Διάλεξε τι θέλεις να κάνουμε και θα σε καθοδηγήσω βήμα-βήμα.
                   </p>
+                  <div style={{ width: "100%", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(145px, 1fr))", gap: "11px", textAlign: "left" }}>
+                    {[
+                      { icon: "✦", title: "Νέο ραντεβού", detail: "Βρες υπηρεσία και ώρα", prompt: "Θέλω να κλείσω ένα νέο ραντεβού." },
+                      { icon: "↻", title: "Αλλαγή ραντεβού", detail: "Μετακίνησε την κράτησή μου", prompt: "Θέλω να αλλάξω ένα υπάρχον ραντεβού." },
+                      { icon: "×", title: "Ακύρωση", detail: "Ακύρωσε μια κράτηση", prompt: "Θέλω να ακυρώσω ένα υπάρχον ραντεβού." },
+                      { icon: "◇", title: "Υπηρεσίες & τιμές", detail: "Δες τι προσφέρεται", prompt: "Θέλω να δω τις διαθέσιμες υπηρεσίες και τις τιμές τους." },
+                      { icon: "◷", title: "Ωράριο λειτουργίας", detail: "Μάθε πότε είστε ανοιχτά", prompt: "Ποιες είναι οι ημέρες και ώρες λειτουργίας;" },
+                      { icon: "?", title: "Μίλησε με τη NELA", detail: "Ρώτησε ό,τι χρειάζεσαι", prompt: "Θέλω να ρωτήσω κάτι." },
+                    ].map((action) => (
+                      <button key={action.title} type="button" onClick={() => sendMessage(null, action.prompt)} disabled={chatLoading}
+                        style={{ minHeight: "105px", padding: "15px 14px", borderRadius: "15px", border: "1px solid rgba(201,164,95,0.28)", background: theme === "dark" ? "linear-gradient(145deg,rgba(49,35,20,0.92),rgba(20,14,9,0.96))" : "linear-gradient(145deg,#fffdf7,#f0e4ce)", color: theme === "dark" ? "#eee1c5" : "#4b391e", textAlign: "left", cursor: chatLoading ? "wait" : "pointer", opacity: chatLoading ? 0.55 : 1, display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "7px", transition: "transform .18s ease, border-color .18s ease" }}
+                        onMouseEnter={(event) => { if (!chatLoading) { event.currentTarget.style.borderColor = "rgba(224,193,125,0.75)"; event.currentTarget.style.transform = "translateY(-2px)"; } }}
+                        onMouseLeave={(event) => { event.currentTarget.style.borderColor = "rgba(201,164,95,0.28)"; event.currentTarget.style.transform = "translateY(0)"; }}>
+                        <span style={{ color: "#d6b675", fontSize: "18px", lineHeight: 1 }}>{action.icon}</span>
+                        <strong style={{ fontSize: "12px", fontWeight: 650 }}>{action.title}</strong>
+                        <span style={{ color: theme === "dark" ? "#aa9878" : "#88734e", fontSize: "10px", lineHeight: 1.45 }}>{action.detail}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
 
