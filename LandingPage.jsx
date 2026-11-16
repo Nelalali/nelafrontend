@@ -323,6 +323,10 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
     setMessage("");
     setMenuOpen(false);
     setMode(newMode);
+    if (newMode === "home") {
+      // Returning to the homepage should always reveal the hero, especially on mobile.
+      window.requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "instant" }));
+    }
   };
 
   const updateCustomer = (event) => {
@@ -1048,7 +1052,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
 
         <nav className="nela-navigation">
           {mode === "home" && <>
-            <button type="button" className="nela-nav-link" onClick={() => document.getElementById("nela-features")?.scrollIntoView({ behavior: "smooth" })}>PLATFORM</button>
+            <button type="button" className="nela-nav-link" onClick={() => document.getElementById("nela-features")?.scrollIntoView({ behavior: "smooth" })}>EXPLORE</button>
             <button type="button" className="nela-nav-link" onClick={() => document.getElementById("nela-how")?.scrollIntoView({ behavior: "smooth" })}>HOW IT WORKS</button>
             <button type="button" className="nela-nav-link" onClick={() => document.getElementById("nela-pricing")?.scrollIntoView({ behavior: "smooth" })}>PRICING</button>
             <button type="button" className="nela-nav-login" onClick={() => changeMode("login")}>LOG IN</button>
