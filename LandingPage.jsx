@@ -1052,7 +1052,7 @@ export default function LandingPage({ defaultMode = "home" } = {}) {
 
         <nav className="nela-navigation">
           {mode === "home" && <>
-            <button type="button" className="nela-nav-link" onClick={() => document.getElementById("nela-features")?.scrollIntoView({ behavior: "smooth" })}>PLATFORM</button>
+            
             <button type="button" className="nela-nav-link" onClick={() => document.getElementById("nela-how")?.scrollIntoView({ behavior: "smooth" })}>HOW IT WORKS</button>
             <button type="button" className="nela-nav-link" onClick={() => document.getElementById("nela-pricing")?.scrollIntoView({ behavior: "smooth" })}>PRICING</button>
             <button type="button" className="nela-nav-login" onClick={() => changeMode("login")}>LOG IN</button>
